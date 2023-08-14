@@ -1,0 +1,2 @@
+# otto
+Library for GPGPU
