@@ -1,0 +1,21 @@
+file(GLOB EXAMPLE_ROOT_SOURCE *.c)
+file(GLOB EXAMPLE_ROOT_HEADER *.h)
+
+set(EXAMPLE_NAME vector_add)
+
+add_executable(${EXAMPLE_NAME} ${EXAMPLE_ROOT_HEADER} ${EXAMPLE_ROOT_SOURCE})
+
+target_link_libraries(
+  ${EXAMPLE_NAME} PUBLIC ${PROJECT_CORE_NAME} ${PROJECT_UTILS_NAME}
+                         OpenCL::OpenCL)
+target_include_directories(
+  ${EXAMPLE_NAME}
+  PUBLIC ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR} ${PROJECT_HEADERS}
+         ${CMAKE_SOURCE_DIR} ${CMAKE_DEPENDENCIES_DIR}/OpenCL/include)
+
+set_target_properties(
+  ${EXAMPLE_NAME}
+  PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
+             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug/examples
+             RUNTIME_OUTPUT_DIRECTORY_RELEASE
+             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/examples)
