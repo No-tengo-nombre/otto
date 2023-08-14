@@ -7,10 +7,6 @@ target_link_libraries(${PROJECT_CORE_NAME} PUBLIC ${PROJECT_UTILS_NAME}
                                                   OpenCL::OpenCL)
 target_include_directories(
   ${PROJECT_CORE_NAME}
-  PUBLIC ${PROJECT_BINARY_DIR}
-         ${PROJECT_SOURCE_DIR}
-         ${PROJECT_SOURCE_DIR_LOCATION}
-         ${PROJECT_HEADERS}
-         ${CMAKE_SOURCE_DIR}
-         ${CMAKE_DEPENDENCIES_DIR}/OpenCL/include
-         ${Vulkan_INCLUDE_DIRS})
+  PUBLIC ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}
+         ${PROJECT_SOURCE_DIR_LOCATION} ${PROJECT_HEADERS} ${CMAKE_SOURCE_DIR}
+         ${CMAKE_DEPENDENCIES_DIR}/OpenCL/include)
