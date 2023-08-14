@@ -8,7 +8,7 @@
 #ifndef LOG_INTERNAL_H
 #define LOG_INTERNAL_H
 
-#include <otto/utils/log.h>
+#include <ottou/log.h>
 
 #define logi_trace(...) log_log_internal(LOG_TRACE, __FILENAME__, __LINE__, __VA_ARGS__)
 #define logi_debug(...) log_log_internal(LOG_DEBUG, __FILENAME__, __LINE__, __VA_ARGS__)
