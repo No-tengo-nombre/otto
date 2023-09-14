@@ -43,7 +43,7 @@ otto_status_t otto_vector_from_array(const void *data, const size_t size,
     return OTTO_STATUS_FAILURE;
   }
 
-  memcpy(new_data, data, size);
+  memcpy(new_data, data, size * data_size);
   otto_vector_t result = {
       .data = new_data,
       .size = size,
