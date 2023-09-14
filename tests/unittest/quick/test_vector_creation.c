@@ -19,7 +19,6 @@ int test_new() {
   log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
-    s
   }
   if (vec.data != NULL) {
     return TEST_FAIL;
