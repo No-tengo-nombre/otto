@@ -13,7 +13,8 @@ extern "C" {
  * @brief Vector object that can live on the CPU or GPU.
  *
  * This vector corresponds to some contiguos data, which can be stored in the
- * CPU using the heap, or the GPU using the VRAM.
+ * CPU using the heap, or the GPU using the VRAM. Note that while the data
+ * always lives in the heap, the vector object itself can live in the stack.
  */
 typedef struct otto_vector {
   void *data;
@@ -24,8 +25,10 @@ typedef struct otto_vector {
 
 otto_status_t otto_vector_new(otto_vector_t *out);
 otto_status_t otto_vector_with_capacity(const size_t capacity,
+                                        const size_t data_size,
                                         otto_vector_t *out);
-otto_status_t otto_vector_from_array(void *const data, const size_t size,
+otto_status_t otto_vector_from_array(const void *data, const size_t size,
+                                     const size_t data_size,
                                      otto_vector_t *out);
 
 otto_status_t otto_vector_push(const void *target, otto_vector_t *out);
