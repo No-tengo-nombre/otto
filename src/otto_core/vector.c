@@ -63,6 +63,12 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i, void *out) {
+  // TODO: Test this implementation
+  memcpy(out, vec->data + i * vec->data_size, vec->data_size);
+  return OTTO_STATUS_SUCCESS;
+}
+
 otto_status_t otto_vector_push(const void *target, otto_vector_t *out) {
   // TODO: Implement pushing to the vector
   return OTTO_STATUS_FAILURE;
