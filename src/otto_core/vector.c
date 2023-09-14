@@ -64,7 +64,9 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
 }
 
 otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i, void *out) {
-  // TODO: Test this implementation
+  if (vec->data == NULL || i >= vec->size || out == NULL) {
+    return OTTO_STATUS_FAILURE;
+  }
   memcpy(out, vec->data + i * vec->data_size, vec->data_size);
   return OTTO_STATUS_SUCCESS;
 }

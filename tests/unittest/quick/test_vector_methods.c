@@ -22,6 +22,16 @@ int test_get() {
     }
   }
 
+  if (otto_vector_get(&vec, len, &val) != OTTO_STATUS_FAILURE) {
+    return TEST_FAIL;
+  }
+
+  // Check that the failed call to otto_vector_get did not accidentally
+  // modify val
+  if (val != data[len - 1]) {
+    return TEST_FAIL;
+  }
+
   if (status == OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
   }
