@@ -37,5 +37,5 @@
 /* Test utilities */
 
 #define OTTO_CALL_TEST(test)                                                   \
-  if (test())                                                                  \
+  if (test() == TEST_FAIL)                                                     \
     return TEST_FAIL;
