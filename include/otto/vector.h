@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "devices.h"
+#include "status.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -20,6 +21,16 @@ typedef struct otto_vector {
   size_t capacity;
   otto_device_t device;
 } otto_vector_t;
+
+otto_status_t otto_vector_new(otto_vector_t *out);
+otto_status_t otto_vector_with_capacity(const size_t capacity,
+                                        otto_vector_t *out);
+otto_status_t otto_vector_from_array(void *const data, const size_t size,
+                                     otto_vector_t *out);
+
+otto_status_t otto_vector_push(const void *target, otto_vector_t *out);
+otto_status_t otto_vector_extend_array(const void *target, const size_t size,
+                                       otto_vector_t *out);
 
 #ifdef __cplusplus
 }
