@@ -5,18 +5,22 @@
 #include <otto/vector.h>
 
 #include "otto/devices.h"
+#include "ottou/log.h"
 #include "src/otto_utils/test.h"
 
 int test_new() {
+  log_info("Testing `new`");
   otto_vector_t vec;
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
+  log_debug("Creating vector");
   status &= otto_vector_new(sizeof(uint32_t), &vec);
 
+  log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
+    s
   }
-
   if (vec.data != NULL) {
     return TEST_FAIL;
   }
@@ -33,15 +37,17 @@ int test_new() {
 }
 
 int test_with_capacity() {
+  log_info("Testing `with_capacity`");
   otto_vector_t vec;
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
+  log_debug("Creating vector");
   status &= otto_vector_with_capacity(6, sizeof(uint32_t), &vec);
 
+  log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
   }
-
   if (vec.data == NULL) {
     return TEST_FAIL;
   }
@@ -61,17 +67,19 @@ int test_with_capacity() {
 }
 
 int test_from_array() {
+  log_info("Testing `from_array`");
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
+  log_info("Creating vector");
   status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
+  log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
   }
-
   // Check one by one that the elements in the vector are correct
   for (int i = 0; i < len; i++) {
     if (data[i] != *(uint32_t *)(vec.data + i * sizeof(uint32_t))) {
