@@ -63,7 +63,8 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i, void *out) {
+otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
+                              void *out) {
   if (vec->data == NULL || i >= vec->size || out == NULL) {
     return OTTO_STATUS_FAILURE;
   }
@@ -94,8 +95,29 @@ otto_status_t otto_vector_push(const void *src, otto_vector_t *out) {
   }
   return OTTO_STATUS_SUCCESS;
 }
-otto_status_t otto_vector_extend_array(const void *target, const size_t size,
+otto_status_t otto_vector_extend_array(const void *src, const size_t size,
                                        otto_vector_t *out) {
-  // TODO: Implement extending the vector
-  return OTTO_STATUS_FAILURE;
+  if (src == NULL) {
+    return OTTO_STATUS_FAILURE;
+  }
+
+  size_t delta = size - (out->capacity - out->size);
+  if (delta > 0) {
+    // The vector does not have enough space so we have to allocate more
+    // memory
+    void *new_data = realloc(out->data, out->capacity + delta);
+    if (new_data == NULL) {
+      free(out->data);
+      return OTTO_STATUS_FAILURE;
+    }
+    memcpy(new_data + out->size * out->data_size, src, size * out->data_size);
+    out->data = new_data;
+    out->size += size;
+    out->capacity += delta;
+  } else {
+    // It can be assumed that out->size < out->capacity, so this
+    // means we dont have to allocate more memory.
+    memcpy(out->data + out->size * out->data_size, src, size * out->data_size);
+  }
+  return OTTO_STATUS_SUCCESS;
 }
