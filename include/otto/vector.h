@@ -22,10 +22,12 @@ typedef struct otto_vector {
   otto_device_t device;
 } otto_vector_t;
 
-otto_status_t otto_vector_new(otto_vector_t *out);
+otto_status_t otto_vector_new(const otto_device_t dev, otto_vector_t *out);
 otto_status_t otto_vector_with_capacity(const size_t capacity,
+                                        const otto_device_t dev,
                                         otto_vector_t *out);
 otto_status_t otto_vector_from_array(void *const data, const size_t size,
+                                     const otto_device_t dev,
                                      otto_vector_t *out);
 
 otto_status_t otto_vector_push(const void *target, otto_vector_t *out);
