@@ -31,6 +31,8 @@ otto_status_t otto_vector_from_array(const void *data, const size_t size,
                                      const size_t data_size,
                                      otto_vector_t *out);
 
+otto_status_t otto_vector_cleanup(const otto_vector_t *const vec);
+
 otto_status_t otto_vector_push(const void *target, otto_vector_t *out);
 otto_status_t otto_vector_extend_array(const void *target, const size_t size,
                                        otto_vector_t *out);
