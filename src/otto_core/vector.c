@@ -71,9 +71,28 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i, void *ou
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_push(const void *target, otto_vector_t *out) {
-  // TODO: Implement pushing to the vector
-  return OTTO_STATUS_FAILURE;
+otto_status_t otto_vector_push(const void *src, otto_vector_t *out) {
+  if (src == NULL) {
+    return OTTO_STATUS_FAILURE;
+  }
+
+  if (out->size == out->capacity) {
+    // The vector is full so we have to reallocate
+    void *new_data = realloc(out->data, out->capacity + 1);
+    if (new_data == NULL) {
+      free(out->data);
+      return OTTO_STATUS_FAILURE;
+    }
+    memcpy(new_data + out->size * out->data_size, src, out->data_size);
+    out->data = new_data;
+    out->size++;
+    out->capacity++;
+  } else {
+    // It can be assumed that out->size < out->capacity, so this
+    // means we dont have to allocate more memory.
+    memcpy(out->data + out->size * out->data_size, src, out->data_size);
+  }
+  return OTTO_STATUS_SUCCESS;
 }
 otto_status_t otto_vector_extend_array(const void *target, const size_t size,
                                        otto_vector_t *out) {
