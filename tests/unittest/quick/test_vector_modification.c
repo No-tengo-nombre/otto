@@ -61,7 +61,7 @@ int test_extend_array() {
   log_debug("Extending vector");
   uint32_t values[] = {20, 19, 15};
   size_t values_len = 3;
-  status &= otto_vector_extend_array(&values, &vec);
+  status &= otto_vector_extend_array(&values, values_len, &vec);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.size != 11 || vec.capacity != 11) {
@@ -94,5 +94,6 @@ int test_extend_array() {
 
 int main() {
   OTTO_CALL_TEST(test_push);
+  OTTO_CALL_TEST(test_extend_array);
   return TEST_PASS;
 }
