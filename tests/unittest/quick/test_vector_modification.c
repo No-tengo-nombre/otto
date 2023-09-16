@@ -3,9 +3,8 @@
 
 #include <otto/status.h>
 #include <otto/vector.h>
-
-#include "ottou/log.h"
-#include "src/otto_utils/test.h"
+#include <ottou/log.h>
+#include <src/otto_utils/test.h>
 
 int test_push() {
   log_info("Testing `push`");

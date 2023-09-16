@@ -1,12 +1,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <otto/devices.h>
 #include <otto/status.h>
 #include <otto/vector.h>
-
-#include "otto/devices.h"
-#include "ottou/log.h"
-#include "src/otto_utils/test.h"
+#include <ottou/log.h>
+#include <src/otto_utils/test.h>
 
 int test_new() {
   log_info("Testing `new`");
