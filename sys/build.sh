@@ -13,9 +13,12 @@ examples=0
 testing=0
 verbose=0
 
-while getopts "visetrdwlG:R:P:" arg
+while getopts "xvisetrdwlG:R:P:" arg
 do
     case "$arg" in
+        x)
+            params+=" -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+            ;;
         i)
             params+=" -DOTTO_INSTALL=ON"
             ;;
