@@ -25,6 +25,8 @@ typedef struct otto_vector {
 } otto_vector_t;
 
 otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out);
+otto_status_t otto_vector_zero(const size_t size, const size_t data_size,
+                               otto_vector_t *out);
 otto_status_t otto_vector_with_capacity(const size_t capacity,
                                         const size_t data_size,
                                         otto_vector_t *out);

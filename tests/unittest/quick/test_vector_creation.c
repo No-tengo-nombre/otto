@@ -35,6 +35,32 @@ int test_new() {
   return TEST_PASS;
 }
 
+int test_zero() {
+  log_info("Testing `zero`");
+  otto_vector_t vec;
+  otto_status_t status = OTTO_STATUS_SUCCESS;
+  size_t len = 10;
+
+  log_info("Creating vector");
+  status &= otto_vector_zero(len, sizeof(uint32_t), &vec);
+
+  log_debug("Checking creation result");
+  if (status == OTTO_STATUS_FAILURE) {
+    return TEST_FAIL;
+  }
+  // Check one by one that the elements in the vector are correct
+  for (int i = 0; i < len; i++) {
+    if (*(uint32_t *)(vec.data + i * sizeof(uint32_t)) != 0) {
+      return TEST_FAIL;
+    }
+  }
+  if (vec.device != OTTO_DEVICE_CPU) {
+    return TEST_FAIL;
+  }
+
+  return TEST_PASS;
+}
+
 int test_with_capacity() {
   log_info("Testing `with_capacity`");
   otto_vector_t vec;
@@ -94,6 +120,7 @@ int test_from_array() {
 
 int main() {
   OTTO_CALL_TEST(test_new);
+  OTTO_CALL_TEST(test_zero);
   OTTO_CALL_TEST(test_with_capacity);
   OTTO_CALL_TEST(test_from_array);
   return TEST_PASS;

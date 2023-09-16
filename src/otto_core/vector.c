@@ -18,6 +18,24 @@ otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out) {
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t otto_vector_zero(const size_t size, const size_t data_size,
+                               otto_vector_t *out) {
+  void *data = calloc(size, data_size);
+  if (data == NULL) {
+    return OTTO_STATUS_FAILURE;
+  }
+
+  otto_vector_t result = {
+      .data = data,
+      .data_size = data_size,
+      .size = size,
+      .capacity = size,
+      .device = OTTO_DEVICE_CPU,
+  };
+  *out = result;
+  return OTTO_STATUS_SUCCESS;
+}
+
 otto_status_t otto_vector_with_capacity(const size_t capacity,
                                         const size_t data_size,
                                         otto_vector_t *out) {
