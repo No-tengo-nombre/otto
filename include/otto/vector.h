@@ -38,6 +38,8 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec);
 
 otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
                               void *out);
+otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
+                              const void *src);
 
 otto_status_t otto_vector_push(const void *src, otto_vector_t *out);
 otto_status_t otto_vector_extend_array(const void *src, const size_t len,
