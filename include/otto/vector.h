@@ -19,18 +19,18 @@ extern "C" {
 typedef struct otto_vector {
   void *data;
   size_t data_size;
-  size_t size;
+  size_t len;
   size_t capacity;
   otto_device_t device;
 } otto_vector_t;
 
 otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out);
-otto_status_t otto_vector_zero(const size_t size, const size_t data_size,
+otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
                                otto_vector_t *out);
 otto_status_t otto_vector_with_capacity(const size_t capacity,
                                         const size_t data_size,
                                         otto_vector_t *out);
-otto_status_t otto_vector_from_array(const void *data, const size_t size,
+otto_status_t otto_vector_from_array(const void *data, const size_t len,
                                      const size_t data_size,
                                      otto_vector_t *out);
 
@@ -40,7 +40,7 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
                               void *out);
 
 otto_status_t otto_vector_push(const void *src, otto_vector_t *out);
-otto_status_t otto_vector_extend_array(const void *src, const size_t size,
+otto_status_t otto_vector_extend_array(const void *src, const size_t len,
                                        otto_vector_t *out);
 
 #ifdef __cplusplus

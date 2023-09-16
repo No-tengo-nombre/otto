@@ -22,7 +22,7 @@ int test_push() {
   status &= otto_vector_push(&val, &vec);
 
   log_debug("Checking that the dimensions changed properly");
-  if (vec.size != 9 || vec.capacity != 9) {
+  if (vec.len != 9 || vec.capacity != 9) {
     return TEST_FAIL;
   }
 
@@ -31,7 +31,7 @@ int test_push() {
     return TEST_FAIL;
   }
   log_debug("Checking that the failed push does not modify the vector");
-  if (vec.size != 9 || vec.capacity != 9) {
+  if (vec.len != 9 || vec.capacity != 9) {
     return TEST_FAIL;
   }
 
@@ -64,7 +64,7 @@ int test_extend_array() {
   status &= otto_vector_extend_array(&values, values_len, &vec);
 
   log_debug("Checking that the dimensions changed properly");
-  if (vec.size != 11 || vec.capacity != 11) {
+  if (vec.len != 11 || vec.capacity != 11) {
     return TEST_FAIL;
   }
 
@@ -73,7 +73,7 @@ int test_extend_array() {
     return TEST_FAIL;
   }
   log_debug("Checking that the failed extend does not modify the vector");
-  if (vec.size != 11 || vec.capacity != 11) {
+  if (vec.len != 11 || vec.capacity != 11) {
     return TEST_FAIL;
   }
 

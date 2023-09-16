@@ -29,7 +29,7 @@ int test_new() {
   if (vec.device != OTTO_DEVICE_CPU) {
     return TEST_FAIL;
   }
-  if (vec.size != 0) {
+  if (vec.len != 0) {
     return TEST_FAIL;
   }
   return TEST_PASS;
@@ -85,7 +85,7 @@ int test_with_capacity() {
   if (vec.device != OTTO_DEVICE_CPU) {
     return TEST_FAIL;
   }
-  if (vec.size != 0) {
+  if (vec.len != 0) {
     return TEST_FAIL;
   }
   return TEST_PASS;
