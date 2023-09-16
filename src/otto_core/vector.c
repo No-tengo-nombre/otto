@@ -92,7 +92,7 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
 
 otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
                               const void *src) {
-  if (vec->data == NULL || i >= vec->len || val == NULL) {
+  if (vec->data == NULL || i >= vec->len || src == NULL) {
     return OTTO_STATUS_FAILURE;
   }
   memcpy(vec->data + i * vec->data_size, src, vec->data_size);
