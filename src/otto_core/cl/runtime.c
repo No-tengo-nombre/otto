@@ -37,9 +37,11 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
   cl_uint device_num;
   logi_info("Getting platforms");
   status |= clGetPlatformIDs(OTTO_PLATFORM_ENTRIES, &platforms, &platform_num);
+  logi_debug("Found %d platforms", platform_num);
   logi_info("Getting devices");
   status |= clGetDeviceIDs(platforms, dev, OTTO_DEVICE_ENTRIES, &devices,
                            &device_num);
+  logi_debug("Found %d devices", device_num);
   if (status != CL_SUCCESS) {
     logi_error("Failed getting platforms and devices");
     return OTTO_STATUS_FAILURE;
