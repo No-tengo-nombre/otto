@@ -1,4 +1,3 @@
-#include "CL/cl.h"
 #include <otto/cl/cl.h>
 #include <otto/cl/runtime.h>
 #include <otto/status.h>
