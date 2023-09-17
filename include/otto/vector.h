@@ -26,6 +26,8 @@ typedef struct otto_vector {
   otto_device_t device;
 } otto_vector_t;
 
+/* Vector creation */
+
 otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out);
 otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
                                otto_vector_t *out);
@@ -36,14 +38,17 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
                                      const size_t data_size,
                                      otto_vector_t *out);
 
+/* Vector finalization */
+
 otto_status_t otto_vector_cleanup(const otto_vector_t *const vec);
+
+/* Vector attributes */
 
 otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
                               void *out);
 otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
                               const void *src);
 otto_status_t otto_vector_resize(otto_vector_t *vec, const size_t new_capacity);
-
 otto_status_t otto_vector_push(const void *src, otto_vector_t *out);
 otto_status_t otto_vector_extend_array(const void *src, const size_t len,
                                        otto_vector_t *out);

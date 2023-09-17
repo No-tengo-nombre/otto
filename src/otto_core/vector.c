@@ -141,6 +141,7 @@ otto_status_t otto_vector_push(const void *src, otto_vector_t *out) {
   }
   return OTTO_STATUS_SUCCESS;
 }
+
 otto_status_t otto_vector_extend_array(const void *src, const size_t len,
                                        otto_vector_t *out) {
   if (src == NULL) {
