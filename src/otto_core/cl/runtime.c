@@ -25,7 +25,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
     dev = CL_DEVICE_TYPE_GPU;
     break;
   default:
-    logi_fatal("Requested device not implemented");
+    logi_error("Requested device not implemented");
     return OTTO_STATUS_FAILURE;
   }
 
