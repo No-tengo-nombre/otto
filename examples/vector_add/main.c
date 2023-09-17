@@ -6,13 +6,8 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef __APPLE__
-#include <OpenCL/opencl.h>
-#else
-#include <CL/cl.h>
-#endif
-
 #include <otto/cl/runtime.h>
+#include <otto/cl/cl.h>
 #include <otto/status.h>
 #include <otto/vector.h>
 
@@ -44,14 +39,11 @@ int main(void) {
   fclose(fp);
 
   otto_runtime_t ctx;
-  if (otto_runtime_new(NULL, CL_DEVICE_TYPE_CPU, &ctx) != OTTO_STATUS_FAILURE) {
+  if (otto_runtime_new(NULL, NULL, CL_DEVICE_TYPE_CPU, &ctx) !=
+      OTTO_STATUS_FAILURE) {
     return 1;
   }
   cl_int err;
-
-  // Create a command queue
-  cl_command_queue command_queue =
-      clCreateCommandQueue(ctx.ctx, ctx.devices, 0, &err);
 
   // Create memory buffers on the device for each vector
   cl_mem a_mem_obj = clCreateBuffer(ctx.ctx, CL_MEM_READ_ONLY,
@@ -62,9 +54,9 @@ int main(void) {
                                     LIST_SIZE * sizeof(int), NULL, &err);
 
   // Copy the lists A and B to their respective memory buffers
-  err = clEnqueueWriteBuffer(command_queue, a_mem_obj, CL_TRUE, 0,
+  err = clEnqueueWriteBuffer(ctx.cq, a_mem_obj, CL_TRUE, 0,
                              LIST_SIZE * sizeof(int), A, 0, NULL, NULL);
-  err = clEnqueueWriteBuffer(command_queue, b_mem_obj, CL_TRUE, 0,
+  err = clEnqueueWriteBuffer(ctx.cq, b_mem_obj, CL_TRUE, 0,
                              LIST_SIZE * sizeof(int), B, 0, NULL, NULL);
 
   // Create a program from the kernel source
@@ -86,13 +78,12 @@ int main(void) {
   // Execute the OpenCL kernel on the list
   size_t global_item_size = LIST_SIZE; // Process the entire lists
   size_t local_item_size = 64;         // Divide work items into groups of 64
-  err =
-      clEnqueueNDRangeKernel(command_queue, kernel, 1, NULL, &global_item_size,
-                             &local_item_size, 0, NULL, NULL);
+  err = clEnqueueNDRangeKernel(ctx.cq, kernel, 1, NULL, &global_item_size,
+                               &local_item_size, 0, NULL, NULL);
 
   // Read the memory buffer C on the device to the local variable C
   int *C = (int *)malloc(sizeof(int) * LIST_SIZE);
-  err = clEnqueueReadBuffer(command_queue, c_mem_obj, CL_TRUE, 0,
+  err = clEnqueueReadBuffer(ctx.cq, c_mem_obj, CL_TRUE, 0,
                             LIST_SIZE * sizeof(int), C, 0, NULL, NULL);
 
   // Display the result to the screen
@@ -100,14 +91,14 @@ int main(void) {
     printf("%d + %d = %d\n", A[i], B[i], C[i]);
 
   // Clean up
-  err = clFlush(command_queue);
-  err = clFinish(command_queue);
+  err = clFlush(ctx.cq);
+  err = clFinish(ctx.cq);
   err = clReleaseKernel(kernel);
   err = clReleaseProgram(program);
   err = clReleaseMemObject(a_mem_obj);
   err = clReleaseMemObject(b_mem_obj);
   err = clReleaseMemObject(c_mem_obj);
-  err = clReleaseCommandQueue(command_queue);
+  err = clReleaseCommandQueue(ctx.cq);
   err = clReleaseContext(ctx.ctx);
   free(A);
   free(B);

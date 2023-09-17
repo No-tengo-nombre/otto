@@ -1,9 +1,9 @@
-#include <CL/cl.h>
 #include <otto/cl/cl.h>
 #include <otto/cl/runtime.h>
 #include <otto/status.h>
 
-otto_status_t otto_runtime_new(const cl_context_properties *props,
+otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
+                               const cl_queue_properties *q_props,
                                cl_device_type type, otto_runtime_t *out) {
   if (out == NULL) {
     return OTTO_STATUS_FAILURE;
@@ -23,14 +23,20 @@ otto_status_t otto_runtime_new(const cl_context_properties *props,
   }
 
   cl_context ctx =
-      clCreateContext(props, device_num, &devices, NULL, NULL, &status);
-
+      clCreateContext(ctx_props, device_num, &devices, NULL, NULL, &status);
   if (ctx == NULL || status != CL_SUCCESS) {
+    return OTTO_STATUS_FAILURE;
+  }
+
+  cl_command_queue cq =
+      clCreateCommandQueueWithProperties(ctx, devices, q_props, &status);
+  if (cq == NULL || status != CL_SUCCESS) {
     return OTTO_STATUS_FAILURE;
   }
 
   otto_runtime_t result = {
       .ctx = ctx,
+      .cq = cq,
       .platforms = platforms,
       .platform_num = platform_num,
       .devices = devices,

@@ -12,13 +12,15 @@ extern "C" {
 
 typedef struct otto_runtime {
   cl_context ctx;
+  cl_command_queue cq;
   cl_platform_id platforms;
   cl_uint platform_num;
   cl_device_id devices;
   cl_uint device_num;
 } otto_runtime_t;
 
-otto_status_t otto_runtime_new(const cl_context_properties *props,
+otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
+                               const cl_queue_properties *q_props,
                                cl_device_type type, otto_runtime_t *out);
 
 #ifdef __cplusplus
