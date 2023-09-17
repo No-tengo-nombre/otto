@@ -103,6 +103,21 @@ otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t otto_vector_resize(otto_vector_t *vec,
+                                 const size_t new_capacity) {
+  void *data = realloc(vec->data, new_capacity);
+  if (data == NULL) {
+    return OTTO_STATUS_FAILURE;
+  }
+
+  if (new_capacity < vec->len) {
+    vec->len = new_capacity;
+  }
+  vec->capacity = new_capacity;
+  vec->data = data;
+  return OTTO_STATUS_SUCCESS;
+}
+
 otto_status_t otto_vector_push(const void *src, otto_vector_t *out) {
   if (src == NULL) {
     return OTTO_STATUS_FAILURE;
