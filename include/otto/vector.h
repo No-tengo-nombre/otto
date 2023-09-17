@@ -3,6 +3,7 @@
 #include <stddef.h>
 
 #include "cl/cl.h"
+#include "cl/runtime.h"
 #include "devices.h"
 #include "status.h"
 
@@ -55,8 +56,8 @@ otto_status_t otto_vector_extend_array(const void *src, const size_t len,
 
 /* Vector movements */
 
-otto_status_t otto_vector_to_device(otto_vector_t *vec,
-                                    const otto_device_t dev);
+otto_status_t otto_vector_register(otto_vector_t *vec, cl_mem_flags flags,
+                                   const otto_runtime_t *ctx);
 
 #ifdef __cplusplus
 }
