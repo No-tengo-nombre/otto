@@ -2,6 +2,7 @@
 
 #include <stddef.h>
 
+#include "cl/cl.h"
 #include "devices.h"
 #include "status.h"
 
@@ -18,6 +19,7 @@ extern "C" {
  */
 typedef struct otto_vector {
   void *data;
+  cl_mem gmem;
   size_t data_size;
   size_t len;
   size_t capacity;

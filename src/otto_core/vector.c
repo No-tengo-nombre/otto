@@ -9,6 +9,7 @@
 otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out) {
   otto_vector_t result = {
       .data = NULL,
+      .gmem = NULL,
       .data_size = data_size,
       .len = 0,
       .capacity = 0,
@@ -27,6 +28,7 @@ otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
 
   otto_vector_t result = {
       .data = data,
+      .gmem = NULL,
       .data_size = data_size,
       .len = len,
       .capacity = len,
@@ -46,6 +48,7 @@ otto_status_t otto_vector_with_capacity(const size_t capacity,
 
   otto_vector_t result = {
       .data = data,
+      .gmem = NULL,
       .data_size = data_size,
       .len = 0,
       .capacity = capacity,
@@ -66,6 +69,7 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
   memcpy(new_data, data, len * data_size);
   otto_vector_t result = {
       .data = new_data,
+      .gmem = NULL,
       .data_size = data_size,
       .len = len,
       .capacity = len,
