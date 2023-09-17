@@ -73,7 +73,7 @@ int test_push2() {
 
   log_debug("Checking that the push happened fine");
   uint32_t contained_val;
-  status &= otto_vector_get(&vec, 8, &contained_val);
+  status &= otto_vector_get(&vec, 0, &contained_val);
   if (contained_val != val) {
     log_fatal("[FAIL] %d != %d", contained_val, val);
     return TEST_FAIL;
