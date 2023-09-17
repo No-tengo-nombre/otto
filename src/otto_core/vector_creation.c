@@ -81,5 +81,11 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
 otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
   free(vec->data);
 
+  if (vec->gmem != NULL) {
+    if (clReleaseMemObject(vec->gmem) != CL_SUCCESS) {
+      return OTTO_STATUS_FAILURE;
+    }
+  }
+
   return OTTO_STATUS_SUCCESS;
 }
