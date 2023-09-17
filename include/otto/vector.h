@@ -50,9 +50,9 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
 otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
                               const void *src);
 otto_status_t otto_vector_resize(otto_vector_t *vec, const size_t new_capacity);
-otto_status_t otto_vector_push(const void *src, otto_vector_t *out);
-otto_status_t otto_vector_extend_array(const void *src, const size_t len,
-                                       otto_vector_t *out);
+otto_status_t otto_vector_push(otto_vector_t *vec, const void *src);
+otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
+                                       const size_t len);
 
 /* Vector movements */
 

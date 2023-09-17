@@ -18,7 +18,7 @@ int test_push() {
 
   log_debug("Puhsing element");
   uint32_t val = 20;
-  status &= otto_vector_push(&val, &vec);
+  status &= otto_vector_push(&vec, &val);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 9 || vec.capacity != 9) {
@@ -26,7 +26,7 @@ int test_push() {
   }
 
   log_debug("Checking border scenario");
-  if (otto_vector_push(NULL, &vec) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_push(&vec, NULL) != OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
   }
   log_debug("Checking that the failed push does not modify the vector");
@@ -60,7 +60,7 @@ int test_extend_array() {
   log_debug("Extending vector");
   uint32_t values[] = {20, 19, 15};
   size_t values_len = 3;
-  status &= otto_vector_extend_array(&values, values_len, &vec);
+  status &= otto_vector_extend_array(&vec, &values, values_len);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 11 || vec.capacity != 11) {
@@ -68,7 +68,7 @@ int test_extend_array() {
   }
 
   log_debug("Checking border scenario");
-  if (otto_vector_extend_array(NULL, 10010, &vec) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_extend_array(&vec, NULL, 10010) != OTTO_STATUS_FAILURE) {
     return TEST_FAIL;
   }
   log_debug("Checking that the failed extend does not modify the vector");
