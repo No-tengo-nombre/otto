@@ -53,6 +53,11 @@ otto_status_t otto_vector_push(const void *src, otto_vector_t *out);
 otto_status_t otto_vector_extend_array(const void *src, const size_t len,
                                        otto_vector_t *out);
 
+/* Vector movements */
+
+otto_status_t otto_vector_to_device(otto_vector_t *vec,
+                                    const otto_device_t dev);
+
 #ifdef __cplusplus
 }
 #endif
