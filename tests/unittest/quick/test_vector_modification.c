@@ -47,6 +47,37 @@ int test_push() {
   return TEST_PASS;
 }
 
+int test_push2() {
+  log_info("Testing `push2`");
+  otto_vector_t vec;
+  otto_status_t status = OTTO_STATUS_SUCCESS;
+  size_t capacity = 8;
+
+  log_debug("Creating vector");
+  status &= otto_vector_with_capacity(capacity, sizeof(uint32_t), &vec);
+
+  log_debug("Pushing element");
+  uint32_t val = 20;
+  status &= otto_vector_push(&vec, &val);
+
+  log_debug("Checking that the dimensions changed properly");
+  if (vec.len != 1 || vec.capacity != 8) {
+    return TEST_FAIL;
+  }
+
+  log_debug("Checking that the push happened fine");
+  uint32_t contained_val;
+  status &= otto_vector_get(&vec, 8, &contained_val);
+  if (contained_val != val) {
+    return TEST_FAIL;
+  }
+
+  if (status == OTTO_STATUS_FAILURE) {
+    return TEST_FAIL;
+  }
+  return TEST_PASS;
+}
+
 int test_extend_array() {
   log_info("Testing `extend_array`");
   otto_vector_t vec;
@@ -93,6 +124,7 @@ int test_extend_array() {
 
 int main() {
   OTTO_CALL_TEST(test_push);
+  OTTO_CALL_TEST(test_push2);
   OTTO_CALL_TEST(test_extend_array);
   return TEST_PASS;
 }
