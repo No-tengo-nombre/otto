@@ -58,6 +58,7 @@ otto_status_t otto_vector_push(otto_vector_t *vec, const void *src) {
     // It can be assumed that vec->len < vec->capacity, so this
     // means we dont have to allocate more memory.
     memcpy(vec->data + vec->len * vec->data_size, src, vec->data_size);
+    vec->len++;
   }
   return OTTO_STATUS_SUCCESS;
 }
@@ -85,6 +86,7 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
     // It can be assumed that vec->len < vec->capacity, so this
     // means we dont have to allocate more memory.
     memcpy(vec->data + vec->len * vec->data_size, src, len * vec->data_size);
+    vec->len += len;
   }
   return OTTO_STATUS_SUCCESS;
 }
