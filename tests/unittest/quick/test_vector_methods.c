@@ -21,22 +21,26 @@ int test_get() {
   for (int i = 0; i < len; i++) {
     status &= otto_vector_get(&vec, i, &val);
     if (data[i] != val) {
+      log_fatal("[FAIL] %d != %d", data[i], val);
       return TEST_FAIL;
     }
   }
 
   log_debug("Checking border scenarios");
   if (otto_vector_get(&vec, len, &val) != OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Getting element %d did not fail", len);
     return TEST_FAIL;
   }
 
   // Check that the failed call to otto_vector_get did not accidentally
   // modify val
   if (val != data[len - 1]) {
+    log_fatal("[FAIL] %d != %d", val, data[len - 1]);
     return TEST_FAIL;
   }
 
   if (status == OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Some operation failed");
     return TEST_FAIL;
   }
   return TEST_PASS;
@@ -57,6 +61,7 @@ int test_set() {
   for (int i = 0; i < len; i++) {
     status &= otto_vector_get(&vec, i, &val);
     if (data[i] != val) {
+      log_fatal("[FAIL] %d != %d", data[i], val);
       return TEST_FAIL;
     }
   }
@@ -74,14 +79,17 @@ int test_set() {
     status &= otto_vector_get(&vec, i, &val);
     if (i == i0) {
       if (new0 != val) {
+        log_fatal("[FAIL] %d != %d", new0, val);
         return TEST_FAIL;
       }
     } else if (i == i1) {
       if (new1 != val) {
+        log_fatal("[FAIL] %d != %d", new1, val);
         return TEST_FAIL;
       }
     } else {
       if (data[i] != val) {
+        log_fatal("[FAIL] %d != %d", data[i], val);
         return TEST_FAIL;
       }
     }
@@ -89,16 +97,19 @@ int test_set() {
 
   log_debug("Checking border scenarios");
   if (otto_vector_set(&vec, len - 1, NULL) != OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Setting element %d did not fail", len - 1);
     return TEST_FAIL;
   }
 
   // Check that the failed call to otto_vector_get did not accidentally
   // modify val
   if (val != data[len - 1]) {
+    log_fatal("[FAIL] %d != %d", val, data[len - 1]);
     return TEST_FAIL;
   }
 
   if (status == OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Some operation failed");
     return TEST_FAIL;
   }
   return TEST_PASS;

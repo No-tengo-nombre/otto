@@ -22,15 +22,18 @@ int test_push() {
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 9 || vec.capacity != 9) {
+    log_fatal("[FAIL] Found incorrect length or capacity");
     return TEST_FAIL;
   }
 
   log_debug("Checking border scenario");
   if (otto_vector_push(&vec, NULL) != OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Pushing NULL did not fail");
     return TEST_FAIL;
   }
   log_debug("Checking that the failed push does not modify the vector");
   if (vec.len != 9 || vec.capacity != 9) {
+    log_fatal("[FAIL] Failed operation modified the vector");
     return TEST_FAIL;
   }
 
@@ -38,10 +41,12 @@ int test_push() {
   uint32_t contained_val;
   status &= otto_vector_get(&vec, 8, &contained_val);
   if (contained_val != val) {
+    log_fatal("[FAIL] %d != %d", contained_val, val);
     return TEST_FAIL;
   }
 
   if (status == OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Some operation failed");
     return TEST_FAIL;
   }
   return TEST_PASS;
@@ -62,6 +67,7 @@ int test_push2() {
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 1 || vec.capacity != 8) {
+    log_fatal("[FAIL] Found incorrect length or capacity");
     return TEST_FAIL;
   }
 
@@ -69,10 +75,12 @@ int test_push2() {
   uint32_t contained_val;
   status &= otto_vector_get(&vec, 8, &contained_val);
   if (contained_val != val) {
+    log_fatal("[FAIL] %d != %d", contained_val, val);
     return TEST_FAIL;
   }
 
   if (status == OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Some operation failed");
     return TEST_FAIL;
   }
   return TEST_PASS;
@@ -95,15 +103,18 @@ int test_extend_array() {
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 11 || vec.capacity != 11) {
+    log_fatal("[FAIL] Found incorrect length or capacity");
     return TEST_FAIL;
   }
 
   log_debug("Checking border scenario");
   if (otto_vector_extend_array(&vec, NULL, 10010) != OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Extending with NULL did not fail");
     return TEST_FAIL;
   }
   log_debug("Checking that the failed extend does not modify the vector");
   if (vec.len != 11 || vec.capacity != 11) {
+    log_fatal("[FAIL] Failed operation modified the vector");
     return TEST_FAIL;
   }
 
@@ -112,11 +123,13 @@ int test_extend_array() {
   for (int i = 0; i < values_len; i++) {
     status &= otto_vector_get(&vec, i + len, &contained_val);
     if (contained_val != values[i]) {
+      log_fatal("[FAIL] %d != %d", contained_val, values[i]);
       return TEST_FAIL;
     }
   }
 
   if (status == OTTO_STATUS_FAILURE) {
+    log_fatal("[FAIL] Some operation failed");
     return TEST_FAIL;
   }
   return TEST_PASS;
