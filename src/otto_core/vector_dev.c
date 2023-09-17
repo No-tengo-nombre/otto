@@ -5,8 +5,6 @@
 
 otto_status_t otto_vector_register(otto_vector_t *vec, cl_mem_flags flags,
                                    const otto_runtime_t *ctx) {
-  // TODO: Implement moving devices
-
   if (vec == NULL) {
     return OTTO_STATUS_FAILURE;
   }
