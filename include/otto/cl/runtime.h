@@ -1,6 +1,7 @@
 #pragma once
 
 #include <otto/cl/cl.h>
+#include <otto/devices.h>
 #include <otto/status.h>
 
 #ifdef __cplusplus
@@ -17,11 +18,12 @@ typedef struct otto_runtime {
   cl_uint platform_num;
   cl_device_id devices;
   cl_uint device_num;
+  otto_device_t dev;
 } otto_runtime_t;
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
-                               cl_device_type type, otto_runtime_t *out);
+                               otto_device_t type, otto_runtime_t *out);
 
 #ifdef __cplusplus
 }
