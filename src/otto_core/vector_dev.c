@@ -8,7 +8,6 @@
 otto_status_t otto_vector_register(otto_vector_t *vec,
                                    const otto_runtime_t *ctx,
                                    const cl_mem_flags flags) {
-  // TODO: Figure out why it is not producing the intended results
   logi_info("Registering vector in a CL context");
   if (vec == NULL) {
     logi_error("Can not register NULL vector");
