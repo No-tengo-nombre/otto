@@ -13,7 +13,7 @@ int test_new() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_new(sizeof(uint32_t), &vec);
+  status |= otto_vector_new(sizeof(uint32_t), &vec);
 
   log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
@@ -46,7 +46,7 @@ int test_zero() {
   size_t len = 10;
 
   log_info("Creating vector");
-  status &= otto_vector_zero(len, sizeof(uint32_t), &vec);
+  status |= otto_vector_zero(len, sizeof(uint32_t), &vec);
 
   log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
@@ -75,7 +75,7 @@ int test_with_capacity() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_with_capacity(6, sizeof(uint32_t), &vec);
+  status |= otto_vector_with_capacity(6, sizeof(uint32_t), &vec);
 
   log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {
@@ -113,7 +113,7 @@ int test_from_array() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_info("Creating vector");
-  status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
+  status |= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
   log_debug("Checking creation result");
   if (status == OTTO_STATUS_FAILURE) {

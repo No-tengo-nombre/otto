@@ -14,11 +14,11 @@ int test_push() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
+  status |= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
   log_debug("Puhsing element");
   uint32_t val = 20;
-  status &= otto_vector_push(&vec, &val);
+  status |= otto_vector_push(&vec, &val);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 9 || vec.capacity != 9) {
@@ -39,7 +39,7 @@ int test_push() {
 
   log_debug("Checking that the push happened fine");
   uint32_t contained_val;
-  status &= otto_vector_get(&vec, 8, &contained_val);
+  status |= otto_vector_get(&vec, 8, &contained_val);
   if (contained_val != val) {
     log_fatal("[FAIL] %d != %d", contained_val, val);
     return TEST_FAIL;
@@ -59,11 +59,11 @@ int test_push2() {
   size_t capacity = 8;
 
   log_debug("Creating vector");
-  status &= otto_vector_with_capacity(capacity, sizeof(uint32_t), &vec);
+  status |= otto_vector_with_capacity(capacity, sizeof(uint32_t), &vec);
 
   log_debug("Pushing element");
   uint32_t val = 20;
-  status &= otto_vector_push(&vec, &val);
+  status |= otto_vector_push(&vec, &val);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 1 || vec.capacity != 8) {
@@ -73,7 +73,7 @@ int test_push2() {
 
   log_debug("Checking that the push happened fine");
   uint32_t contained_val;
-  status &= otto_vector_get(&vec, 0, &contained_val);
+  status |= otto_vector_get(&vec, 0, &contained_val);
   if (contained_val != val) {
     log_fatal("[FAIL] %d != %d", contained_val, val);
     return TEST_FAIL;
@@ -94,12 +94,12 @@ int test_extend_array() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
+  status |= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
   log_debug("Extending vector");
   uint32_t values[] = {20, 19, 15};
   size_t values_len = 3;
-  status &= otto_vector_extend_array(&vec, &values, values_len);
+  status |= otto_vector_extend_array(&vec, &values, values_len);
 
   log_debug("Checking that the dimensions changed properly");
   if (vec.len != 11 || vec.capacity != 11) {
@@ -121,7 +121,7 @@ int test_extend_array() {
   log_debug("Checking that the extend happened fine");
   uint32_t contained_val;
   for (int i = 0; i < values_len; i++) {
-    status &= otto_vector_get(&vec, i + len, &contained_val);
+    status |= otto_vector_get(&vec, i + len, &contained_val);
     if (contained_val != values[i]) {
       log_fatal("[FAIL] %d != %d", contained_val, values[i]);
       return TEST_FAIL;

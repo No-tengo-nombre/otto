@@ -14,12 +14,12 @@ int test_get() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
+  status |= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
   log_debug("Checking all the elements");
   uint32_t val;
   for (int i = 0; i < len; i++) {
-    status &= otto_vector_get(&vec, i, &val);
+    status |= otto_vector_get(&vec, i, &val);
     if (data[i] != val) {
       log_fatal("[FAIL] %d != %d", data[i], val);
       return TEST_FAIL;
@@ -54,12 +54,12 @@ int test_set() {
   otto_status_t status = OTTO_STATUS_SUCCESS;
 
   log_debug("Creating vector");
-  status &= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
+  status |= otto_vector_from_array(data, len, sizeof(uint32_t), &vec);
 
   log_debug("Checking all the elements before setting");
   uint32_t val;
   for (int i = 0; i < len; i++) {
-    status &= otto_vector_get(&vec, i, &val);
+    status |= otto_vector_get(&vec, i, &val);
     if (data[i] != val) {
       log_fatal("[FAIL] %d != %d", data[i], val);
       return TEST_FAIL;
@@ -71,12 +71,12 @@ int test_set() {
   size_t i1 = 6;
   uint32_t new0 = 20;
   uint32_t new1 = 1881;
-  status &= otto_vector_set(&vec, i0, &new0);
-  status &= otto_vector_set(&vec, i1, &new1);
+  status |= otto_vector_set(&vec, i0, &new0);
+  status |= otto_vector_set(&vec, i1, &new1);
 
   log_debug("Checking elements after setting");
   for (int i = 0; i < len; i++) {
-    status &= otto_vector_get(&vec, i, &val);
+    status |= otto_vector_get(&vec, i, &val);
     if (i == i0) {
       if (new0 != val) {
         log_fatal("[FAIL] %d != %d", new0, val);
