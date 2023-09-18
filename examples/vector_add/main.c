@@ -3,7 +3,6 @@ This example is copied over from
 https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 */
 
-#include "CL/cl.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -55,23 +54,9 @@ int main(void) {
   cl_int err;
 
   log_info("Creating the buffers in device memory");
-  otto_vector_register(&a, CL_MEM_READ_ONLY, &ctx);
-  otto_vector_register(&b, CL_MEM_READ_ONLY, &ctx);
-  otto_vector_register(&out, CL_MEM_WRITE_ONLY, &ctx);
-
-  // Create memory buffers on the device for each vector
-  // cl_mem a_mem_obj = clCreateBuffer(ctx.ctx, CL_MEM_READ_ONLY,
-  //                                   LIST_SIZE * sizeof(int), NULL, &err);
-  // cl_mem b_mem_obj = clCreateBuffer(ctx.ctx, CL_MEM_READ_ONLY,
-  //                                   LIST_SIZE * sizeof(int), NULL, &err);
-  // cl_mem c_mem_obj = clCreateBuffer(ctx.ctx, CL_MEM_WRITE_ONLY,
-  //                                   LIST_SIZE * sizeof(int), NULL, &err);
-
-  // log_info("Writing to the buffers");
-  // err = clEnqueueWriteBuffer(ctx.cq, a_mem_obj, CL_TRUE, 0,
-  //                            LIST_SIZE * sizeof(int), a.data, 0, NULL, NULL);
-  // err = clEnqueueWriteBuffer(ctx.cq, b_mem_obj, CL_TRUE, 0,
-  //                            LIST_SIZE * sizeof(int), b.data, 0, NULL, NULL);
+  otto_vector_register(&a, &ctx, CL_MEM_READ_ONLY);
+  otto_vector_register(&b, &ctx, CL_MEM_READ_ONLY);
+  otto_vector_register(&out, &ctx, CL_MEM_WRITE_ONLY);
 
   log_info("Creating the program");
   cl_program program =
