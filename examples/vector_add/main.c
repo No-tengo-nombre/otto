@@ -69,7 +69,7 @@ int main(void) {
 
   log_info("Building the program");
   OTTO_CL_CALL(clBuildProgram(program, 1, &ctx.devices, NULL, NULL, NULL),
-               "Failed building program (%d)", err_);
+               "Failed building program");
 
   log_info("Creating the kernel");
   cl_kernel kernel = clCreateKernel(program, "otto_vector_add", &err);
@@ -80,11 +80,11 @@ int main(void) {
 
   log_info("Setting kernel arguments");
   OTTO_CL_CALL(clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&a.gmem),
-               "Failed passing A to the kernel (%d)", err_);
+               "Failed passing A to the kernel");
   OTTO_CL_CALL(clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&b.gmem),
-               "Failed passing B to the kernel (%d)", err_);
+               "Failed passing B to the kernel");
   OTTO_CL_CALL(clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&out.gmem),
-               "Failed passing OUT to the kernel (%d)", err_);
+               "Failed passing OUT to the kernel");
 
   log_info("Executing kernel");
   size_t global_item_size = out.capacity; // Process the entire lists
@@ -92,13 +92,13 @@ int main(void) {
   OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel, 1, NULL,
                                       &global_item_size, &local_item_size, 0,
                                       NULL, NULL),
-               "Could not run kernel (%d)", err_);
+               "Could not run kernel");
 
   log_info("Reading from the output buffer");
   OTTO_CL_CALL(clEnqueueReadBuffer(ctx.cq, out.gmem, CL_TRUE, 0,
                                    out.capacity * out.data_size, out.data, 0,
                                    NULL, NULL),
-               "Failed reading from OUT (%d)", err_);
+               "Failed reading from OUT");
 
   // TODO: Replace this hacky solution for the proper one
   out.len = out.capacity;
@@ -113,15 +113,15 @@ int main(void) {
   }
 
   log_info("Doing final cleanup");
-  OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq (%d)", err_);
-  OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq (%d)", err_);
-  OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel (%d)", err_);
+  OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq");
+  OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq");
+  OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel");
   OTTO_CL_CALL(clReleaseProgram(program), "Failed releasing program (%d)",
                err_);
   OTTO_CALL(otto_vector_cleanup(&a), "Failed cleaning A");
   OTTO_CALL(otto_vector_cleanup(&b), "Failed cleaning B");
   OTTO_CALL(otto_vector_cleanup(&out), "Failed cleaning OUT");
-  OTTO_CL_CALL(clReleaseCommandQueue(ctx.cq), "Failed releasing cq (%d)", err_);
-  OTTO_CL_CALL(clReleaseContext(ctx.ctx), "Failed releasing ctx (%d)", err_);
+  OTTO_CL_CALL(clReleaseCommandQueue(ctx.cq), "Failed releasing cq");
+  OTTO_CL_CALL(clReleaseContext(ctx.ctx), "Failed releasing ctx");
   return 0;
 }
