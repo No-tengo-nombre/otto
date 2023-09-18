@@ -56,8 +56,9 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
 
 /* Vector movements */
 
-otto_status_t otto_vector_register(otto_vector_t *vec, cl_mem_flags flags,
-                                   const otto_runtime_t *ctx);
+otto_status_t otto_vector_register(otto_vector_t *vec,
+                                   const otto_runtime_t *ctx,
+                                   const cl_mem_flags flags);
 
 #ifdef __cplusplus
 }
