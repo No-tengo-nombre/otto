@@ -33,5 +33,6 @@ otto_status_t otto_vector_register(otto_vector_t *vec,
 
   vec->gmem = gmem;
   vec->device = ctx->dev;
+  vec->ctx = ctx;
   return OTTO_STATUS_SUCCESS;
 }

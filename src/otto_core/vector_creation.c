@@ -14,6 +14,7 @@ otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out) {
       .len = 0,
       .capacity = 0,
       .device = OTTO_DEVICE_CPU,
+      .ctx = NULL,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -33,6 +34,7 @@ otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
       .len = len,
       .capacity = len,
       .device = OTTO_DEVICE_CPU,
+      .ctx = NULL,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -53,6 +55,7 @@ otto_status_t otto_vector_with_capacity(const size_t capacity,
       .len = 0,
       .capacity = capacity,
       .device = OTTO_DEVICE_CPU,
+      .ctx = NULL,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -74,6 +77,7 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
       .len = len,
       .capacity = len,
       .device = OTTO_DEVICE_CPU,
+      .ctx = NULL,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
