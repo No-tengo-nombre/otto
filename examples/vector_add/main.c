@@ -7,6 +7,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <stdlib.h>
 
 #include <ottou/log.h>
+#include <ottou/macros.h>
 
 #include <otto/cl/cl.h>
 #include <otto/cl/runtime.h>
@@ -15,21 +16,6 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <otto/vector.h>
 
 #define MAX_SOURCE_SIZE (0x100000)
-
-#define CALL(x, msg, ...)                                                      \
-  if (x != OTTO_STATUS_SUCCESS) {                                              \
-    log_fatal(msg, ##__VA_ARGS__);                                             \
-    return 1;                                                                  \
-  }
-
-#define CL_CALL(x, msg, ...)                                                   \
-  {                                                                            \
-    cl_int err_ = x;                                                           \
-    if (err_ != CL_SUCCESS) {                                                  \
-      log_fatal(msg, ##__VA_ARGS__);                                           \
-      return 1;                                                                \
-    }                                                                          \
-  }
 
 int main(void) {
   log_info("Creating the parameters");
