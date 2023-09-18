@@ -7,6 +7,10 @@
 #include "cl.h"
 #include "runtime.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct otto_program {
   cl_program p;
 } otto_program_t;
@@ -22,3 +26,7 @@ otto_status_t otto_program_cleanup(const otto_program_t *prog);
 otto_status_t otto_program_build(const otto_program_t *prog,
                                  const otto_runtime_t *ctx,
                                  const char *options);
+
+#ifdef __cplusplus
+}
+#endif
