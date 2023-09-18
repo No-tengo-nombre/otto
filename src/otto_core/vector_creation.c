@@ -4,6 +4,7 @@
 
 #include <otto/status.h>
 #include <otto/vector.h>
+#include <otto_utils/macros.h>
 
 otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out) {
   otto_vector_t result = {
@@ -82,9 +83,8 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
   free(vec->data);
 
   if (vec->gmem != NULL) {
-    if (clReleaseMemObject(vec->gmem) != CL_SUCCESS) {
-      return OTTO_STATUS_FAILURE;
-    }
+    CL_CALL_I(clReleaseMemObject(vec->gmem),
+              "Failed releasing device memory (%d)", err_);
   }
 
   return OTTO_STATUS_SUCCESS;

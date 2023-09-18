@@ -1,3 +1,4 @@
+#include "otto_utils/macros.h"
 #include "otto_utils/vendor/log.h"
 
 #include <otto/cl/cl.h>
@@ -36,16 +37,14 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
   cl_device_id devices = NULL;
   cl_uint device_num;
   logi_info("Getting platforms");
-  status |= clGetPlatformIDs(OTTO_PLATFORM_ENTRIES, &platforms, &platform_num);
+  CL_CALL_I(clGetPlatformIDs(OTTO_PLATFORM_ENTRIES, &platforms, &platform_num),
+            "Failed getting platforms");
   logi_debug("Found %d platforms", platform_num);
   logi_info("Getting devices");
-  status |= clGetDeviceIDs(platforms, dev, OTTO_DEVICE_ENTRIES, &devices,
-                           &device_num);
+  CL_CALL_I(clGetDeviceIDs(platforms, dev, OTTO_DEVICE_ENTRIES, &devices,
+                           &device_num),
+            "Failed getting devices");
   logi_debug("Found %d devices", device_num);
-  if (status != CL_SUCCESS) {
-    logi_error("Failed getting platforms and devices");
-    return OTTO_STATUS_FAILURE;
-  }
 
   logi_info("Creating context");
   cl_context ctx =

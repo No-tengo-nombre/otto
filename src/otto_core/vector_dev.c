@@ -2,6 +2,7 @@
 #include <otto/cl/runtime.h>
 #include <otto/status.h>
 #include <otto/vector.h>
+#include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
 otto_status_t otto_vector_register(otto_vector_t *vec,
@@ -24,12 +25,10 @@ otto_status_t otto_vector_register(otto_vector_t *vec,
 
   if (flags == CL_MEM_READ_ONLY) {
     logi_debug("Writing to the buffer");
-    if (clEnqueueWriteBuffer(ctx->cq, gmem, CL_TRUE, 0,
-                             vec->len * vec->data_size, vec->data, 0, NULL,
-                             NULL) != CL_SUCCESS) {
-      logi_error("Failed enqueuing buffer");
-      return OTTO_STATUS_FAILURE;
-    }
+    CL_CALL_I(clEnqueueWriteBuffer(ctx->cq, gmem, CL_TRUE, 0,
+                                   vec->len * vec->data_size, vec->data, 0,
+                                   NULL, NULL),
+              "Failed enqueing buffer (%d)", err_);
   }
 
   vec->gmem = gmem;
