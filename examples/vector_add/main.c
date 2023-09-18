@@ -10,6 +10,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <ottou/macros.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
 #include <otto/status.h>
@@ -63,16 +64,13 @@ int main(void) {
             "Failed registering OUT");
 
   log_info("Creating the program");
-  cl_program program =
-      clCreateProgramWithSource(ctx.ctx, 1, (const char **)&source_str,
-                                (const size_t *)&source_size, &err);
-
-  log_info("Building the program");
-  OTTO_CL_CALL(clBuildProgram(program, 1, &ctx.devices, NULL, NULL, NULL),
-               "Failed building program");
+  otto_program_t prog;
+  OTTO_CALL(
+      otto_program_from_sources(&ctx, (const char **)&source_str, 1, "", &prog),
+      "Failed to create the program");
 
   log_info("Creating the kernel");
-  cl_kernel kernel = clCreateKernel(program, "otto_vector_add", &err);
+  cl_kernel kernel = clCreateKernel(prog.p, "otto_vector_add", &err);
   if (err != CL_SUCCESS) {
     log_fatal("Could not create kernel (%d)", err);
     return 1;
@@ -116,8 +114,7 @@ int main(void) {
   OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq");
   OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq");
   OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel");
-  OTTO_CL_CALL(clReleaseProgram(program), "Failed releasing program (%d)",
-               err_);
+  OTTO_CALL(otto_program_cleanup(&prog), "Failed cleaning program");
   OTTO_CALL(otto_vector_cleanup(&a), "Failed cleaning A");
   OTTO_CALL(otto_vector_cleanup(&b), "Failed cleaning B");
   OTTO_CALL(otto_vector_cleanup(&out), "Failed cleaning OUT");
