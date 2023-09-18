@@ -13,13 +13,13 @@ int test_get() {
   size_t len = 8;
 
   log_debug("Creating vector");
-  CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
+  OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
        "Failed creating vector");
 
   log_debug("Checking all the elements");
   uint32_t val;
   for (int i = 0; i < len; i++) {
-    CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
+    OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     OTTO_ASSERT_EQI(val, data[i]);
   }
 
@@ -41,13 +41,13 @@ int test_set() {
   size_t len = 8;
 
   log_debug("Creating vector");
-  CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
+  OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
        "Failed creating vector");
 
   log_debug("Checking all the elements before setting");
   uint32_t val;
   for (int i = 0; i < len; i++) {
-    CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
+    OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     OTTO_ASSERT_EQI(val, data[i]);
   }
 
@@ -56,12 +56,12 @@ int test_set() {
   size_t i1 = 6;
   uint32_t new0 = 20;
   uint32_t new1 = 1881;
-  CALL(otto_vector_set(&vec, i0, &new0), "Failed ");
-  CALL(otto_vector_set(&vec, i1, &new1), "Failed ");
+  OTTO_CALL(otto_vector_set(&vec, i0, &new0), "Failed ");
+  OTTO_CALL(otto_vector_set(&vec, i1, &new1), "Failed ");
 
   log_debug("Checking elements after setting");
   for (int i = 0; i < len; i++) {
-    CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
+    OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     if (i == i0) {
       OTTO_ASSERT_EQI(val, new0);
     } else if (i == i1) {

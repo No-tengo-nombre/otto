@@ -4,13 +4,13 @@
 #include <otto/cl/cl.h>
 #include <otto/status.h>
 
-#define CALL_I(x, msg, ...)                                                    \
+#define OTTO_CALL_I(x, msg, ...)                                               \
   if (x != OTTO_STATUS_SUCCESS) {                                              \
     logi_fatal(msg, ##__VA_ARGS__);                                            \
     return OTTO_STATUS_FAILURE;                                                \
   }
 
-#define CL_CALL_I(x, msg, ...)                                                 \
+#define OTTO_CL_CALL_I(x, msg, ...)                                            \
   {                                                                            \
     cl_int err_ = x;                                                           \
     if (err_ != CL_SUCCESS) {                                                  \

@@ -83,7 +83,7 @@ otto_status_t otto_vector_cleanup(const otto_vector_t *const vec) {
   free(vec->data);
 
   if (vec->gmem != NULL) {
-    CL_CALL_I(clReleaseMemObject(vec->gmem),
+    OTTO_CL_CALL_I(clReleaseMemObject(vec->gmem),
               "Failed releasing device memory (%d)", err_);
   }
 

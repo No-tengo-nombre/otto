@@ -25,7 +25,7 @@ otto_status_t otto_vector_register(otto_vector_t *vec,
 
   if (flags == CL_MEM_READ_ONLY) {
     logi_debug("Writing to the buffer");
-    CL_CALL_I(clEnqueueWriteBuffer(ctx->cq, gmem, CL_TRUE, 0,
+    OTTO_CL_CALL_I(clEnqueueWriteBuffer(ctx->cq, gmem, CL_TRUE, 0,
                                    vec->len * vec->data_size, vec->data, 0,
                                    NULL, NULL),
               "Failed enqueing buffer (%d)", err_);

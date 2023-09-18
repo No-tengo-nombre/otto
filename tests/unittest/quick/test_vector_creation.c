@@ -12,7 +12,7 @@ int test_new() {
   otto_vector_t vec;
 
   log_debug("Creating vector");
-  CALL(otto_vector_new(sizeof(uint32_t), &vec), "Failed creating vector");
+  OTTO_CALL(otto_vector_new(sizeof(uint32_t), &vec), "Failed creating vector");
 
   log_debug("Checking creation result");
   OTTO_ASSERT_EQI(vec.data, NULL);
@@ -27,7 +27,7 @@ int test_zero() {
   size_t len = 10;
 
   log_info("Creating vector");
-  CALL(otto_vector_zero(len, sizeof(uint32_t), &vec), "Failed creating vector");
+  OTTO_CALL(otto_vector_zero(len, sizeof(uint32_t), &vec), "Failed creating vector");
 
   log_debug("Checking creation result");
   for (int i = 0; i < len; i++) {
@@ -41,7 +41,7 @@ int test_with_capacity() {
   otto_vector_t vec;
 
   log_debug("Creating vector");
-  CALL(otto_vector_with_capacity(6, sizeof(uint32_t), &vec),
+  OTTO_CALL(otto_vector_with_capacity(6, sizeof(uint32_t), &vec),
        "Failed creating vector");
 
   log_debug("Checking creation result");
@@ -59,7 +59,7 @@ int test_from_array() {
   size_t len = 8;
 
   log_info("Creating vector");
-  CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
+  OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
        "Failed creating vector");
 
   log_debug("Checking creation result");
