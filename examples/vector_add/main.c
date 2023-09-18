@@ -24,11 +24,11 @@ int main(void) {
   otto_vector_t out;
   const int LIST_SIZE = 256;
   OTTO_CALL(otto_vector_with_capacity(LIST_SIZE, sizeof(int), &a),
-       "Failed allocating A");
+            "Failed allocating A");
   OTTO_CALL(otto_vector_with_capacity(LIST_SIZE, sizeof(int), &b),
-       "Failed allocating B");
+            "Failed allocating B");
   OTTO_CALL(otto_vector_with_capacity(LIST_SIZE, sizeof(int), &out),
-       "Failed allocating OUT");
+            "Failed allocating OUT");
   for (int i = 0; i < LIST_SIZE; i++) {
     otto_vector_push(&a, &i);
     int v = LIST_SIZE - i;
@@ -51,16 +51,16 @@ int main(void) {
   log_info("Creating the runtime");
   otto_runtime_t ctx;
   OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, &ctx),
-       "Could not initialize the runtime");
+            "Could not initialize the runtime");
   cl_int err;
 
   log_info("Creating the buffers in device memory");
   OTTO_CALL(otto_vector_register(&a, &ctx, CL_MEM_READ_ONLY),
-       "Failed registering A");
+            "Failed registering A");
   OTTO_CALL(otto_vector_register(&b, &ctx, CL_MEM_READ_ONLY),
-       "Failed registering B");
+            "Failed registering B");
   OTTO_CALL(otto_vector_register(&out, &ctx, CL_MEM_WRITE_ONLY),
-       "Failed registering OUT");
+            "Failed registering OUT");
 
   log_info("Creating the program");
   cl_program program =
@@ -69,7 +69,7 @@ int main(void) {
 
   log_info("Building the program");
   OTTO_CL_CALL(clBuildProgram(program, 1, &ctx.devices, NULL, NULL, NULL),
-          "Failed building program (%d)", err_);
+               "Failed building program (%d)", err_);
 
   log_info("Creating the kernel");
   cl_kernel kernel = clCreateKernel(program, "otto_vector_add", &err);
@@ -80,24 +80,25 @@ int main(void) {
 
   log_info("Setting kernel arguments");
   OTTO_CL_CALL(clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&a.gmem),
-          "Failed passing A to the kernel (%d)", err_);
+               "Failed passing A to the kernel (%d)", err_);
   OTTO_CL_CALL(clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&b.gmem),
-          "Failed passing B to the kernel (%d)", err_);
+               "Failed passing B to the kernel (%d)", err_);
   OTTO_CL_CALL(clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&out.gmem),
-          "Failed passing OUT to the kernel (%d)", err_);
+               "Failed passing OUT to the kernel (%d)", err_);
 
   log_info("Executing kernel");
   size_t global_item_size = out.capacity; // Process the entire lists
   size_t local_item_size = 64;            // Divide work items into groups of 64
-  OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel, 1, NULL, &global_item_size,
-                                 &local_item_size, 0, NULL, NULL),
-          "Could not run kernel (%d)", err_);
+  OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel, 1, NULL,
+                                      &global_item_size, &local_item_size, 0,
+                                      NULL, NULL),
+               "Could not run kernel (%d)", err_);
 
   log_info("Reading from the output buffer");
   OTTO_CL_CALL(clEnqueueReadBuffer(ctx.cq, out.gmem, CL_TRUE, 0,
-                              out.capacity * out.data_size, out.data, 0, NULL,
-                              NULL),
-          "Failed reading from OUT (%d)", err_);
+                                   out.capacity * out.data_size, out.data, 0,
+                                   NULL, NULL),
+               "Failed reading from OUT (%d)", err_);
 
   // TODO: Replace this hacky solution for the proper one
   out.len = out.capacity;
@@ -115,7 +116,8 @@ int main(void) {
   OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq (%d)", err_);
   OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq (%d)", err_);
   OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel (%d)", err_);
-  OTTO_CL_CALL(clReleaseProgram(program), "Failed releasing program (%d)", err_);
+  OTTO_CL_CALL(clReleaseProgram(program), "Failed releasing program (%d)",
+               err_);
   OTTO_CALL(otto_vector_cleanup(&a), "Failed cleaning A");
   OTTO_CALL(otto_vector_cleanup(&b), "Failed cleaning B");
   OTTO_CALL(otto_vector_cleanup(&out), "Failed cleaning OUT");
