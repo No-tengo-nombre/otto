@@ -44,6 +44,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
 otto_status_t otto_program_cleanup(const otto_program_t *prog) {
   OTTO_CL_CALL_I(clReleaseProgram(prog->p), "Failed releasing program (%d)",
                  err_);
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_program_build(const otto_program_t *prog,
