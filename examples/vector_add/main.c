@@ -111,14 +111,14 @@ int main(void) {
   }
 
   log_info("Doing final cleanup");
-  OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq");
-  OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq");
-  OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel");
-  OTTO_CALL(otto_program_cleanup(&prog), "Failed cleaning program");
   OTTO_CALL(otto_vector_cleanup(&a), "Failed cleaning A");
   OTTO_CALL(otto_vector_cleanup(&b), "Failed cleaning B");
   OTTO_CALL(otto_vector_cleanup(&out), "Failed cleaning OUT");
+  OTTO_CL_CALL(clFlush(ctx.cq), "Failed flushing cq");
+  OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq");
   OTTO_CL_CALL(clReleaseCommandQueue(ctx.cq), "Failed releasing cq");
   OTTO_CL_CALL(clReleaseContext(ctx.ctx), "Failed releasing ctx");
+  OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel");
+  OTTO_CALL(otto_program_cleanup(&prog), "Failed cleaning program");
   return 0;
 }
