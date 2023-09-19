@@ -3,6 +3,7 @@ This example is copied over from
 https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 */
 
+#include "CL/cl.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -10,6 +11,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <ottou/macros.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/kernel.h>
 #include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
@@ -51,7 +53,8 @@ int main(void) {
 
   log_info("Creating the runtime");
   otto_runtime_t ctx;
-  OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, &ctx),
+  otto_kernelht_t *ht = NULL;
+  OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx),
             "Could not initialize the runtime");
   cl_int err;
 
@@ -70,24 +73,25 @@ int main(void) {
       "Failed to create the program");
 
   log_info("Creating the kernel");
-  cl_kernel kernel = clCreateKernel(prog.p, "otto_vector_add", &err);
-  if (err != CL_SUCCESS) {
-    log_fatal("Could not create kernel (%d)", err);
-    return 1;
-  }
+  OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", &ctx, NULL),
+            "Failed creating kernel");
+
+  otto_kernel_t kernel;
+  OTTO_CALL(otto_runtime_get_kernel(&ctx, "otto_vector_add", &kernel),
+            "Failed getting the kernel");
 
   log_info("Setting kernel arguments");
-  OTTO_CL_CALL(clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&a.gmem),
+  OTTO_CL_CALL(clSetKernelArg(kernel.k, 0, sizeof(cl_mem), (void *)&a.gmem),
                "Failed passing A to the kernel");
-  OTTO_CL_CALL(clSetKernelArg(kernel, 1, sizeof(cl_mem), (void *)&b.gmem),
+  OTTO_CL_CALL(clSetKernelArg(kernel.k, 1, sizeof(cl_mem), (void *)&b.gmem),
                "Failed passing B to the kernel");
-  OTTO_CL_CALL(clSetKernelArg(kernel, 2, sizeof(cl_mem), (void *)&out.gmem),
+  OTTO_CL_CALL(clSetKernelArg(kernel.k, 2, sizeof(cl_mem), (void *)&out.gmem),
                "Failed passing OUT to the kernel");
 
   log_info("Executing kernel");
   size_t global_item_size = out.capacity; // Process the entire lists
   size_t local_item_size = 64;            // Divide work items into groups of 64
-  OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel, 1, NULL,
+  OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel.k, 1, NULL,
                                       &global_item_size, &local_item_size, 0,
                                       NULL, NULL),
                "Could not run kernel");
@@ -118,7 +122,7 @@ int main(void) {
   OTTO_CL_CALL(clFinish(ctx.cq), "Failed finishing cq");
   OTTO_CL_CALL(clReleaseCommandQueue(ctx.cq), "Failed releasing cq");
   OTTO_CL_CALL(clReleaseContext(ctx.ctx), "Failed releasing ctx");
-  OTTO_CL_CALL(clReleaseKernel(kernel), "Failed releasing kernel");
+  OTTO_CL_CALL(clReleaseKernel(kernel.k), "Failed releasing kernel");
   OTTO_CALL(otto_program_cleanup(&prog), "Failed cleaning program");
   return 0;
 }
