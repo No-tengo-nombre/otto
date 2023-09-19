@@ -20,6 +20,10 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
 
   logi_info("Allocating memory for the kernel");
   otto_kernel_t *kernel_ptr = malloc(sizeof(otto_kernel_t));
+  if (kernel_ptr == NULL) {
+    logi_error("Could not allocate memory");
+    return OTTO_STATUS_FAILURE;
+  }
 
   logi_info("Assembling struct");
   otto_kernel_t kernel = {
