@@ -1,16 +1,48 @@
 #pragma once
 
+#include <uthash.h>
+
 #include <otto/cl/cl.h>
 #include <otto/devices.h>
 #include <otto/status.h>
+
+#define OTTO_PLATFORM_ENTRIES 1
+#define OTTO_DEVICE_ENTRIES 1
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define OTTO_PLATFORM_ENTRIES 1
-#define OTTO_DEVICE_ENTRIES 1
+typedef struct otto_kernel otto_kernel_t;
 
+typedef struct otto_kernelht {
+  const char *name;
+  otto_kernel_t *kernel;
+  UT_hash_handle hh;
+} otto_kernelht_t;
+
+typedef struct otto_kernelll {
+  otto_kernel_t *kernel;
+  struct otto_kernelll *next;
+} otto_kernelll_t;
+
+otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernel_t *val);
+
+/**
+ * @brief Context for a program that uses OpenCL
+ *
+ * This context should be initialized once in every program. It
+ * handles OpenCL devices, platforms and holds all relevant attributes
+ * that OpenCL might use, such as the OpenCL context and command queue.
+ *
+ * The attribute `_kernels_ht` is a hash table with all the kernels that
+ * are registered in the given context, to allow calling kernels from
+ * their name.
+ *
+ * The attribute `_kernels_ll` is a linked list where each element is a pointer
+ * to an `otto_kernel_t` element. This is done to facilitate the releasing of
+ * all the memory.
+ */
 typedef struct otto_runtime {
   cl_context ctx;
   cl_command_queue cq;
@@ -19,11 +51,19 @@ typedef struct otto_runtime {
   cl_device_id devices;
   cl_uint device_num;
   otto_device_t dev;
+  otto_kernelht_t *_kernels_ht;
+  otto_kernelll_t *_kernels_ll;
 } otto_runtime_t;
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
-                               otto_device_t type, otto_runtime_t *out);
+                               const otto_device_t type,
+                               otto_kernelht_t *kernel_ht, otto_runtime_t *out);
+
+otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
+                                      otto_kernel_t *kernel);
+otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
+                                      const char *name, otto_kernel_t *out);
 
 #ifdef __cplusplus
 }

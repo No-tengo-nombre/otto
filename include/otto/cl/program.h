@@ -5,11 +5,12 @@
 #include <otto/status.h>
 
 #include "cl.h"
-#include "runtime.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct otto_runtime otto_runtime_t;
 
 typedef struct otto_program {
   cl_program p;

@@ -1,14 +1,23 @@
-#include "otto_utils/macros.h"
-#include "otto_utils/vendor/log.h"
+#include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+
+#include <uthash.h>
+
+#include <otto_utils/macros.h>
+#include <otto_utils/vendor/log.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/kernel.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
 #include <otto/status.h>
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
-                               otto_device_t type, otto_runtime_t *out) {
+                               const otto_device_t type,
+                               otto_kernelht_t *kernel_ht,
+                               otto_runtime_t *out) {
   if (out == NULL) {
     return OTTO_STATUS_FAILURE;
   }
@@ -63,6 +72,15 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
     return OTTO_STATUS_FAILURE;
   }
 
+  logi_debug("Allocating memory for the linked list");
+  otto_kernelll_t *node = malloc(sizeof(otto_kernelll_t));
+  if (node == NULL) {
+    logi_error("Could not allocate memory for linked list");
+    return OTTO_STATUS_FAILURE;
+  }
+  node->kernel = NULL;
+  node->next = NULL;
+
   logi_info("Assembling struct");
   otto_runtime_t result = {
       .ctx = ctx,
@@ -72,7 +90,41 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       .devices = devices,
       .device_num = device_num,
       .dev = type,
+      ._kernels_ht = kernel_ht,
+      ._kernels_ll = node,
   };
   *out = result;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
+                                      otto_kernel_t *kernel) {
+  logi_info("Adding kernel '%s' to the runtime", name);
+  logi_debug("Creating hashtable item");
+  otto_kernelht_t item;
+  item.name = name;
+  item.kernel = kernel;
+
+  logi_debug("Adding to hashtable");
+  HASH_ADD_STR(ctx->_kernels_ht, name, &item);
+  logi_debug("Pushing to linked list");
+  otto_kernelll_push(ctx->_kernels_ll, kernel);
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
+                                      const char *name, otto_kernel_t *out) {
+  logi_info("Getting kernel '%s' from the runtime", name);
+  otto_kernelht_t *item;
+
+  logi_debug("Finding in hashtable");
+  HASH_FIND_STR(ctx->_kernels_ht, name, item);
+  logi_debug("Copying data to output");
+  if (item == NULL) {
+    logi_error("Could not find kernel");
+    return OTTO_STATUS_FAILURE;
+  }
+  *(otto_kernel_t *)out = *(otto_kernel_t *)item->kernel;
+  logi_debug("Finished copying data");
   return OTTO_STATUS_SUCCESS;
 }
