@@ -97,6 +97,15 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx) {
+  otto_kernelll_cleanup(ctx->_kernels_ll);
+  OTTO_CL_CALL_I(clFlush(ctx->cq), "Failed flushing command queue");
+  OTTO_CL_CALL_I(clFinish(ctx->cq), "Failed finishing command queue");
+  OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq), "Failed releasing command queue");
+  OTTO_CL_CALL_I(clReleaseContext(ctx->ctx), "Failed releasing context");
+  return OTTO_STATUS_SUCCESS;
+}
+
 otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
                                       otto_kernel_t *kernel) {
   logi_info("Adding kernel '%s' to the runtime", name);
@@ -124,7 +133,7 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
     logi_error("Could not find kernel");
     return OTTO_STATUS_FAILURE;
   }
-  *(otto_kernel_t *)out = *(otto_kernel_t *)item->kernel;
+  *out = *item->kernel;
   logi_debug("Finished copying data");
   return OTTO_STATUS_SUCCESS;
 }

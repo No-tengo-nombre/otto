@@ -27,6 +27,7 @@ typedef struct otto_kernelll {
 } otto_kernelll_t;
 
 otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernel_t *val);
+otto_status_t otto_kernelll_cleanup(otto_kernelll_t *head);
 
 /**
  * @brief Context for a program that uses OpenCL
@@ -59,6 +60,8 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
                                const otto_device_t type,
                                otto_kernelht_t *kernel_ht, otto_runtime_t *out);
+
+otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx);
 
 otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
                                       otto_kernel_t *kernel);

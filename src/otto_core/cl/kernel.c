@@ -32,9 +32,9 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
   logi_info("Adding kernel to runtime");
   OTTO_CALL_I(otto_runtime_add_kernel(ctx, name, kernel_ptr),
               "Failed adding vector to hash table");
-  logi_info("Copying output");
 
   if (out != NULL) {
+    logi_info("Copying output");
     *out = kernel;
   }
   return OTTO_STATUS_SUCCESS;

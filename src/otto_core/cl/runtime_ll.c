@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
 #include <otto/cl/runtime.h>
@@ -26,5 +27,15 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernel_t *val) {
   node->kernel = val;
   node->next = NULL;
   head->next = node;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_kernelll_cleanup(otto_kernelll_t *head) {
+  if (head == NULL) {
+    return OTTO_STATUS_SUCCESS;
+  }
+  otto_kernelll_cleanup(head->next); // This never fails
+  free(head->kernel);
+  free(head);
   return OTTO_STATUS_SUCCESS;
 }
