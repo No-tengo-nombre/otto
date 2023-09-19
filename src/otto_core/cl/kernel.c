@@ -16,8 +16,6 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
     return OTTO_STATUS_FAILURE;
   }
 
-  // TODO: Implement registering the kernel in a context
-
   logi_info("Allocating memory for the kernel");
   otto_kernel_t *kernel_ptr = malloc(sizeof(otto_kernel_t));
   if (kernel_ptr == NULL) {
