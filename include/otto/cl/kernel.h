@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #include <otto/status.h>
 
 #include "cl.h"
@@ -14,10 +16,14 @@ typedef struct otto_runtime otto_runtime_t;
 typedef struct otto_kernel {
   cl_kernel k;
   const char *name;
+  size_t nargs;
 } otto_kernel_t;
 
 otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
-                              otto_runtime_t *ctx, otto_kernel_t *out);
+                              const size_t nargs, otto_runtime_t *ctx,
+                              otto_kernel_t *out);
+
+otto_status_t otto_kernel_call(const otto_kernel_t *ker, ...);
 
 #ifdef __cplusplus
 }

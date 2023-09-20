@@ -73,7 +73,7 @@ int main(void) {
       "Failed to create the program");
 
   log_info("Creating the kernel");
-  OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", &ctx, NULL),
+  OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL),
             "Failed creating kernel");
 
   otto_kernel_t kernel;

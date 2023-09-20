@@ -1,3 +1,6 @@
+#include <stdarg.h>
+#include <stddef.h>
+
 #include <otto/cl/cl.h>
 #include <otto/cl/kernel.h>
 #include <otto/cl/program.h>
@@ -7,7 +10,8 @@
 #include <otto_utils/vendor/log.h>
 
 otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
-                              otto_runtime_t *ctx, otto_kernel_t *out) {
+                              const size_t nargs, otto_runtime_t *ctx,
+                              otto_kernel_t *out) {
   cl_int status = CL_SUCCESS;
   logi_info("Creating kernel");
   cl_kernel k = clCreateKernel(prog->p, name, &status);
@@ -27,6 +31,7 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
   otto_kernel_t kernel = {
       .k = k,
       .name = name,
+      .nargs = nargs,
   };
   *kernel_ptr = kernel;
   logi_info("Adding kernel to runtime");
@@ -37,5 +42,25 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
     logi_info("Copying output");
     *out = kernel;
   }
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_kernel_call(const otto_kernel_t *ker, ...) {
+  if (ker == NULL) {
+    logi_error("Can not call NULL pointer as kernel");
+    return OTTO_STATUS_FAILURE;
+  }
+
+  logi_info("Calling kernel '%s'", ker->name);
+
+  va_list args;
+  va_start(args, ker);
+
+  for (int i = 0; i < ker->nargs; i++) {
+    void *arg = va_arg(args, void *);
+    OTTO_CL_CALL_I(clSetKernelArg(ker->k, i, sizeof(*arg), arg),
+                   "Failed passing %d-th arg to the kernel");
+  }
+
   return OTTO_STATUS_SUCCESS;
 }
