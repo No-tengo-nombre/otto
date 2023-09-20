@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -101,7 +102,8 @@ otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx) {
   otto_kernelll_cleanup(ctx->_kernels_ll);
   OTTO_CL_CALL_I(clFlush(ctx->cq), "Failed flushing command queue");
   OTTO_CL_CALL_I(clFinish(ctx->cq), "Failed finishing command queue");
-  OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq), "Failed releasing command queue");
+  OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq),
+                 "Failed releasing command queue");
   OTTO_CL_CALL_I(clReleaseContext(ctx->ctx), "Failed releasing context");
   return OTTO_STATUS_SUCCESS;
 }
@@ -135,5 +137,51 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
   }
   *out = *item->kernel;
   logi_debug("Finished copying data");
+  return OTTO_STATUS_SUCCESS;
+}
+
+// otto_status_t otto_runtime_call_kernel(const otto_runtime_t *ctx,
+//                                        const char *name, void **args) {
+//   if (ctx == NULL) {
+//     logi_error("Runtime is NULL");
+//     return OTTO_STATUS_FAILURE;
+//   }
+
+//   otto_kernel_t ker;
+//   OTTO_CALL_I(otto_runtime_get_kernel(ctx, name, &ker),
+//               "Could not get the kernel");
+
+//   logi_info("Calling kernel '%s'", ker.name);
+//   for (int i = 0; i < ker.nargs; i++) {
+//     OTTO_CL_CALL_I(clSetKernelArg(ker.k, i, sizeof(args[i]), args[i]),
+//                    "Failed passing %d-th arg to the kernel", i);
+//   }
+
+//   return OTTO_STATUS_SUCCESS;
+// }
+
+otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
+                                        const char *name, ...) {
+  if (ctx == NULL) {
+    logi_error("Runtime is NULL");
+    return OTTO_STATUS_FAILURE;
+  }
+
+  otto_kernel_t ker;
+  OTTO_CALL_I(otto_runtime_get_kernel(ctx, name, &ker),
+              "Could not get the kernel");
+
+  logi_info("Calling kernel '%s'", ker.name);
+
+  va_list args;
+  va_start(args, name);
+
+  for (int i = 0; i < ker.nargs; i++) {
+    size_t size = va_arg(args, size_t);
+    void *arg = va_arg(args, void *);
+    OTTO_CL_CALL_I(clSetKernelArg(ker.k, i, size, arg),
+                   "Failed passing %d-th arg to the kernel");
+  }
+
   return OTTO_STATUS_SUCCESS;
 }

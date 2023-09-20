@@ -67,6 +67,10 @@ otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
                                       otto_kernel_t *kernel);
 otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
                                       const char *name, otto_kernel_t *out);
+// otto_status_t otto_runtime_call_kernel(const otto_runtime_t *ctx,
+//                                        const char *name, void **args);
+otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
+                                        const char *name, ...);
 
 #ifdef __cplusplus
 }

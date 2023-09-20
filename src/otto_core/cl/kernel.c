@@ -72,8 +72,9 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker, ...) {
   va_start(args, ker);
 
   for (int i = 0; i < ker->nargs; i++) {
+    size_t size = va_arg(args, size_t);
     void *arg = va_arg(args, void *);
-    OTTO_CL_CALL_I(clSetKernelArg(ker->k, i, sizeof(*arg), arg),
+    OTTO_CL_CALL_I(clSetKernelArg(ker->k, i, size, arg),
                    "Failed passing %d-th arg to the kernel", i);
   }
 
