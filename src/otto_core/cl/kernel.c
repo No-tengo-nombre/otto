@@ -45,21 +45,6 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
   return OTTO_STATUS_SUCCESS;
 }
 
-// otto_status_t otto_kernel_call(const otto_kernel_t *ker, void **args) {
-//   if (ker == NULL) {
-//     logi_error("Can not call NULL pointer as kernel");
-//     return OTTO_STATUS_FAILURE;
-//   }
-
-//   logi_info("Calling kernel '%s'", ker->name);
-//   for (int i = 0; i < ker->nargs; i++) {
-//     OTTO_CL_CALL_I(clSetKernelArg(ker->k, i, sizeof(args[i]), args[i]),
-//                    "Failed passing %d-th arg to the kernel", i);
-//   }
-
-//   return OTTO_STATUS_SUCCESS;
-// }
-
 otto_status_t otto_kernel_vcall(const otto_kernel_t *ker, ...) {
   if (ker == NULL) {
     logi_error("Can not call NULL pointer as kernel");

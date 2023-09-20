@@ -140,26 +140,6 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
   return OTTO_STATUS_SUCCESS;
 }
 
-// otto_status_t otto_runtime_call_kernel(const otto_runtime_t *ctx,
-//                                        const char *name, void **args) {
-//   if (ctx == NULL) {
-//     logi_error("Runtime is NULL");
-//     return OTTO_STATUS_FAILURE;
-//   }
-
-//   otto_kernel_t ker;
-//   OTTO_CALL_I(otto_runtime_get_kernel(ctx, name, &ker),
-//               "Could not get the kernel");
-
-//   logi_info("Calling kernel '%s'", ker.name);
-//   for (int i = 0; i < ker.nargs; i++) {
-//     OTTO_CL_CALL_I(clSetKernelArg(ker.k, i, sizeof(args[i]), args[i]),
-//                    "Failed passing %d-th arg to the kernel", i);
-//   }
-
-//   return OTTO_STATUS_SUCCESS;
-// }
-
 otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
                                         const char *name, ...) {
   // TODO: Figure out why this fails at getting the kernel
