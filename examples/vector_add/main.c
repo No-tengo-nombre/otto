@@ -81,12 +81,16 @@ int main(void) {
             "Failed getting the kernel");
 
   log_info("Setting kernel arguments");
-  OTTO_CL_CALL(clSetKernelArg(kernel.k, 0, sizeof(cl_mem), (void *)&a.gmem),
-               "Failed passing A to the kernel");
-  OTTO_CL_CALL(clSetKernelArg(kernel.k, 1, sizeof(cl_mem), (void *)&b.gmem),
-               "Failed passing B to the kernel");
-  OTTO_CL_CALL(clSetKernelArg(kernel.k, 2, sizeof(cl_mem), (void *)&out.gmem),
-               "Failed passing OUT to the kernel");
+  // OTTO_CL_CALL(clSetKernelArg(kernel.k, 0, sizeof(cl_mem), (void *)&a.gmem),
+  //              "Failed passing A to the kernel");
+  // OTTO_CL_CALL(clSetKernelArg(kernel.k, 1, sizeof(cl_mem), (void *)&b.gmem),
+  //              "Failed passing B to the kernel");
+  // OTTO_CL_CALL(clSetKernelArg(kernel.k, 2, sizeof(cl_mem), (void
+  // *)&out.gmem),
+  //              "Failed passing OUT to the kernel");
+  OTTO_CALL(otto_kernel_vcall(&kernel, sizeof(a.gmem), &a.gmem, sizeof(b.gmem),
+                              &b.gmem, sizeof(out.gmem), &out.gmem),
+            "Failed calling kernel");
 
   log_info("Executing kernel");
   size_t global_item_size = out.capacity; // Process the entire lists
