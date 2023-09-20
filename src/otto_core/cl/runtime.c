@@ -162,6 +162,7 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
 
 otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
                                         const char *name, ...) {
+  // TODO: Figure out why this fails at getting the kernel
   if (ctx == NULL) {
     logi_error("Runtime is NULL");
     return OTTO_STATUS_FAILURE;
