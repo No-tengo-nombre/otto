@@ -59,11 +59,11 @@ int main(void) {
   cl_int err;
 
   log_info("Creating the buffers in device memory");
-  OTTO_CALL(otto_vector_register(&a, &ctx, CL_MEM_READ_ONLY),
+  OTTO_CALL(otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY),
             "Failed registering A");
-  OTTO_CALL(otto_vector_register(&b, &ctx, CL_MEM_READ_ONLY),
+  OTTO_CALL(otto_vector_todevice(&b, &ctx, CL_MEM_READ_ONLY),
             "Failed registering B");
-  OTTO_CALL(otto_vector_register(&out, &ctx, CL_MEM_WRITE_ONLY),
+  OTTO_CALL(otto_vector_todevice(&out, &ctx, CL_MEM_WRITE_ONLY),
             "Failed registering OUT");
 
   log_info("Creating the program");

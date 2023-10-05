@@ -55,9 +55,9 @@ int main(void) {
   cl_int err;
 
   log_info("Creating the buffers in device memory");
-  otto_vector_register(&a, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_register(&b, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_register(&out, &ctx, CL_MEM_WRITE_ONLY);
+  otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY);
+  otto_vector_todevice(&b, &ctx, CL_MEM_READ_ONLY);
+  otto_vector_todevice(&out, &ctx, CL_MEM_WRITE_ONLY);
 
   log_info("Creating the program");
   otto_program_t prog;
