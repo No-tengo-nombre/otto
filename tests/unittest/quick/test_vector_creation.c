@@ -32,7 +32,7 @@ int test_zero(void) {
 
   log_debug("Checking creation result");
   for (int i = 0; i < len; i++) {
-    OTTO_ASSERT_EQI(*(uint32_t *)(vec.data + i * sizeof(uint32_t)), 0);
+    OTTO_ASSERT_EQI(*(uint32_t *)((char *)vec.data + i * sizeof(uint32_t)), 0);
   }
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
   return TEST_PASS;
@@ -65,7 +65,8 @@ int test_from_array(void) {
 
   log_debug("Checking creation result");
   for (int i = 0; i < len; i++) {
-    OTTO_ASSERT_EQI(*(uint32_t *)(vec.data + i * sizeof(uint32_t)), data[i]);
+    OTTO_ASSERT_EQI(*(uint32_t *)((char *)vec.data + i * sizeof(uint32_t)),
+                    data[i]);
   }
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
 

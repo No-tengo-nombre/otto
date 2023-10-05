@@ -10,7 +10,7 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
   if (vec->data == NULL || i >= vec->len || out == NULL) {
     return OTTO_STATUS_FAILURE;
   }
-  memcpy(out, vec->data + i * vec->data_size, vec->data_size);
+  memcpy(out, (char *)vec->data + i * vec->data_size, vec->data_size);
   return OTTO_STATUS_SUCCESS;
 }
 
@@ -19,7 +19,7 @@ otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
   if (vec->data == NULL || i >= vec->len || src == NULL) {
     return OTTO_STATUS_FAILURE;
   }
-  memcpy(vec->data + i * vec->data_size, src, vec->data_size);
+  memcpy((char *)vec->data + i * vec->data_size, src, vec->data_size);
   return OTTO_STATUS_SUCCESS;
 }
 
@@ -50,14 +50,14 @@ otto_status_t otto_vector_push(otto_vector_t *vec, const void *src) {
       free(vec->data);
       return OTTO_STATUS_FAILURE;
     }
-    memcpy(new_data + vec->len * vec->data_size, src, vec->data_size);
+    memcpy((char *)new_data + vec->len * vec->data_size, src, vec->data_size);
     vec->data = new_data;
     vec->len++;
     vec->capacity++;
   } else {
     // It can be assumed that vec->len < vec->capacity, so this
     // means we dont have to allocate more memory.
-    memcpy(vec->data + vec->len * vec->data_size, src, vec->data_size);
+    memcpy((char *)vec->data + vec->len * vec->data_size, src, vec->data_size);
     vec->len++;
   }
   return OTTO_STATUS_SUCCESS;
@@ -78,14 +78,16 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
       free(vec->data);
       return OTTO_STATUS_FAILURE;
     }
-    memcpy(new_data + vec->len * vec->data_size, src, len * vec->data_size);
+    memcpy((char *)new_data + vec->len * vec->data_size, src,
+           len * vec->data_size);
     vec->data = new_data;
     vec->len += len;
     vec->capacity += delta;
   } else {
     // It can be assumed that vec->len < vec->capacity, so this
     // means we dont have to allocate more memory.
-    memcpy(vec->data + vec->len * vec->data_size, src, len * vec->data_size);
+    memcpy((char *)vec->data + vec->len * vec->data_size, src,
+           len * vec->data_size);
     vec->len += len;
   }
   return OTTO_STATUS_SUCCESS;
