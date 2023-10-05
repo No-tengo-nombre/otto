@@ -35,7 +35,8 @@ otto_status_t otto_kernelll_cleanup(otto_kernelll_t *head) {
     return OTTO_STATUS_SUCCESS;
   }
   otto_kernelll_cleanup(head->next); // This never fails
-  free(head->item);                  // Frees the hash table entry associated
+  free(head->item->kernel);
+  free(head->item); // Frees the hash table entry associated
   free(head);
   return OTTO_STATUS_SUCCESS;
 }
