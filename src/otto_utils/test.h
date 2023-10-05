@@ -37,6 +37,8 @@
 /* Test utilities */
 
 #define OTTO_CALL_TEST(test)                                                   \
-  log_info("TEST: *" #test "*");                                                    \
-  if (test() == TEST_FAIL)                                                     \
-    return TEST_FAIL;
+  log_info("TEST: *" #test "*");                                               \
+  if (test() == TEST_FAIL) {                                                   \
+    log_error("Found failing test");                                           \
+    return TEST_FAIL;                                                          \
+  }
