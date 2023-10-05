@@ -85,7 +85,7 @@ elif [[ "${platform}" == "LINUX" ]]; then
 fi
 
 if [[ "${force_generator}" != "" ]]; then
-    generator=force_generator
+    generator=$force_generator
 fi
 
 echo -e "\n\nBuilding with parameters \x1b[32;20m'${params}'\x1b[0m"
