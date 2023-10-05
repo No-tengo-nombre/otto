@@ -46,6 +46,7 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
 }
 
 otto_status_t otto_kernel_vcall(const otto_kernel_t *ker, ...) {
+  // TODO: Include actual calling of the kernel in this function
   if (ker == NULL) {
     logi_error("Can not call NULL pointer as kernel");
     return OTTO_STATUS_FAILURE;
