@@ -157,7 +157,7 @@ otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
   va_list args;
   va_start(args, name);
 
-  for (int i = 0; i < ker.nargs; i++) {
+  for (uint32_t i = 0; i < ker.nargs; i++) {
     size_t size = va_arg(args, size_t);
     void *arg = va_arg(args, void *);
     OTTO_CL_CALL_I(clSetKernelArg(ker.k, i, size, arg),

@@ -56,7 +56,7 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker, ...) {
   va_list args;
   va_start(args, ker);
 
-  for (int i = 0; i < ker->nargs; i++) {
+  for (uint32_t i = 0; i < ker->nargs; i++) {
     size_t size = va_arg(args, size_t);
     void *arg = va_arg(args, void *);
     OTTO_CL_CALL_I(clSetKernelArg(ker->k, i, size, arg),
