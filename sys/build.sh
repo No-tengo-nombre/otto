@@ -13,9 +13,12 @@ examples=0
 testing=0
 verbose=0
 
-while getopts "xvisetrdwlG:R:P:" arg
+while getopts "cxvisetrdwlG:R:P:" arg
 do
     case "$arg" in
+        c)
+            sys/clean.sh
+            ;;
         x)
             params+=" -DCMAKE_EXPORT_COMPILE_COMMANDS=1"
             ;;
