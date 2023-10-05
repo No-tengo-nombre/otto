@@ -128,7 +128,7 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
   logi_info("Getting kernel '%s' from the runtime", name);
   otto_kernelht_t *item;
 
-  logi_debug("Finding in hashtable");
+  logi_debug("Finding '%s' in hashtable", name);
   HASH_FIND_STR(ctx->_kernels_ht, name, item);
   logi_debug("Copying data to output");
   if (item == NULL) {
