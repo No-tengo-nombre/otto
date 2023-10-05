@@ -1,2 +1,3 @@
 add_subdirectory(raw_ocl)
 add_subdirectory(vector_add)
+add_subdirectory(vector_add_clean)
