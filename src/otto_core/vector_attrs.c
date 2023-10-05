@@ -76,7 +76,8 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
     // memory
     logi_info("Allocating memory for extension of vector");
     logi_debug("Allocating %d more bytes", delta);
-    void *new_data = realloc(vec->data, (vec->capacity + delta) * vec->data_size);
+    void *new_data =
+        realloc(vec->data, (vec->capacity + delta) * vec->data_size);
     if (new_data == NULL) {
       logi_error("Reallocation failed");
       // free(vec->data);
