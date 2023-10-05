@@ -12,4 +12,4 @@ target_include_directories(
   PUBLIC ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}
          ${PROJECT_SOURCE_DIR_LOCATION} ${PROJECT_HEADERS} ${CMAKE_SOURCE_DIR}
          ${CMAKE_DEPENDENCIES_DIR}/OpenCL/include
-         ${CMAKE_DEPENDENCIES_DIR}/uthash/include)
+         ${CMAKE_DEPENDENCIES_DIR}/uthash/src)
