@@ -161,7 +161,7 @@ otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
     size_t size = va_arg(args, size_t);
     void *arg = va_arg(args, void *);
     OTTO_CL_CALL_I(clSetKernelArg(ker.k, i, size, arg),
-                   "Failed passing %d-th arg to the kernel");
+                   "Failed passing %d-th arg to the kernel", i);
   }
 
   return OTTO_STATUS_SUCCESS;
