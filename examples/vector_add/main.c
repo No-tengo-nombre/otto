@@ -96,13 +96,7 @@ int main(void) {
                "Could not run kernel");
 
   log_info("Reading from the output buffer");
-  OTTO_CL_CALL(clEnqueueReadBuffer(ctx.cq, out.gmem, CL_TRUE, 0,
-                                   out.capacity * out.data_size, out.data, 0,
-                                   NULL, NULL),
-               "Failed reading from OUT");
-
-  // TODO: Replace this hacky solution for the proper one
-  out.len = out.capacity;
+  OTTO_CALL(otto_vector_tohost(&out, 0), "Failed fetching OUT to host");
 
   log_info("Displaying results");
   for (int i = 0; i < LIST_SIZE; i++) {
