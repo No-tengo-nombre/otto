@@ -14,7 +14,7 @@ int test_push() {
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Puhsing element");
   uint32_t val = 20;
@@ -46,7 +46,7 @@ int test_push2() {
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_with_capacity(capacity, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Pushing element");
   uint32_t val = 20;
@@ -70,13 +70,13 @@ int test_extend_array() {
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Extending vector");
   uint32_t values[] = {20, 19, 15};
   size_t values_len = 3;
   OTTO_CALL(otto_vector_extend_array(&vec, &values, values_len),
-       "Failed extending array");
+            "Failed extending array");
 
   log_debug("Checking that the dimensions changed properly");
   OTTO_ASSERT_EQI(vec.len, 11);
@@ -95,7 +95,7 @@ int test_extend_array() {
   uint32_t contained_val;
   for (int i = 0; i < values_len; i++) {
     OTTO_CALL(otto_vector_get(&vec, i + len, &contained_val),
-         "Failed getting vec[i + len]");
+              "Failed getting vec[%d]", i + len);
     OTTO_ASSERT_EQI(contained_val, values[i]);
   }
   return TEST_PASS;
