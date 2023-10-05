@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Run tools from the root directory of the project
+# TODO: Ignore TODOs in dependencies
 
 echo -e "# TODO\nThis file contains a list of the TODO tasks found within the source code.\n\n" > TODO.md
 
