@@ -93,11 +93,17 @@ int test_extend_array(void) {
 
   log_debug("Checking that the extend happened fine");
   uint32_t contained_val;
-  for (int i = 0; i < values_len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
+    OTTO_CALL(otto_vector_get(&vec, i, &contained_val),
+              "Failed getting vec[%d]", i);
+    OTTO_ASSERT_EQI(contained_val, data[i]);
+  }
+  for (uint32_t i = 0; i < values_len; i++) {
     OTTO_CALL(otto_vector_get(&vec, i + len, &contained_val),
               "Failed getting vec[%d]", i + len);
     OTTO_ASSERT_EQI(contained_val, values[i]);
   }
+  log_debug("Found no issues");
   return TEST_PASS;
 }
 

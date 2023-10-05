@@ -31,7 +31,7 @@ int test_zero(void) {
             "Failed creating vector");
 
   log_debug("Checking creation result");
-  for (int i = 0; i < len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
     OTTO_ASSERT_EQI(*(uint32_t *)((char *)vec.data + i * sizeof(uint32_t)), 0);
   }
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
@@ -64,7 +64,7 @@ int test_from_array(void) {
             "Failed creating vector");
 
   log_debug("Checking creation result");
-  for (int i = 0; i < len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
     OTTO_ASSERT_EQI(*(uint32_t *)((char *)vec.data + i * sizeof(uint32_t)),
                     data[i]);
   }

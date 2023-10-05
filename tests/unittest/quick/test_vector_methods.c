@@ -18,7 +18,7 @@ int test_get(void) {
 
   log_debug("Checking all the elements");
   uint32_t val;
-  for (int i = 0; i < len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
     OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     OTTO_ASSERT_EQI(val, data[i]);
   }
@@ -46,7 +46,7 @@ int test_set(void) {
 
   log_debug("Checking all the elements before setting");
   uint32_t val;
-  for (int i = 0; i < len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
     OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     OTTO_ASSERT_EQI(val, data[i]);
   }
@@ -60,7 +60,7 @@ int test_set(void) {
   OTTO_CALL(otto_vector_set(&vec, i1, &new1), "Failed ");
 
   log_debug("Checking elements after setting");
-  for (int i = 0; i < len; i++) {
+  for (uint32_t i = 0; i < len; i++) {
     OTTO_CALL(otto_vector_get(&vec, i, &val), "Failed getting vec[%d]", i);
     if (i == i0) {
       OTTO_ASSERT_EQI(val, new0);
