@@ -6,7 +6,7 @@
 
 #define OTTO_CALL(x, msg, ...)                                                 \
   if (x != OTTO_STATUS_SUCCESS) {                                              \
-    log_error(msg, ##__VA_ARGS__);                                             \
+    log_error(msg, #__VA_ARGS__);                                              \
     return OTTO_STATUS_FAILURE;                                                \
   }
 
@@ -14,7 +14,7 @@
   {                                                                            \
     cl_int err_ = x;                                                           \
     if (err_ != CL_SUCCESS) {                                                  \
-      log_error(msg " (%d)", ##__VA_ARGS__, err_);                             \
+      log_error(msg " (%d)", #__VA_ARGS__, err_);                              \
       return OTTO_STATUS_FAILURE;                                              \
     }                                                                          \
   }
