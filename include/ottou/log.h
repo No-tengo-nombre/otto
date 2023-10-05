@@ -17,6 +17,9 @@
 extern "C" {
 #endif
 
+#ifndef SOURCE_PATH_SIZE
+#define SOURCE_PATH_SIZE 0
+#endif
 #define LOG_VERSION "0.1.0"
 #define __FILENAME__ (&__FILE__[SOURCE_PATH_SIZE])
 
