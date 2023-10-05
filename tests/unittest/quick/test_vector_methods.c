@@ -7,14 +7,14 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_get() {
+int test_get(void) {
   otto_vector_t vec;
   uint32_t data[] = {7, 6, 5, 4, 3, 2, 1, 0};
   size_t len = 8;
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Checking all the elements");
   uint32_t val;
@@ -35,14 +35,14 @@ int test_get() {
   return TEST_PASS;
 }
 
-int test_set() {
+int test_set(void) {
   otto_vector_t vec;
   uint32_t data[] = {7, 6, 5, 4, 3, 2, 1, 0};
   size_t len = 8;
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Checking all the elements before setting");
   uint32_t val;
@@ -83,7 +83,7 @@ int test_set() {
   return TEST_PASS;
 }
 
-int main() {
+int main(void) {
   OTTO_CALL_TEST(test_get);
   OTTO_CALL_TEST(test_set);
   return TEST_PASS;

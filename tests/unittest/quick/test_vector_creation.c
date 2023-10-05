@@ -8,7 +8,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_new() {
+int test_new(void) {
   otto_vector_t vec;
 
   log_debug("Creating vector");
@@ -22,12 +22,13 @@ int test_new() {
   return TEST_PASS;
 }
 
-int test_zero() {
+int test_zero(void) {
   otto_vector_t vec;
   size_t len = 10;
 
   log_info("Creating vector");
-  OTTO_CALL(otto_vector_zero(len, sizeof(uint32_t), &vec), "Failed creating vector");
+  OTTO_CALL(otto_vector_zero(len, sizeof(uint32_t), &vec),
+            "Failed creating vector");
 
   log_debug("Checking creation result");
   for (int i = 0; i < len; i++) {
@@ -37,12 +38,12 @@ int test_zero() {
   return TEST_PASS;
 }
 
-int test_with_capacity() {
+int test_with_capacity(void) {
   otto_vector_t vec;
 
   log_debug("Creating vector");
   OTTO_CALL(otto_vector_with_capacity(6, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Checking creation result");
   OTTO_ASSERT_NEI(vec.data, NULL);
@@ -53,14 +54,14 @@ int test_with_capacity() {
   return TEST_PASS;
 }
 
-int test_from_array() {
+int test_from_array(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
 
   log_info("Creating vector");
   OTTO_CALL(otto_vector_from_array(data, len, sizeof(uint32_t), &vec),
-       "Failed creating vector");
+            "Failed creating vector");
 
   log_debug("Checking creation result");
   for (int i = 0; i < len; i++) {
@@ -71,7 +72,7 @@ int test_from_array() {
   return TEST_PASS;
 }
 
-int main() {
+int main(void) {
   OTTO_CALL_TEST(test_new);
   OTTO_CALL_TEST(test_zero);
   OTTO_CALL_TEST(test_with_capacity);

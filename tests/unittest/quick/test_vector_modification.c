@@ -7,7 +7,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_push() {
+int test_push(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -40,7 +40,7 @@ int test_push() {
   return TEST_PASS;
 }
 
-int test_push2() {
+int test_push2(void) {
   otto_vector_t vec;
   size_t capacity = 8;
 
@@ -63,7 +63,7 @@ int test_push2() {
   return TEST_PASS;
 }
 
-int test_extend_array() {
+int test_extend_array(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -101,7 +101,7 @@ int test_extend_array() {
   return TEST_PASS;
 }
 
-int main() {
+int main(void) {
   OTTO_CALL_TEST(test_push);
   OTTO_CALL_TEST(test_push2);
   OTTO_CALL_TEST(test_extend_array);
