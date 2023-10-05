@@ -1,3 +1,5 @@
+#include <stdint.h>
+
 #include <otto/cl/cl.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
@@ -28,7 +30,8 @@ otto_status_t otto_vector_todevice(otto_vector_t *vec,
   }
 
   if (flags == CL_MEM_READ_ONLY) {
-    logi_debug("Writing to the buffer");
+    logi_debug("Writing %d elements (%d bytes) to device", vec->len,
+               vec->len * vec->data_size);
     OTTO_CL_CALL_I(clEnqueueWriteBuffer(ctx->cq, gmem, CL_TRUE, 0,
                                         vec->len * vec->data_size, vec->data, 0,
                                         NULL, NULL),
@@ -38,5 +41,24 @@ otto_status_t otto_vector_todevice(otto_vector_t *vec,
   vec->gmem = gmem;
   vec->device = ctx->dev;
   vec->ctx = ctx;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_vector_tohost(otto_vector_t *vec, uint64_t total) {
+  if (total > vec->capacity) {
+    logi_warn(
+        "Trying to fetch more data than capacity, some data will be lost");
+    total = vec->capacity;
+  } else if (total == 0) {
+    total = vec->capacity;
+  }
+
+  logi_debug("Fetching %d elements (%d bytes) to host", total,
+             total * vec->data_size);
+  OTTO_CL_CALL_I(clEnqueueReadBuffer(vec->ctx->cq, vec->gmem, CL_TRUE, 0,
+                                     total * vec->data_size, vec->data, 0, NULL,
+                                     NULL),
+                 "Failed sending to host");
+  vec->len = total;
   return OTTO_STATUS_SUCCESS;
 }

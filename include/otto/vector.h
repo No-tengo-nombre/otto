@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include "cl/cl.h"
 #include "cl/runtime.h"
@@ -60,6 +61,7 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
 otto_status_t otto_vector_todevice(otto_vector_t *vec,
                                    const otto_runtime_t *ctx,
                                    const cl_mem_flags flags);
+otto_status_t otto_vector_tohost(otto_vector_t *vec, uint64_t total);
 
 #ifdef __cplusplus
 }
