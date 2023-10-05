@@ -76,18 +76,20 @@ int main(void) {
   OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL),
             "Failed creating kernel");
 
-  otto_kernel_t kernel;
-  OTTO_CALL(otto_runtime_get_kernel(&ctx, "otto_vector_add", &kernel),
-            "Failed getting the kernel");
-
-  log_info("Setting kernel arguments");
-  OTTO_CALL(otto_kernel_vcall(&kernel, sizeof(a.gmem), &a.gmem, sizeof(b.gmem),
-                              &b.gmem, sizeof(out.gmem), &out.gmem),
+  log_info("Calling kernel directly from runtime");
+  OTTO_CALL(otto_runtime_vcall_kernel(&ctx, "otto_vector_add", sizeof(a.gmem),
+                                      &a.gmem, sizeof(b.gmem), &b.gmem,
+                                      sizeof(out.gmem), &out.gmem),
             "Failed calling kernel");
 
   log_info("Executing kernel");
   size_t global_item_size = out.capacity; // Process the entire lists
   size_t local_item_size = 64;            // Divide work items into groups of 64
+  log_info(
+      "Fetching kernel for enqueue call (should be eventually unnecessary)");
+  otto_kernel_t kernel;
+  OTTO_CALL(otto_runtime_get_kernel(&ctx, "otto_vector_add", &kernel),
+            "Failed getting the kernel");
   OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel.k, 1, NULL,
                                       &global_item_size, &local_item_size, 0,
                                       NULL, NULL),
