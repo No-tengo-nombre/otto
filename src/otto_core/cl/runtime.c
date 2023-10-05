@@ -79,7 +79,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
     logi_error("Could not allocate memory for linked list");
     return OTTO_STATUS_FAILURE;
   }
-  node->kernel = NULL;
+  node->item = NULL;
   node->next = NULL;
 
   logi_info("Assembling struct");
@@ -112,14 +112,14 @@ otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
                                       otto_kernel_t *kernel) {
   logi_info("Adding kernel '%s' to the runtime", name);
   logi_debug("Creating hashtable item");
-  otto_kernelht_t item;
-  item.name = name;
-  item.kernel = kernel;
+  otto_kernelht_t *item = malloc(sizeof(otto_kernelht_t));
+  item->name = name;
+  item->kernel = kernel;
 
   logi_debug("Adding to hashtable");
-  HASH_ADD_STR(ctx->_kernels_ht, name, &item);
+  HASH_ADD_STR(ctx->_kernels_ht, name, item);
   logi_debug("Pushing to linked list");
-  otto_kernelll_push(ctx->_kernels_ll, kernel);
+  otto_kernelll_push(ctx->_kernels_ll, item);
   return OTTO_STATUS_SUCCESS;
 }
 
@@ -146,7 +146,6 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
 
 otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
                                         const char *name, ...) {
-  // TODO: Figure out why this fails at getting the kernel
   if (ctx == NULL) {
     logi_error("Runtime is NULL");
     return OTTO_STATUS_FAILURE;

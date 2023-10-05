@@ -22,11 +22,11 @@ typedef struct otto_kernelht {
 } otto_kernelht_t;
 
 typedef struct otto_kernelll {
-  otto_kernel_t *kernel;
+  otto_kernelht_t *item;
   struct otto_kernelll *next;
 } otto_kernelll_t;
 
-otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernel_t *val);
+otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val);
 otto_status_t otto_kernelll_cleanup(otto_kernelll_t *head);
 
 /**
