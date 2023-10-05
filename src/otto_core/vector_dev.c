@@ -1,5 +1,6 @@
 #include <otto/cl/cl.h>
 #include <otto/cl/runtime.h>
+#include <otto/devices.h>
 #include <otto/status.h>
 #include <otto/vector.h>
 #include <otto_utils/macros.h>
@@ -8,7 +9,11 @@
 otto_status_t otto_vector_todevice(otto_vector_t *vec,
                                    const otto_runtime_t *ctx,
                                    const cl_mem_flags flags) {
-  logi_info("Registering vector in a CL context");
+  const char *dev_name;
+  OTTO_CALL_I(otto_device_name(ctx->dev, &dev_name),
+              "Requested device not implemented");
+
+  logi_info("Sending vector to device '%s'", dev_name);
   if (vec == NULL) {
     logi_error("Can not register NULL vector");
     return OTTO_STATUS_FAILURE;

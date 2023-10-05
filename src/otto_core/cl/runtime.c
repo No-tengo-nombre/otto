@@ -24,21 +24,12 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
   }
 
   cl_device_type dev = CL_DEVICE_TYPE_DEFAULT;
-
-  logi_info("Determining dev");
-  switch (type) {
-  case OTTO_DEVICE_CPU:
-    logi_info("Using CPU");
-    dev = CL_DEVICE_TYPE_CPU;
-    break;
-  case OTTO_DEVICE_GPU:
-    logi_info("Using GPU");
-    dev = CL_DEVICE_TYPE_GPU;
-    break;
-  default:
-    logi_error("Requested device not implemented");
-    return OTTO_STATUS_FAILURE;
-  }
+  const char *dev_name;
+  OTTO_CALL_I(otto_device_as_cl(type, &dev),
+              "Requested device not implemented");
+  OTTO_CALL_I(otto_device_name(type, &dev_name),
+              "Requested device not implemented");
+  logi_info("Using device '%s'", dev_name);
 
   cl_int status = CL_SUCCESS;
 
