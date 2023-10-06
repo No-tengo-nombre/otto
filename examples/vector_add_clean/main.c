@@ -14,6 +14,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
+#include <otto/paths.h>
 #include <otto/status.h>
 #include <otto/vector.h>
 
@@ -38,7 +39,7 @@ int main(void) {
   FILE *fp;
   char *source_str;
   size_t source_size;
-  fp = fopen("examples/vector_add/ocl/vector_add.cl", "r");
+  fp = fopen(OTTO_CLKERNEL("vector/elementary.cl"), "r");
   if (!fp) {
     fprintf(stderr, "Failed to load kernel.\n");
     exit(1);
