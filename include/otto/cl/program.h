@@ -28,6 +28,8 @@ otto_status_t otto_program_build(const otto_program_t *prog,
                                  const otto_runtime_t *ctx,
                                  const char *options);
 
+// TODO: Implement creation of programs directly from source files
+
 #ifdef __cplusplus
 }
 #endif
