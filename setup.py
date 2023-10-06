@@ -1,6 +1,8 @@
 from setuptools import Extension, setup
 import os
 
+# TODO: Get the Python wrapper working
+
 LIB_NAME = "otto"
 
 USE_CYTHON = True
