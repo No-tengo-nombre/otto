@@ -1,0 +1,12 @@
+[book]
+authors = ["Cristóbal Allendes"]
+language = "en"
+multilingual = false
+src = "src"
+title = "otto"
+
+[build]
+build-dir = "../book"
+
+[output.html]
+mathjax-support = true

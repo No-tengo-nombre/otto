@@ -227,6 +227,9 @@ poetry.toml
 # LSP config files
 pyrightconfig.json
 
+### MdBook ###
+book/
+
 ### otto ###
 bin/
 build/
