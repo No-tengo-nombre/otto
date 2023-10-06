@@ -1,8 +1,3 @@
-/*
-This example is copied over from
-https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 
