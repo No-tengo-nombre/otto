@@ -40,6 +40,8 @@ set(PROJECT_SOURCE_DIR_LOCATION ${CMAKE_SOURCE_DIR}/src)
 set(PROJECT_CORE_NAME ${PROJECT_NAME}_core)
 set(PROJECT_UTILS_NAME ${PROJECT_NAME}_utils)
 set(PROJECT_HEADERS ${CMAKE_SOURCE_DIR}/include)
+set(PROJECT_CL_KERNELS ${CMAKE_SOURCE_DIR}/cl)
+add_compile_definitions(OTTO_CLKERNELS_DIR="${PROJECT_CL_KERNELS}")
 
 option(OTTO_BUILD_EXAMPLES "Build the examples that come with the package."
        OFF)
