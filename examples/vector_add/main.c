@@ -84,9 +84,8 @@ int main(void) {
   };
 
   log_info("Calling kernel directly from runtime");
-  OTTO_CALL(otto_runtime_call_kernel(&ctx, "otto_vector_add", &hparams,
-                                     OTTO_VECTORARG(a), OTTO_VECTORARG(b),
-                                     OTTO_VECTORARG(out)),
+  OTTO_CALL(otto_runtime_call_kernel_binop(&ctx, "otto_vector_add", &hparams,
+                                           &a, &b, &out),
             "Failed calling kernel");
 
   log_info("Reading from the output buffer");
