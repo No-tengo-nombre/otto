@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdint.h>
 
 #include <otto/status.h>
 
@@ -13,6 +14,12 @@ extern "C" {
 typedef struct otto_program otto_program_t;
 typedef struct otto_runtime otto_runtime_t;
 
+typedef struct otto_kernel_args {
+  uint32_t work_dim;
+  size_t global_size;
+  size_t local_size;
+} otto_kernel_args_t;
+
 typedef struct otto_kernel {
   cl_kernel k;
   const char *name;
@@ -24,7 +31,9 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
                               otto_kernel_t *out);
 
 // otto_status_t otto_kernel_call(const otto_kernel_t *ker, void **args);
-otto_status_t otto_kernel_vcall(const otto_kernel_t *ker, ...);
+otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
+                                const otto_runtime_t *ctx,
+                                const otto_kernel_args_t *hparams, ...);
 
 #ifdef __cplusplus
 }

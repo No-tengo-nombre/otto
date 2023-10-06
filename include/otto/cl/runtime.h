@@ -13,6 +13,7 @@
 extern "C" {
 #endif
 
+typedef struct otto_kernel_args otto_kernel_args_t;
 typedef struct otto_kernel otto_kernel_t;
 
 typedef struct otto_kernelht {
@@ -54,6 +55,7 @@ typedef struct otto_runtime {
   otto_device_t dev;
   otto_kernelht_t *_kernels_ht;
   otto_kernelll_t *_kernels_ll;
+  otto_kernel_args_t *kernel_hparams;
 } otto_runtime_t;
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
@@ -70,7 +72,8 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
 // otto_status_t otto_runtime_call_kernel(const otto_runtime_t *ctx,
 //                                        const char *name, void **args);
 otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
-                                        const char *name, ...);
+                                        const char *name,
+                                        const otto_kernel_args_t *hparams, ...);
 
 #ifdef __cplusplus
 }
