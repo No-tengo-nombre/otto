@@ -47,16 +47,14 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
 
 otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
                                 const otto_runtime_t *ctx,
-                                const otto_kernel_args_t *hparams, ...) {
+                                const otto_kernel_args_t *hparams,
+                                va_list args) {
   if (ker == NULL) {
     logi_error("Can not call NULL pointer as kernel");
     return OTTO_STATUS_FAILURE;
   }
 
   logi_info("Calling kernel '%s'", ker->name);
-
-  va_list args;
-  va_start(args, hparams);
 
   for (uint32_t i = 0; i < ker->nargs; i++) {
     size_t size = va_arg(args, size_t);
@@ -99,4 +97,14 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
   }
 
   return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_kernel_call(const otto_kernel_t *ker,
+                               const otto_runtime_t *ctx,
+                               const otto_kernel_args_t *hparams, ...) {
+  va_list args;
+  va_start(args, hparams);
+  otto_status_t s = otto_kernel_vcall(ker, ctx, hparams, args);
+  va_end(args);
+  return s;
 }
