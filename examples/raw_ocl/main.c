@@ -6,6 +6,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <stdio.h>
 #include <stdlib.h>
 
+#define CL_TARGET_OPENCL_VERSION 300
 #ifdef __APPLE__
 #include <OpenCL/opencl.h>
 #else

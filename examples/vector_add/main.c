@@ -3,7 +3,6 @@ This example is copied over from
 https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 */
 
-#include "CL/cl.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -19,6 +18,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #include <otto/vector.h>
 
 #define MAX_SOURCE_SIZE (0x100000)
+#define CL_TARGET_OPENCL_VERSION 300
 
 int main(void) {
   log_info("Creating the parameters");
@@ -49,6 +49,7 @@ int main(void) {
   }
   source_str = (char *)malloc(MAX_SOURCE_SIZE);
   source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
+  log_debug("Source size: %d", source_size);
   fclose(fp);
 
   log_info("Creating the runtime");
@@ -56,7 +57,6 @@ int main(void) {
   otto_kernelht_t *ht = NULL;
   OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx),
             "Could not initialize the runtime");
-  cl_int err;
 
   log_info("Creating the buffers in device memory");
   OTTO_CALL(otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY),
@@ -76,24 +76,18 @@ int main(void) {
   OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL),
             "Failed creating kernel");
 
-  log_info("Calling kernel directly from runtime");
-  OTTO_CALL(otto_runtime_vcall_kernel(&ctx, "otto_vector_add", sizeof(a.gmem),
-                                      &a.gmem, sizeof(b.gmem), &b.gmem,
-                                      sizeof(out.gmem), &out.gmem),
-            "Failed calling kernel");
+  log_info("Creating hparams");
+  otto_kernel_args_t hparams = {
+      .work_dim = 1,
+      .global_size = out.capacity,
+      .local_size = 64,
+  };
 
-  log_info("Executing kernel");
-  size_t global_item_size = out.capacity; // Process the entire lists
-  size_t local_item_size = 64;            // Divide work items into groups of 64
-  log_info(
-      "Fetching kernel for enqueue call (should be eventually unnecessary)");
-  otto_kernel_t kernel;
-  OTTO_CALL(otto_runtime_get_kernel(&ctx, "otto_vector_add", &kernel),
-            "Failed getting the kernel");
-  OTTO_CL_CALL(clEnqueueNDRangeKernel(ctx.cq, kernel.k, 1, NULL,
-                                      &global_item_size, &local_item_size, 0,
-                                      NULL, NULL),
-               "Could not run kernel");
+  log_info("Calling kernel directly from runtime");
+  OTTO_CALL(otto_runtime_vcall_kernel(&ctx, "otto_vector_add", &hparams,
+                                      sizeof(a.gmem), &a.gmem, sizeof(b.gmem),
+                                      &b.gmem, sizeof(out.gmem), &out.gmem),
+            "Failed calling kernel");
 
   log_info("Reading from the output buffer");
   OTTO_CALL(otto_vector_tohost(&out, 0), "Failed fetching OUT to host");
