@@ -8,6 +8,8 @@
 
 #include "cl.h"
 
+#define OTTO_VECTORARG(vec) sizeof(vec.gmem), &vec.gmem
+
 #ifdef __cplusplus
 extern "C" {
 #endif

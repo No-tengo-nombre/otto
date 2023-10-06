@@ -73,9 +73,8 @@ int main(void) {
   };
 
   log_info("Calling kernel directly from runtime");
-  otto_runtime_call_kernel(&ctx, "otto_vector_add", &hparams, sizeof(a.gmem),
-                           &a.gmem, sizeof(b.gmem), &b.gmem, sizeof(out.gmem),
-                           &out.gmem);
+  otto_runtime_call_kernel(&ctx, "otto_vector_add", &hparams, OTTO_VECTORARG(a),
+                           OTTO_VECTORARG(b), OTTO_VECTORARG(out));
 
   log_info("Reading from the output buffer");
   otto_vector_tohost(&out, 0);
