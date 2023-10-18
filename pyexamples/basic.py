@@ -1,5 +1,4 @@
-import otto_pyx
+import otto.ffi
 
 def main():
-    print(otto_pyx.__dict__.keys())
-    print("Hasdf")
+    print(otto.ffi.CLIB_DEBUG_PATH)
