@@ -13,7 +13,7 @@ examples=0
 testing=0
 verbose=0
 
-while getopts "cxvisetrdwlG:R:P:" arg
+while getopts "hcxvisetrdwlG:R:P:" arg
 do
     case "$arg" in
         c)
