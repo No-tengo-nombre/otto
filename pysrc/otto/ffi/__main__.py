@@ -1,3 +1,3 @@
-from otto.ffi import ffi_builder
+from otto.ffi import build
 
-ffi_builder.compile()
+build()

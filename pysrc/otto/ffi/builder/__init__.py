@@ -3,7 +3,7 @@
 import cffi
 from pathlib import Path
 
-from otto.ffi.config import CHEADER_PATH
+from otto.ffi.config import CHEADER_PATH, CLIB_DEBUG_PATH
 from otto.ffi import devices, status, vector, cl
 
 
@@ -39,7 +39,14 @@ FFI_CDEF = f"""
 {cl.runtime.CDEF}
 """
 
+
+LIB_SOURCE = """
+#include <otto/otto.h>
+"""
+
+
 ffi_builder = cffi.FFI()
 ffi_builder.cdef(FFI_CDEF)
 
-_otto = ffi_builder.set_source("_otto", str(Path.joinpath(CHEADER_PATH, "otto", "otto.h")), libraries=["otto_core"])
+# _otto = ffi_builder.set_source("_otto", str(Path.joinpath(CHEADER_PATH, "otto", "otto.h")), libraries=["otto_core"], include_dirs=[str(CLIB_DEBUG_PATH)])
+_otto = ffi_builder.set_source("_otto", LIB_SOURCE, libraries=["otto_core"], include_dirs=[str(CLIB_DEBUG_PATH)])
