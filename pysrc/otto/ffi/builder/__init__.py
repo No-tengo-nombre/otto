@@ -3,7 +3,7 @@
 import cffi
 from pathlib import Path
 
-from otto.ffi.config import CLIB_DEBUG_PATH, CSOURCES_PATH
+from otto.ffi.config import CSOURCES_PATH, INCLUDE_DIRS
 from otto.ffi import devices, status, vector, cl
 
 
@@ -60,5 +60,5 @@ ffi_builder.set_source(
     LIB_SOURCE,
     sources=LIB_SOURCES,
     libraries=["otto_core"],
-    include_dirs=[str(CLIB_DEBUG_PATH)],
+    include_dirs=INCLUDE_DIRS,
 )
