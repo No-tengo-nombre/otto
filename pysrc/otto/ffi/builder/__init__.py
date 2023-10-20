@@ -2,7 +2,7 @@
 
 import cffi
 
-from otto.ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH
+from otto.ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH
 from otto.ffi import devices, status, vector, cl
 
 
@@ -47,7 +47,7 @@ ffi_builder.set_source(
     "_otto",
     LIB_SOURCE,
     libraries=["otto_core"],
-    library_dirs=[str(CBIN_DEBUG_PATH), str(CLIB_DEBUG_PATH)],
+    library_dirs=[str(CBIN_DEBUG_PATH), str(CLIB_DEBUG_PATH), str(CBIN_RELEASE_PATH), str(CLIB_RELEASE_PATH)],
     include_dirs=INCLUDE_DIRS,
     # extra_link_args=["-Wl,-rpath,."],
 )
