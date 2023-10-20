@@ -47,7 +47,7 @@ option(OTTO_BUILD_EXAMPLES "Build the examples that come with the package."
        OFF)
 option(OTTO_BUILD_TESTS "Build the tests that come with the package." OFF)
 option(OTTO_INSTALL "Install target." OFF)
-option(BUILD_SHARED_LIBS "Build using shared libraries." OFF)
+option(BUILD_SHARED_LIBS "Build using shared libraries." ON)
 
 add_compile_definitions(LOG_USE_COLOR)
 
