@@ -1,9 +1,8 @@
 """Build the ffi"""
 
 import cffi
-from pathlib import Path
 
-from otto.ffi.config import CSOURCES_PATH, INCLUDE_DIRS
+from otto.ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH
 from otto.ffi import devices, status, vector, cl
 
 
@@ -39,17 +38,6 @@ LIB_SOURCE = """
 #include <otto/otto.h>
 """
 
-LIB_SOURCES = [
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "cl", "kernel.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "cl", "program.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "cl", "runtime_ll.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "cl", "runtime.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "devices.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "vector_attrs.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "vector_creation.c")),
-    str(Path.joinpath(CSOURCES_PATH, "otto_core", "vector_dev.c")),
-]
-
 # Builder for the FFI
 
 ffi_builder = cffi.FFI()
@@ -58,7 +46,8 @@ ffi_builder.cdef(FFI_CDEF)
 ffi_builder.set_source(
     "_otto",
     LIB_SOURCE,
-    sources=LIB_SOURCES,
     libraries=["otto_core"],
+    library_dirs=[str(CBIN_DEBUG_PATH), str(CLIB_DEBUG_PATH)],
     include_dirs=INCLUDE_DIRS,
+    # extra_link_args=["-Wl,-rpath,."],
 )
