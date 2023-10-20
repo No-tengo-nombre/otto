@@ -9,11 +9,6 @@ set(CMAKE_DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 # Necessary libraries
 find_package(OpenCL REQUIRED)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
-
 # Output for files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
@@ -48,6 +43,16 @@ option(OTTO_BUILD_EXAMPLES "Build the examples that come with the package."
 option(OTTO_BUILD_TESTS "Build the tests that come with the package." OFF)
 option(OTTO_INSTALL "Install target." OFF)
 option(BUILD_SHARED_LIBS "Build using shared libraries." ON)
+
+if(MSVC)
+  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
+else()
+  # The MSVC warnings are annoying and uninformative
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pedantic")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pedantic")
+endif()
 
 add_compile_definitions(LOG_USE_COLOR)
 
