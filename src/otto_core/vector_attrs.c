@@ -26,7 +26,7 @@ otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
 
 otto_status_t otto_vector_resize(otto_vector_t *vec,
                                  const size_t new_capacity) {
-  void *data = realloc(vec->data, new_capacity);
+  void *data = realloc(vec->data, new_capacity * vec->data_size);
   if (data == NULL) {
     return OTTO_STATUS_FAILURE;
   }
@@ -46,9 +46,8 @@ otto_status_t otto_vector_push(otto_vector_t *vec, const void *src) {
 
   if (vec->len == vec->capacity) {
     // The vector is full so we have to reallocate
-    void *new_data = realloc(vec->data, vec->capacity + 1);
+    void *new_data = realloc(vec->data, (vec->capacity + 1) * vec->data_size);
     if (new_data == NULL) {
-      free(vec->data);
       return OTTO_STATUS_FAILURE;
     }
     memcpy((char *)new_data + vec->len * vec->data_size, src, vec->data_size);
@@ -80,7 +79,6 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
         realloc(vec->data, (vec->capacity + delta) * vec->data_size);
     if (new_data == NULL) {
       logi_error("Reallocation failed");
-      // free(vec->data);
       return OTTO_STATUS_FAILURE;
     }
     logi_debug("Copying new memory");
