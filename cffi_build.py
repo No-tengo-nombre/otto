@@ -1,6 +1,14 @@
 """Build the ffi"""
 
+import os
+import sys
+from pathlib import Path
+
 import cffi
+
+src_path = Path.joinpath(Path(__file__).parent, "pysrc")
+os.environ["PYTHONPATH"] = str(src_path)
+sys.path.append(str(src_path))
 
 from otto.ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH
 from otto.ffi import devices, status, vector, cl
