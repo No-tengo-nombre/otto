@@ -43,7 +43,11 @@ def _get_shared_lib(flag=False):
     return path, files
 
 
-path, files = _get_shared_lib()
+ret = _get_shared_lib()
+if ret is None:
+    print("ERROR: Could not find shared library files", file=sys.stderr)
+    sys.exit(1)
+path, files = ret
 for f in files:
     shutil.copyfile(str(Path.joinpath(path, f)),
                     str(Path.joinpath(SHLIB_PATH, f)))
