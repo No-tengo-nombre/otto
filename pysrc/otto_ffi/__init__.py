@@ -7,8 +7,8 @@ from pathlib import Path
 
 lib_path = str(Path(__file__).parent)
 try:
-    os.environ["LD_LIBRARY_PATH"] = f"{
-        lib_path}: {os.environ["LD_LIBRARY_PATH"]}"
+    new_path = f"{lib_path}" + f"{os.environ['LD_LIBRARY_PATH']}"
+    os.environ["LD_LIBRARY_PATH"] = new_path
 except KeyError:
     os.environ["LD_LIBRARY_PATH"] = lib_path
 
@@ -16,3 +16,6 @@ except KeyError:
 _WINDOWS_NAME = "nt"
 if os.name == _WINDOWS_NAME:
     os.add_dll_directory(os.environ["LD_LIBRARY_PATH"])
+
+
+# TODO: Update the FFI to account for the interface changes

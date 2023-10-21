@@ -33,20 +33,6 @@ int main(void) {
     otto_vector_push(&b, &v);
   }
 
-  log_info("Loading the kernel");
-  FILE *fp;
-  char *source_str;
-  size_t source_size;
-  fp = fopen(OTTO_CLKERNEL("vector/elementary.cl"), "r");
-  if (!fp) {
-    fprintf(stderr, "Failed to load kernel.\n");
-    exit(1);
-  }
-  source_str = (char *)malloc(MAX_SOURCE_SIZE);
-  source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
-  log_debug("Source size: %d", source_size);
-  fclose(fp);
-
   log_info("Creating the runtime");
   otto_runtime_t ctx;
   otto_kernelht_t *ht = NULL;
@@ -54,18 +40,15 @@ int main(void) {
             "Could not initialize the runtime");
 
   log_info("Creating the buffers in device memory");
-  OTTO_CALL(otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY),
-            "Failed registering A");
-  OTTO_CALL(otto_vector_todevice(&b, &ctx, CL_MEM_READ_ONLY),
-            "Failed registering B");
-  OTTO_CALL(otto_vector_todevice(&out, &ctx, CL_MEM_WRITE_ONLY),
-            "Failed registering OUT");
+  OTTO_CALL(otto_vector_todevice_read(&a, &ctx), "Failed registering A");
+  OTTO_CALL(otto_vector_todevice_read(&b, &ctx), "Failed registering B");
+  OTTO_CALL(otto_vector_todevice_write(&out, &ctx), "Failed registering OUT");
 
   log_info("Creating the program");
+  const char *files[] = {OTTO_CLKERNEL("vector/elementary.cl")};
   otto_program_t prog;
-  OTTO_CALL(
-      otto_program_from_sources(&ctx, (const char **)&source_str, 1, "", &prog),
-      "Failed to create the program");
+  OTTO_CALL(otto_program_from_files(&ctx, files, 1, "", &prog),
+            "Failed to create the program");
 
   log_info("Creating the kernel");
   OTTO_CALL(otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL),

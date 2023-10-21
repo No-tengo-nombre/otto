@@ -1,12 +1,51 @@
 #include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/kernel.h>
 #include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/status.h>
 
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
+
+const char *_OTTO_KERNELS_CORE[] = {
+    OTTO_CLKERNEL("vector/elementary.cl"),
+    OTTO_CLKERNEL("matrix/elementary.cl"),
+};
+const char *_OTTO_KERNELS_CORE_NAMES[] = {
+    // Vectors
+    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    // Matrices
+};
+const size_t _OTTO_KERNELS_CORE_COUNT =
+    sizeof(_OTTO_KERNELS_CORE) / sizeof(char *);
+const size_t _OTTO_KERNELS_CORE_NAMES_COUNT =
+    sizeof(_OTTO_KERNELS_CORE_NAMES) / sizeof(char *);
+
+const char *_OTTO_KERNELS_ALL[] = {
+    OTTO_CLKERNEL("vector/elementary.cl"),
+    OTTO_CLKERNEL("matrix/elementary.cl"),
+};
+const char *_OTTO_KERNELS_ALL_NAMES[] = {
+    // Vectors
+    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    // Matrices
+};
+const size_t _OTTO_KERNELS_ALL_COUNT =
+    sizeof(_OTTO_KERNELS_ALL) / sizeof(char *);
+const size_t _OTTO_KERNELS_ALL_NAMES_COUNT =
+    sizeof(_OTTO_KERNELS_ALL_NAMES) / sizeof(char *);
+
+int64_t get_file_size(FILE *file) {
+  fseek(file, 0, SEEK_END);
+  int64_t size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+  return size;
+}
 
 otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
                                         const char **sources,
@@ -38,6 +77,92 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
               "on the program");
   }
   *out = prog;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
+                                      const size_t count,
+                                      const char *build_options,
+                                      otto_program_t *out) {
+  char **sources = malloc(count * sizeof(char *));
+  if (sources == NULL) {
+    logi_error("Could not allocate files");
+    return OTTO_STATUS_FAILURE;
+  }
+  FILE *f;
+  char *source;
+  int64_t size = 0;
+
+  for (size_t i = 0; i < count; i++, files++) {
+    logi_info("Reading file '%s'", *files);
+    f = fopen(*files, "r");
+    if (!f) {
+      logi_warn("Could not open file '%s', skipping it", *files);
+      continue;
+    }
+
+    size = get_file_size(f);
+    logi_debug("File size: %i", size);
+    source = malloc(size * sizeof(char));
+    if (source == NULL) {
+      logi_warn("Could not allocate contents");
+      continue;
+    }
+    fread(source, 1, size, f);
+    source[size] = 0;
+    fclose(f);
+    logi_debug("Closed file '%s'", *files);
+
+    sources[i] = source;
+  }
+
+  ctx->_sources = (const char **)sources;
+  ctx->_sources_count = count;
+  return otto_program_from_sources(ctx, (const char **)sources, count,
+                                   build_options, out);
+}
+
+otto_status_t otto_program_from_default(otto_runtime_t *ctx,
+                                        const otto_program_kernels_t kernels,
+                                        const char *build_options,
+                                        otto_program_t *out) {
+  const char **files;
+  const char **ker_names;
+  size_t count;
+  size_t ker_count;
+  switch (kernels) {
+  case OTTO_KERNELS_CORE:
+    files = _OTTO_KERNELS_CORE;
+    count = _OTTO_KERNELS_CORE_COUNT;
+    ker_names = _OTTO_KERNELS_CORE_NAMES;
+    ker_count = _OTTO_KERNELS_CORE_NAMES_COUNT;
+    logi_info("Using CORE kernels");
+    break;
+
+  case OTTO_KERNELS_ALL:
+    files = _OTTO_KERNELS_ALL;
+    count = _OTTO_KERNELS_ALL_COUNT;
+    ker_names = _OTTO_KERNELS_ALL_NAMES;
+    ker_count = _OTTO_KERNELS_ALL_NAMES_COUNT;
+    logi_info("Using ALL kernels");
+    break;
+
+  default:
+    logi_error("Could not interpret kernels");
+    return OTTO_STATUS_FAILURE;
+  }
+
+  logi_debug("Loading %i files", count);
+  logi_debug("Loading %i kernels", ker_count);
+
+  OTTO_CALL_I(otto_program_from_files(ctx, files, count, build_options, out),
+              "Could not create program from files");
+
+  // Since we know the kernels we can create them right away
+  for (size_t i = 0; i < ker_count; i++, ker_names++) {
+    OTTO_CALL_I(otto_kernel_new(out, *ker_names, 3, ctx, NULL),
+                "Could not load kernel '%s'", *ker_names);
+  }
   return OTTO_STATUS_SUCCESS;
 }
 

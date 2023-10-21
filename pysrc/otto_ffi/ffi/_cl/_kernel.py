@@ -1,6 +1,15 @@
 CTYPEDEF = """
-typedef ... otto_kernel_args_t;
-typedef ... otto_kernel_t;
+typedef struct otto_kernel_args {
+  uint32_t work_dim;
+  size_t global_size;
+  size_t local_size;
+} otto_kernel_args_t;
+
+typedef struct otto_kernel {
+  cl_kernel k;
+  const char *name;
+  size_t nargs;
+} otto_kernel_t;
 """
 
 CDEF = """

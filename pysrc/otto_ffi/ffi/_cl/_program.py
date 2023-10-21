@@ -1,5 +1,7 @@
 CTYPEDEF = """
-typedef ... otto_program_t;
+typedef struct otto_program {
+  cl_program p;
+} otto_program_t;
 """
 
 CDEF = """

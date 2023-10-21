@@ -13,37 +13,13 @@
 #include <otto/status.h>
 #include <otto/vector.h>
 
-#define MAX_SOURCE_SIZE (0x100000)
-
 int main(void) {
   /* Runtime creation */
   log_info("Creating the runtime");
   otto_runtime_t ctx;
   otto_kernelht_t *ht = NULL;
   otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx);
-
-  /* Loading kernels into the program */
-  log_info("Loading the kernel");
-  FILE *fp;
-  char *source_str;
-  size_t source_size;
-  fp = fopen(OTTO_CLKERNEL("vector/elementary.cl"), "r");
-  if (!fp) {
-    fprintf(stderr, "Failed to load kernel.\n");
-    exit(1);
-  }
-  source_str = (char *)malloc(MAX_SOURCE_SIZE);
-  source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
-  log_debug("Source size: %d", source_size);
-  fclose(fp);
-
-  log_info("Creating the program");
-  otto_program_t prog;
-  otto_program_from_sources(&ctx, (const char **)&source_str, 1, "", &prog);
-
-  log_info("Creating the kernel");
-  otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL);
-  otto_program_cleanup(&prog);
+  otto_runtime_load_kernels(&ctx, OTTO_KERNELS_CORE, "");
 
   /* Create the vectors for the kernel call */
   log_info("Creating the vectors");
@@ -59,11 +35,12 @@ int main(void) {
     int v = LIST_SIZE - i;
     otto_vector_push(&b, &v);
   }
+  otto_vector_setwrite(&out);
 
   log_info("Creating the buffers in device memory");
-  otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_todevice(&b, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_todevice(&out, &ctx, CL_MEM_WRITE_ONLY);
+  otto_vector_todevice(&a, &ctx);
+  otto_vector_todevice(&b, &ctx);
+  otto_vector_todevice(&out, &ctx);
 
   /* Call the kernel */
   log_info("Creating hparams");
