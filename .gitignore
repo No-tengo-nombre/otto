@@ -236,3 +236,4 @@ build/
 pdb/
 lib/
 logs/
+pybuild/

@@ -13,7 +13,7 @@ examples=0
 testing=0
 verbose=0
 
-while getopts "cxvisetrdwlG:R:P:" arg
+while getopts "hcxvisetrdwlG:R:P:" arg
 do
     case "$arg" in
         c)
@@ -118,8 +118,8 @@ fi
 if [[ "${example}" != "" ]]; then
     echo -e "\n\nRunning example '\x1b[32;20m${example}\x1b[0m'"
     if [ $release_mode -eq 1 ]; then
-        ./bin/examples/${example}
+        ./bin/ex.${example}
     else
-        ./bin/debug/examples/${example}
+        ./bin/debug/ex.${example}
     fi
 fi
