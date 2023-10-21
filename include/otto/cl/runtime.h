@@ -72,6 +72,9 @@ otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
                                         const otto_program_kernels_t kernels,
                                         const char *build_options);
 
+// TODO: Add the option to load multiple kernel extensions
+// TODO: Include support for user-created kernel extensions
+
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx);
 
 otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
