@@ -80,3 +80,5 @@ if(${OTTO_BUILD_TESTS})
   enable_testing()
   add_subdirectory(tests)
 endif()
+
+# TODO: Implement option to build the Python wrapper along with the C lib
