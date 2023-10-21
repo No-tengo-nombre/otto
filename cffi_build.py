@@ -36,11 +36,48 @@ for f in files:
 # Parameters for the FFI
 
 LIB_TYPEDEF = """
-typedef ... va_list;
-typedef ... cl_device_type;
-typedef ... cl_mem_flags;
-typedef ... cl_context_properties;
-typedef ... cl_queue_properties;
+typedef struct UT_hash_bucket {
+   struct UT_hash_handle *hh_head;
+   unsigned count;
+   unsigned expand_mult;
+} UT_hash_bucket;
+
+typedef struct UT_hash_table {
+   UT_hash_bucket *buckets;
+   unsigned num_buckets, log2_num_buckets;
+   unsigned num_items;
+   struct UT_hash_handle *tail;
+   ptrdiff_t hho;
+   unsigned ideal_chain_maxlen;
+   unsigned nonideal_items;
+   unsigned ineff_expands, noexpand;
+   uint32_t signature;
+} UT_hash_table;
+
+typedef struct UT_hash_handle {
+   struct UT_hash_table *tbl;
+   void *prev;
+   void *next;
+   struct UT_hash_handle *hh_prev;
+   struct UT_hash_handle *hh_next;
+   const void *key;
+   unsigned keylen;
+   unsigned hashv;
+} UT_hash_handle;
+
+typedef char *va_list;
+typedef struct _cl_device_type *cl_device_type;
+typedef struct _cl_mem *cl_mem;
+typedef struct _cl_mem_flags *cl_mem_flags;
+typedef struct _cl_kernel *cl_kernel;
+typedef struct _cl_program *cl_program;
+typedef struct _cl_context_properties *cl_context_properties;
+typedef struct _cl_queue_properties *cl_queue_properties;
+typedef struct _cl_context *cl_context;
+typedef struct _cl_command_queue *cl_command_queue;
+typedef struct _cl_platform_id *cl_platform_id;
+typedef struct _cl_device_id *cl_device_id;
+typedef struct _cl_uint *cl_uint;
 """
 
 FFI_CDEF = f"""
@@ -48,17 +85,17 @@ FFI_CDEF = f"""
 {LIB_TYPEDEF}
 {status.CTYPEDEF}
 {devices.CTYPEDEF}
-{vector.CTYPEDEF}
 {cl.kernel.CTYPEDEF}
 {cl.program.CTYPEDEF}
 {cl.runtime.CTYPEDEF}
+{vector.CTYPEDEF}
 // Function definitions
 {status.CDEF}
 {devices.CDEF}
-{vector.CDEF}
 {cl.kernel.CDEF}
 {cl.program.CDEF}
 {cl.runtime.CDEF}
+{vector.CDEF}
 """
 
 LIB_SOURCE = """
