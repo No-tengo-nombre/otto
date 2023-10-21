@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <otto/cl/cl.h>
 #include <otto/status.h>
 #include <otto/vector.h>
 #include <otto_utils/macros.h>
@@ -15,6 +16,7 @@ otto_status_t otto_vector_new(const size_t data_size, otto_vector_t *out) {
       .capacity = 0,
       .device = OTTO_DEVICE_CPU,
       .ctx = NULL,
+      .flags = CL_MEM_READ_ONLY,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -35,6 +37,7 @@ otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
       .capacity = len,
       .device = OTTO_DEVICE_CPU,
       .ctx = NULL,
+      .flags = CL_MEM_READ_ONLY,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -56,6 +59,7 @@ otto_status_t otto_vector_with_capacity(const size_t capacity,
       .capacity = capacity,
       .device = OTTO_DEVICE_CPU,
       .ctx = NULL,
+      .flags = CL_MEM_READ_ONLY,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
@@ -78,6 +82,7 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
       .capacity = len,
       .device = OTTO_DEVICE_CPU,
       .ctx = NULL,
+      .flags = CL_MEM_READ_ONLY,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;

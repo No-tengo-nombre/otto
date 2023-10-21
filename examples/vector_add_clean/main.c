@@ -35,11 +35,12 @@ int main(void) {
     int v = LIST_SIZE - i;
     otto_vector_push(&b, &v);
   }
+  otto_vector_setwrite(&out);
 
   log_info("Creating the buffers in device memory");
-  otto_vector_todevice_read(&a, &ctx);
-  otto_vector_todevice_read(&b, &ctx);
-  otto_vector_todevice_write(&out, &ctx);
+  otto_vector_todevice(&a, &ctx);
+  otto_vector_todevice(&b, &ctx);
+  otto_vector_todevice(&out, &ctx);
 
   /* Call the kernel */
   log_info("Creating hparams");

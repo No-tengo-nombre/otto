@@ -27,6 +27,7 @@ typedef struct otto_vector {
   size_t capacity;
   otto_device_t device;
   const otto_runtime_t *ctx;
+  cl_mem_flags flags;
 } otto_vector_t;
 
 /* Vector creation */
@@ -57,6 +58,10 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
                                        const size_t len);
 
 /* Vector movements */
+
+otto_status_t otto_vector_setread(otto_vector_t *vec);
+otto_status_t otto_vector_setwrite(otto_vector_t *vec);
+otto_status_t otto_vector_setreadwrite(otto_vector_t *vec);
 
 otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
                                         const otto_runtime_t *ctx,
