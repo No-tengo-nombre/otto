@@ -1,5 +1,13 @@
 CTYPEDEF = """
-typedef ... otto_vector_t;
+typedef struct otto_vector {
+  void *data;
+  cl_mem gmem;
+  size_t data_size;
+  size_t len;
+  size_t capacity;
+  otto_device_t device;
+  const otto_runtime_t *ctx;
+} otto_vector_t;
 """
 
 CDEF = """
