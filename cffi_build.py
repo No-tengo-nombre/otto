@@ -2,6 +2,7 @@
 
 import os
 import sys
+import shutil
 from pathlib import Path
 
 import cffi
@@ -10,8 +11,26 @@ src_path = Path.joinpath(Path(__file__).parent, "pysrc")
 os.environ["PYTHONPATH"] = str(src_path)
 sys.path.append(str(src_path))
 
-from otto.ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH
-from otto.ffi import devices, status, vector, cl
+from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
+from otto_ffi import devices, status, vector, cl
+
+
+# Manually copy the corresponding shared libraries
+if os.path.exists(str(Path.joinpath(CLIB_RELEASE_PATH, CLIB_SO_NAMES[0]))):
+    path = CLIB_RELEASE_PATH
+    files = CLIB_SO_NAMES
+elif os.path.exists(str(Path.joinpath(CLIB_DEBUG_PATH, CLIB_SO_NAMES[0]))):
+    path = CLIB_DEBUG_PATH
+    files = CLIB_SO_NAMES
+elif os.path.exists(str(Path.joinpath(CBIN_RELEASE_PATH, CLIB_DLL_NAMES[0]))):
+    path = CBIN_RELEASE_PATH
+    files = CLIB_DLL_NAMES
+elif os.path.exists(str(Path.joinpath(CBIN_DEBUG_PATH, CLIB_DLL_NAMES[0]))):
+    path = CBIN_DEBUG_PATH
+    files = CLIB_DLL_NAMES
+
+for f in files:
+    shutil.copyfile(str(Path.joinpath(path, f)), str(Path.joinpath(SHLIB_PATH, f)))
 
 
 # Parameters for the FFI

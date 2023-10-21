@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, Extension
 
 # The setup assumes the C library has been built and the .dll/.so files are located
 # in "bin" for Windows and "lib" for Linux
