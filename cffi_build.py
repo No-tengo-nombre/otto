@@ -78,5 +78,3 @@ ffi_builder.set_source(
     include_dirs=INCLUDE_DIRS,
     # extra_link_args=["-Wl,-rpath,."],
 )
-
-# TODO: Make this builder run automatically and move files appropriately
