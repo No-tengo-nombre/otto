@@ -10,6 +10,7 @@
 
 #include <otto/cl/cl.h>
 #include <otto/cl/kernel.h>
+#include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
 #include <otto/status.h>
@@ -86,13 +87,36 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       ._kernels_ht = kernel_ht,
       ._kernels_ll = node,
       .kernel_hparams = NULL,
+      ._sources = NULL,
+      ._sources_count = 0,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
+                                        const otto_program_kernels_t kernels,
+                                        const char *build_options) {
+  otto_program_t prog;
+  OTTO_CALL_I(otto_program_from_default(ctx, kernels, build_options, &prog),
+              "Could not load program");
+  OTTO_CALL_I(otto_program_cleanup(&prog), "Failed cleaning up the program");
+  return OTTO_STATUS_SUCCESS;
+}
+
+void cleanup_sources(const char **sources, const size_t count) {
+  // This should only be called with a malloc'ed array of malloc'ed strings,
+  // meaning both sources and all sources[i] are in heap.
+  const char **original = sources;
+  for (size_t i = 0; i < count; i++, sources++) {
+    free((void *)*sources);
+  }
+  free(original);
+}
+
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx) {
   otto_kernelll_cleanup(ctx->_kernels_ll);
+  cleanup_sources(ctx->_sources, ctx->_sources_count);
   OTTO_CL_CALL_I(clFlush(ctx->cq), "Failed flushing command queue");
   OTTO_CL_CALL_I(clFinish(ctx->cq), "Failed finishing command queue");
   OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq),

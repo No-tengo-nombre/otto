@@ -6,6 +6,9 @@ import otto_ffi as _
 from _otto import ffi, lib as _ottol
 
 
+# TODO: Update this class to account for the interface changes
+
+
 class Vector[T]:
     __slots__ = ("_cdata", "_dtype", "_dsize", "_index")
 

@@ -16,3 +16,6 @@ except KeyError:
 _WINDOWS_NAME = "nt"
 if os.name == _WINDOWS_NAME:
     os.add_dll_directory(os.environ["LD_LIBRARY_PATH"])
+
+
+# TODO: Update the FFI to account for the interface changes

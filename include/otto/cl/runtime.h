@@ -5,6 +5,7 @@
 #include <uthash.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/program.h>
 #include <otto/devices.h>
 #include <otto/status.h>
 
@@ -59,12 +60,20 @@ typedef struct otto_runtime {
   otto_kernelht_t *_kernels_ht;
   otto_kernelll_t *_kernels_ll;
   otto_kernel_args_t *kernel_hparams;
+  const char **_sources; // Keeps track of them only to clean them up
+  size_t _sources_count; // Keeps track of them only to clean them up
 } otto_runtime_t;
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
                                const otto_device_t type,
                                otto_kernelht_t *kernel_ht, otto_runtime_t *out);
+otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
+                                        const otto_program_kernels_t kernels,
+                                        const char *build_options);
+
+// TODO: Add the option to load multiple kernel extensions
+// TODO: Include support for user-created kernel extensions
 
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx);
 

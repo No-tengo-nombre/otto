@@ -8,9 +8,24 @@
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
-otto_status_t otto_vector_todevice(otto_vector_t *vec,
-                                   const otto_runtime_t *ctx,
-                                   const cl_mem_flags flags) {
+otto_status_t otto_vector_setread(otto_vector_t *vec) {
+  vec->flags = CL_MEM_READ_ONLY;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_vector_setwrite(otto_vector_t *vec) {
+  vec->flags = CL_MEM_WRITE_ONLY;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_vector_setreadwrite(otto_vector_t *vec) {
+  vec->flags = CL_MEM_READ_WRITE;
+  return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
+                                        const otto_runtime_t *ctx,
+                                        const cl_mem_flags flags) {
   const char *dev_name;
   OTTO_CALL_I(otto_device_name(ctx->dev, &dev_name),
               "Requested device not implemented");
@@ -42,6 +57,21 @@ otto_status_t otto_vector_todevice(otto_vector_t *vec,
   vec->device = ctx->dev;
   vec->ctx = ctx;
   return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_vector_todevice(otto_vector_t *vec,
+                                   const otto_runtime_t *ctx) {
+  return otto_vector_todevice_mode(vec, ctx, vec->flags);
+}
+
+otto_status_t otto_vector_todevice_read(otto_vector_t *vec,
+                                        const otto_runtime_t *ctx) {
+  return otto_vector_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
+}
+
+otto_status_t otto_vector_todevice_write(otto_vector_t *vec,
+                                         const otto_runtime_t *ctx) {
+  return otto_vector_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
 }
 
 otto_status_t otto_vector_tohost(otto_vector_t *vec, uint64_t total) {
