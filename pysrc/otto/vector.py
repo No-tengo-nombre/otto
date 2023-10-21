@@ -1,4 +1,4 @@
-import sys
+from typing import List
 
 from otto.dtypes import DataType
 
@@ -93,3 +93,6 @@ class Vector:
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = value
         _ottol.otto_vector_set(self._cdata, key, val)
+
+    def to_list(self) -> List:
+        return list(self)
