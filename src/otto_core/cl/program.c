@@ -19,13 +19,26 @@ const char *_OTTO_KERNELS_CORE[] = {
 const char *_OTTO_KERNELS_CORE_NAMES[] = {
     // Vectors
     "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
-
     // Matrices
 };
 const size_t _OTTO_KERNELS_CORE_COUNT =
     sizeof(_OTTO_KERNELS_CORE) / sizeof(char *);
 const size_t _OTTO_KERNELS_CORE_NAMES_COUNT =
     sizeof(_OTTO_KERNELS_CORE_NAMES) / sizeof(char *);
+
+const char *_OTTO_KERNELS_ALL[] = {
+    OTTO_CLKERNEL("vector/elementary.cl"),
+    OTTO_CLKERNEL("matrix/elementary.cl"),
+};
+const char *_OTTO_KERNELS_ALL_NAMES[] = {
+    // Vectors
+    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    // Matrices
+};
+const size_t _OTTO_KERNELS_ALL_COUNT =
+    sizeof(_OTTO_KERNELS_ALL) / sizeof(char *);
+const size_t _OTTO_KERNELS_ALL_NAMES_COUNT =
+    sizeof(_OTTO_KERNELS_ALL_NAMES) / sizeof(char *);
 
 int64_t get_file_size(FILE *file) {
   fseek(file, 0, SEEK_END);
@@ -124,6 +137,14 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
     ker_names = _OTTO_KERNELS_CORE_NAMES;
     ker_count = _OTTO_KERNELS_CORE_NAMES_COUNT;
     logi_info("Using CORE kernels");
+    break;
+
+  case OTTO_KERNELS_ALL:
+    files = _OTTO_KERNELS_ALL;
+    count = _OTTO_KERNELS_ALL_COUNT;
+    ker_names = _OTTO_KERNELS_ALL_NAMES;
+    ker_count = _OTTO_KERNELS_ALL_NAMES_COUNT;
+    logi_info("Using ALL kernels");
     break;
 
   default:
