@@ -1,5 +1,6 @@
 # TODO
 This file contains a list of the TODO tasks found within the source code.
+- **(`./cffi_build.py`)** Implement building the C library from Python
 - **(`./dependencies/OpenCL/include/CL/opencl.hpp`)** This should really have a D3D10 rerror code!
 - **(`./include/otto/cl/program.h`)** Implement creation of programs directly from source files
 - **(`./pysrc/otto/vector.py`)** Implement creation from arrays and lists
