@@ -1,5 +1,6 @@
 # TODO
 This file contains a list of the TODO tasks found within the source code.
+- **(`./CMakeLists.txt`)** Implement option to build the Python wrapper along with the C lib
 - **(`./cffi_build.py`)** Implement building the C library from Python
 - **(`./dependencies/OpenCL/include/CL/opencl.hpp`)** This should really have a D3D10 rerror code!
 - **(`./include/otto/cl/runtime.h`)** Add the option to load multiple kernel extensions
