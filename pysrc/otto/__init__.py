@@ -1,1 +1,1 @@
-import otto_ffi.ld_path
+import otto_ffi
