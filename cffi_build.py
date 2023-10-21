@@ -10,27 +10,43 @@ import cffi
 src_path = Path.joinpath(Path(__file__).parent, "pysrc")
 os.environ["PYTHONPATH"] = str(src_path)
 sys.path.append(str(src_path))
-
-from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
 from otto_ffi.ffi import devices, status, vector, cl
+from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
+
+
+def _build_shared_lib() -> bool:
+    """Build the underlying C library"""
+    # TODO: Implement building the C library from Python
+    return False
 
 
 # Manually copy the corresponding shared libraries
-if os.path.exists(str(Path.joinpath(CLIB_RELEASE_PATH, CLIB_SO_NAMES[0]))):
-    path = CLIB_RELEASE_PATH
-    files = CLIB_SO_NAMES
-elif os.path.exists(str(Path.joinpath(CLIB_DEBUG_PATH, CLIB_SO_NAMES[0]))):
-    path = CLIB_DEBUG_PATH
-    files = CLIB_SO_NAMES
-elif os.path.exists(str(Path.joinpath(CBIN_RELEASE_PATH, CLIB_DLL_NAMES[0]))):
-    path = CBIN_RELEASE_PATH
-    files = CLIB_DLL_NAMES
-elif os.path.exists(str(Path.joinpath(CBIN_DEBUG_PATH, CLIB_DLL_NAMES[0]))):
-    path = CBIN_DEBUG_PATH
-    files = CLIB_DLL_NAMES
+def _get_shared_lib(flag=False):
+    if os.path.exists(str(Path.joinpath(CLIB_RELEASE_PATH, CLIB_SO_NAMES[0]))):
+        path = CLIB_RELEASE_PATH
+        files = CLIB_SO_NAMES
+    elif os.path.exists(str(Path.joinpath(CLIB_DEBUG_PATH, CLIB_SO_NAMES[0]))):
+        path = CLIB_DEBUG_PATH
+        files = CLIB_SO_NAMES
+    elif os.path.exists(str(Path.joinpath(CBIN_RELEASE_PATH, CLIB_DLL_NAMES[0]))):
+        path = CBIN_RELEASE_PATH
+        files = CLIB_DLL_NAMES
+    elif os.path.exists(str(Path.joinpath(CBIN_DEBUG_PATH, CLIB_DLL_NAMES[0]))):
+        path = CBIN_DEBUG_PATH
+        files = CLIB_DLL_NAMES
+    else:
+        if flag:
+            return None
+        if not _build_shared_lib():
+            return None
+        return _get_shared_lib(True)
+    return path, files
 
+
+path, files = _get_shared_lib()
 for f in files:
-    shutil.copyfile(str(Path.joinpath(path, f)), str(Path.joinpath(SHLIB_PATH, f)))
+    shutil.copyfile(str(Path.joinpath(path, f)),
+                    str(Path.joinpath(SHLIB_PATH, f)))
 
 
 # Parameters for the FFI
@@ -111,7 +127,8 @@ ffi_builder.set_source(
     "_otto",
     LIB_SOURCE,
     libraries=["otto_core"],
-    library_dirs=[str(CBIN_DEBUG_PATH), str(CLIB_DEBUG_PATH), str(CBIN_RELEASE_PATH), str(CLIB_RELEASE_PATH)],
+    library_dirs=[str(CBIN_DEBUG_PATH), str(CLIB_DEBUG_PATH),
+                  str(CBIN_RELEASE_PATH), str(CLIB_RELEASE_PATH)],
     include_dirs=INCLUDE_DIRS,
     # extra_link_args=["-Wl,-rpath,."],
 )
