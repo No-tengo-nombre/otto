@@ -96,3 +96,5 @@ class Vector:
 
     def to_list(self) -> List:
         return list(self)
+
+    # TODO: Implement interpreting as different collections (e.g. numpy arrays)
