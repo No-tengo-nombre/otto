@@ -15,18 +15,17 @@ class DataType:
         return self.long_name
 
 # TODO: Implement interpreting C types as these data types
-# TODO: Define corresponding C types for the `Vector.get` call
 
 
-UINT8 = DataType(1, "u8", "UINT8")
-UINT16 = DataType(2, "u16", "UINT16")
-UINT32 = DataType(4, "u32", "UINT32")
-UINT64 = DataType(8, "u64", "UINT64")
+UINT8 = DataType(1, "u8", "uint8_t")
+UINT16 = DataType(2, "u16", "uint16_t")
+UINT32 = DataType(4, "u32", "uint32_t")
+UINT64 = DataType(8, "u64", "uint64_t")
 
-INT8 = DataType(1, "i8", "INT8")
-INT16 = DataType(2, "i16", "INT16")
-INT32 = DataType(4, "i32", "INT32")
-INT64 = DataType(8, "i64", "INT64")
+INT8 = DataType(1, "i8", "int8_t")
+INT16 = DataType(2, "i16", "int16_t")
+INT32 = DataType(4, "i32", "int32_t")
+INT64 = DataType(8, "i64", "int64_t")
 
-FLOAT32 = DataType(4, "f32", "FLOAT32")
-FLOAT64 = DataType(8, "f64", "FLOAT64")
+FLOAT32 = DataType(4, "f32", "float")
+FLOAT64 = DataType(8, "f64", "double")

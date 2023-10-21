@@ -54,11 +54,11 @@ class Vector:
         return self.__str__()
 
     def get(self, idx: int):
-        val = ffi.new(f"void *")
+        val = ffi.new(f"{self._dtype.long_name} *")
         if idx >= self.len:
             raise IndexError(f"index {idx} out of range for vector of len {self.len}")
         if idx < -self.len:
             raise IndexError(f"index {idx % self.len} out of range for vector of len {self.len}")
         idx = idx % self.len
         _ottol.otto_vector_get(self._cdata, idx, val)
-        return val
+        return val[0]
