@@ -37,9 +37,9 @@ int main(void) {
   }
 
   log_info("Creating the buffers in device memory");
-  otto_vector_todevice(&a, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_todevice(&b, &ctx, CL_MEM_READ_ONLY);
-  otto_vector_todevice(&out, &ctx, CL_MEM_WRITE_ONLY);
+  otto_vector_todevice_read(&a, &ctx);
+  otto_vector_todevice_read(&b, &ctx);
+  otto_vector_todevice_write(&out, &ctx);
 
   /* Call the kernel */
   log_info("Creating hparams");
