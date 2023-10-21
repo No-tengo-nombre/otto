@@ -12,7 +12,7 @@ os.environ["PYTHONPATH"] = str(src_path)
 sys.path.append(str(src_path))
 
 from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
-from otto_ffi import devices, status, vector, cl
+from otto_ffi.ffi import devices, status, vector, cl
 
 
 # Manually copy the corresponding shared libraries
