@@ -2,7 +2,10 @@ from otto import Vector, dtypes
 
 
 def main():
-    a = Vector.zero(10, dtypes.INT32)
+    CAP = 10
+    a = Vector.zero(CAP, dtypes.INT32)
     print(a)
-    print(a.capacity)
-    print(a.get(2))
+    print(f"a[2] = {a[2]}")
+    print(f"Before modification : {[val for val in a]}")
+    a[1] = 15
+    print(f"After modification  : {[val for val in a]}")

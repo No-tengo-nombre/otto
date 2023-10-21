@@ -7,6 +7,8 @@ from _otto import ffi, lib as _ottol
 
 
 class Vector:
+    __slots__ = ("_cdata", "_dtype", "_dsize", "_index")
+
     def __init__(self, dtype: DataType):
         self._cdata = ffi.new("otto_vector_t *")
         self._dtype = dtype
@@ -50,15 +52,44 @@ class Vector:
     def __str__(self) -> str:
         return f"Vector<{self._dtype.name}>[{self.len}/{self.capacity}]"
 
+    def __getitem__(self, key: int):
+        return self.get(key)
+
+    def __setitem__(self, key: int, value):
+        return self.set_key(key, value)
+
+    def __iter__(self):
+        self._index = 0
+        return self
+
+    def __next__(self):
+        try:
+            val = self[self._index]
+        except IndexError:
+            raise StopIteration
+        self._index += 1
+        return val
+
     def string(self) -> str:
         return self.__str__()
 
-    def get(self, idx: int):
-        val = ffi.new(f"{self._dtype.long_name} *")
+    def validate_index(self, idx: int) -> int:
         if idx >= self.len:
-            raise IndexError(f"index {idx} out of range for vector of len {self.len}")
+            raise IndexError(
+                f"index {idx} out of range for vector of len {self.len}")
         if idx < -self.len:
-            raise IndexError(f"index {idx % self.len} out of range for vector of len {self.len}")
-        idx = idx % self.len
-        _ottol.otto_vector_get(self._cdata, idx, val)
+            raise IndexError(
+                f"index {idx % self.len} out of range for vector of len {self.len}")
+        return idx % self.len
+
+    def get(self, key: int):
+        key = self.validate_index(key)
+        val = ffi.new(f"{self._dtype.long_name} *")
+        _ottol.otto_vector_get(self._cdata, key, val)
         return val[0]
+
+    def set_key(self, key: int, value) -> None:
+        key = self.validate_index(key)
+        val = ffi.new(f"{self._dtype.long_name} *")
+        val[0] = value
+        _ottol.otto_vector_set(self._cdata, key, val)
