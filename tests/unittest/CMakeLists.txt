@@ -5,6 +5,7 @@ foreach(filepath ${TESTS_QUICK})
   # Get useful names
   file(RELATIVE_PATH filename ${CMAKE_CURRENT_SOURCE_DIR}/quick ${filepath})
   get_filename_component(filename_we ${filename} NAME_WE)
+  set(filename_we test.${filename_we})
 
   # Compile the test
   add_executable(${filename_we} ${filepath})
@@ -16,9 +17,9 @@ foreach(filepath ${TESTS_QUICK})
   set_target_properties(
     ${filename_we}
     PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG
-               ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug/tests
+               ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/debug
                RUNTIME_OUTPUT_DIRECTORY_RELEASE
-               ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/tests)
+               ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 
   # Set up the test
   add_test(NAME ${filename_we} COMMAND ${filename_we})
