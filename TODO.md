@@ -4,6 +4,8 @@ This file contains a list of the TODO tasks found within the source code.
 - **(`./dependencies/OpenCL/include/CL/opencl.hpp`)** This should really have a D3D10 rerror code!
 - **(`./include/otto/cl/runtime.h`)** Add the option to load multiple kernel extensions
 - **(`./include/otto/cl/runtime.h`)** Include support for user-created kernel extensions
+- **(`./pysrc/otto_ffi/__init__.py`)** Update the FFI to account for the interface changes
+- **(`./pysrc/otto/vector.py`)** Update this class to account for the interface changes
 - **(`./pysrc/otto/vector.py`)** Implement creation from arrays and lists
 - **(`./pysrc/otto/vector.py`)** Implement arithmetic operations using OpenCL kernels
 - **(`./pysrc/otto/vector.py`)** Implement interpreting as different collections (e.g. numpy arrays)
