@@ -73,6 +73,8 @@ class Vector[T]:
     def __len__(self) -> int:
         return self.len
 
+    # TODO: Implement arithmetic operations using OpenCL kernels
+
     def string(self) -> str:
         return self.__str__()
 
