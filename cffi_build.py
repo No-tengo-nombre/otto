@@ -10,7 +10,7 @@ import cffi
 src_path = Path.joinpath(Path(__file__).parent, "pysrc")
 os.environ["PYTHONPATH"] = str(src_path)
 sys.path.append(str(src_path))
-from otto_ffi.ffi import devices, status, vector, cl
+from otto_ffi.ffi import _devices, _status, _vector, _cl
 from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
 
 
@@ -99,19 +99,19 @@ typedef struct _cl_uint *cl_uint;
 FFI_CDEF = f"""
 // Typedefs
 {LIB_TYPEDEF}
-{status.CTYPEDEF}
-{devices.CTYPEDEF}
-{cl.kernel.CTYPEDEF}
-{cl.program.CTYPEDEF}
-{cl.runtime.CTYPEDEF}
-{vector.CTYPEDEF}
+{_status.CTYPEDEF}
+{_devices.CTYPEDEF}
+{_cl._kernel.CTYPEDEF}
+{_cl._program.CTYPEDEF}
+{_cl._runtime.CTYPEDEF}
+{_vector.CTYPEDEF}
 // Function definitions
-{status.CDEF}
-{devices.CDEF}
-{cl.kernel.CDEF}
-{cl.program.CDEF}
-{cl.runtime.CDEF}
-{vector.CDEF}
+{_status.CDEF}
+{_devices.CDEF}
+{_cl._kernel.CDEF}
+{_cl._program.CDEF}
+{_cl._runtime.CDEF}
+{_vector.CDEF}
 """
 
 LIB_SOURCE = """
