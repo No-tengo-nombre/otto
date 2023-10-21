@@ -23,11 +23,7 @@ int main(void) {
   /* Loading kernels into the program */
   log_info("Creating the program");
   otto_program_t prog;
-  const char *files[] = {OTTO_CLKERNEL("vector/elementary.cl")};
-  otto_program_from_files(&ctx, files, 1, "", &prog);
-
-  log_info("Creating the kernel");
-  otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL);
+  otto_program_from_default(&ctx, OTTO_KERNELS_CORE, "", &prog);
   otto_program_cleanup(&prog);
 
   /* Create the vectors for the kernel call */
