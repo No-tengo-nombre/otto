@@ -19,12 +19,7 @@ int main(void) {
   otto_runtime_t ctx;
   otto_kernelht_t *ht = NULL;
   otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx);
-
-  /* Loading kernels into the program */
-  log_info("Creating the program");
-  otto_program_t prog;
-  otto_program_from_default(&ctx, OTTO_KERNELS_CORE, "", &prog);
-  otto_program_cleanup(&prog);
+  otto_runtime_load_kernels(&ctx, OTTO_KERNELS_CORE, "");
 
   /* Create the vectors for the kernel call */
   log_info("Creating the vectors");

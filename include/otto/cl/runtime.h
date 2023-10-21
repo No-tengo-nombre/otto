@@ -5,6 +5,7 @@
 #include <uthash.h>
 
 #include <otto/cl/cl.h>
+#include <otto/cl/program.h>
 #include <otto/devices.h>
 #include <otto/status.h>
 
@@ -67,6 +68,9 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
                                const otto_device_t type,
                                otto_kernelht_t *kernel_ht, otto_runtime_t *out);
+otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
+                                        const otto_program_kernels_t kernels,
+                                        const char *build_options);
 
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx);
 
