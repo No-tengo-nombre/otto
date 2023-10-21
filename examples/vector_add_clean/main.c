@@ -13,8 +13,6 @@
 #include <otto/status.h>
 #include <otto/vector.h>
 
-#define MAX_SOURCE_SIZE (0x100000)
-
 int main(void) {
   /* Runtime creation */
   log_info("Creating the runtime");
@@ -23,23 +21,10 @@ int main(void) {
   otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx);
 
   /* Loading kernels into the program */
-  log_info("Loading the kernel");
-  FILE *fp;
-  char *source_str;
-  size_t source_size;
-  fp = fopen(OTTO_CLKERNEL("vector/elementary.cl"), "r");
-  if (!fp) {
-    fprintf(stderr, "Failed to load kernel.\n");
-    exit(1);
-  }
-  source_str = (char *)malloc(MAX_SOURCE_SIZE);
-  source_size = fread(source_str, 1, MAX_SOURCE_SIZE, fp);
-  log_debug("Source size: %d", source_size);
-  fclose(fp);
-
   log_info("Creating the program");
   otto_program_t prog;
-  otto_program_from_sources(&ctx, (const char **)&source_str, 1, "", &prog);
+  const char *files[] = {OTTO_CLKERNEL("vector/elementary.cl")};
+  otto_program_from_files(&ctx, files, 1, "", &prog);
 
   log_info("Creating the kernel");
   otto_kernel_new(&prog, "otto_vector_add", 3, &ctx, NULL);

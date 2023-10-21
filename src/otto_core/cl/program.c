@@ -1,4 +1,7 @@
 #include <stddef.h>
+#include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include <otto/cl/cl.h>
 #include <otto/cl/program.h>
@@ -7,6 +10,13 @@
 
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
+
+int64_t get_file_size(FILE *file) {
+  fseek(file, 0, SEEK_END);
+  int64_t size = ftell(file);
+  fseek(file, 0, SEEK_SET);
+  return size;
+}
 
 otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
                                         const char **sources,
@@ -39,6 +49,40 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
   }
   *out = prog;
   return OTTO_STATUS_SUCCESS;
+}
+
+otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
+                                      const size_t count,
+                                      const char *build_options,
+                                      otto_program_t *out) {
+  char **sources = malloc(count * sizeof(char *));
+  FILE *f;
+  char *source;
+  int64_t size = 0;
+
+  for (size_t i = 0; i < count; i++, files++) {
+    logi_info("Reading file '%s'", *files);
+    f = fopen(*files, "r");
+    if (!f) {
+      logi_warn("Could not open file '%s', skipping it", *files);
+      continue;
+    }
+
+    size = get_file_size(f);
+    logi_debug("File size: %i", size);
+    source = malloc(size * sizeof(char));
+    fread(source, 1, size, f);
+    source[size] = 0;
+    fclose(f);
+    logi_debug("Closed file '%s'", *files);
+
+    sources[i] = source;
+  }
+
+  ctx->_sources = (const char **)sources;
+  ctx->_sources_count = count;
+  return otto_program_from_sources(ctx, (const char **)sources, count,
+                                   build_options, out);
 }
 
 otto_status_t otto_program_cleanup(const otto_program_t *prog) {

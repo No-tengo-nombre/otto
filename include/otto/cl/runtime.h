@@ -59,6 +59,8 @@ typedef struct otto_runtime {
   otto_kernelht_t *_kernels_ht;
   otto_kernelll_t *_kernels_ll;
   otto_kernel_args_t *kernel_hparams;
+  const char **_sources; // Keeps track of them only to clean them up
+  size_t _sources_count; // Keeps track of them only to clean them up
 } otto_runtime_t;
 
 otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,

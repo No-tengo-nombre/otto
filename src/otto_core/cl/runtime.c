@@ -86,13 +86,26 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       ._kernels_ht = kernel_ht,
       ._kernels_ll = node,
       .kernel_hparams = NULL,
+      ._sources = NULL,
+      ._sources_count = 0,
   };
   *out = result;
   return OTTO_STATUS_SUCCESS;
 }
 
+void cleanup_sources(const char **sources, const size_t count) {
+  // This should only be called with a malloc'ed array of malloc'ed strings,
+  // meaning both sources and all sources[i] are in heap.
+  const char **original = sources;
+  for (size_t i = 0; i < count; i++, sources++) {
+    free((void *)*sources);
+  }
+  free(original);
+}
+
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx) {
   otto_kernelll_cleanup(ctx->_kernels_ll);
+  cleanup_sources(ctx->_sources, ctx->_sources_count);
   OTTO_CL_CALL_I(clFlush(ctx->cq), "Failed flushing command queue");
   OTTO_CL_CALL_I(clFinish(ctx->cq), "Failed finishing command queue");
   OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq),

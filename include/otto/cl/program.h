@@ -21,6 +21,10 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
                                         const size_t count,
                                         const char *build_options,
                                         otto_program_t *out);
+otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
+                                      const size_t count,
+                                      const char *build_options,
+                                      otto_program_t *out);
 
 otto_status_t otto_program_cleanup(const otto_program_t *prog);
 
