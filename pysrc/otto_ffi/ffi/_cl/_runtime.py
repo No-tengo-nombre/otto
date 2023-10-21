@@ -1,7 +1,27 @@
 CTYPEDEF = """
-typedef ... otto_kernelht_t;
-typedef ... otto_kernelll_t;
-typedef ... otto_runtime_t;
+typedef struct otto_kernelht {
+  const char *name;
+  otto_kernel_t *kernel;
+  UT_hash_handle hh;
+} otto_kernelht_t;
+
+typedef struct otto_kernelll {
+  otto_kernelht_t *item;
+  struct otto_kernelll *next;
+} otto_kernelll_t;
+
+typedef struct otto_runtime {
+  cl_context ctx;
+  cl_command_queue cq;
+  cl_platform_id platforms;
+  cl_uint platform_num;
+  cl_device_id devices;
+  cl_uint device_num;
+  otto_device_t dev;
+  otto_kernelht_t *_kernels_ht;
+  otto_kernelll_t *_kernels_ll;
+  otto_kernel_args_t *kernel_hparams;
+} otto_runtime_t;
 """
 
 CDEF = """

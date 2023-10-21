@@ -16,7 +16,7 @@ from otto_utils.console import ShellColors
 # Set up argument parsing
 DESC_STR = """run the examples"""
 
-parser = argparse.ArgumentParser(prog="pyexamples", description=DESC_STR)
+parser = argparse.ArgumentParser(prog="examples", description=DESC_STR)
 parser.add_argument(
     "args",
     nargs="+",
@@ -72,6 +72,6 @@ print(
 with args {ex_args} and kwargs {ex_kwargs}\n"
 )
 LOGGER.info("Importing example %s", name)
-mod = importlib.import_module(f"pyexamples.{name}")
+mod = importlib.import_module(f"examples.python.{name}")
 LOGGER.info("Running main function")
 mod.main(*ex_args, **ex_kwargs)
