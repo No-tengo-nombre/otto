@@ -7,6 +7,7 @@ typedef struct otto_vector {
   size_t capacity;
   otto_device_t device;
   const otto_runtime_t *ctx;
+  cl_mem_flags flags;
 } otto_vector_t;
 """
 
