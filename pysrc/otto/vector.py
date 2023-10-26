@@ -1,9 +1,10 @@
 from typing import List, Self
 
-from otto.dtypes import DataType
-
+from otto_utils.logger import LOGGER
 import otto_ffi as _
 from _otto import ffi, lib as _ottol
+
+from otto import dtypes
 
 
 # TODO: Update this class to account for the interface changes
@@ -12,27 +13,42 @@ from _otto import ffi, lib as _ottol
 class Vector[T]:
     __slots__ = ("_cdata", "_dtype", "_dsize", "_index")
 
-    def __init__(self, dtype: DataType):
+    def __init__(self, dtype: dtypes.DataType):
         self._cdata = ffi.new("otto_vector_t *")
         self._dtype = dtype
         self._dsize = self._dtype.size
 
     @classmethod
-    def new(cls, dtype: DataType):
+    def new(cls, dtype: dtypes.DataType):
         vec = cls(dtype)
         _ottol.otto_vector_new(vec._dsize, vec._cdata)
         return vec
 
     @classmethod
-    def zero(cls, size: int, dtype: DataType):
+    def zero(cls, size: int, dtype: dtypes.DataType):
         vec = cls(dtype)
         _ottol.otto_vector_zero(size, vec._dsize, vec._cdata)
         return vec
 
     @classmethod
-    def with_capacity(cls, capacity: int, dtype: DataType):
+    def with_capacity(cls, capacity: int, dtype: dtypes.DataType):
         vec = cls(dtype)
         _ottol.otto_vector_with_capacity(capacity, vec._dsize, vec._cdata)
+        return vec
+
+    @classmethod
+    def from_list(cls, target: List[T], dtype: dtypes.DataType = None):
+        if dtype is None:
+            if target == []:
+                LOGGER.error("Found empty list, raising exception")
+                raise ValueError(
+                    "Expected non-empty empty list (see `Vector.new` for empty lists)"
+                )
+            dtype = dtypes.get_ctype(target[0])
+        vec = cls(dtype)
+        size = len(target)
+        val = ffi.new(f"{dtype.long_name}[]", target)
+        _ottol.otto_vector_from_array(val, size, dtype.size, vec._cdata)
         return vec
 
     @property

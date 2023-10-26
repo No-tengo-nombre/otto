@@ -1,3 +1,6 @@
+from typing import Any
+
+
 class DataType:
     def __init__(self, size_bytes, name, long_name) -> None:
         self.size = size_bytes
@@ -29,3 +32,14 @@ INT64 = DataType(8, "i64", "int64_t")
 
 FLOAT32 = DataType(4, "f32", "float")
 FLOAT64 = DataType(8, "f64", "double")
+
+
+def get_ctype(value: Any) -> DataType:
+    if isinstance(value, int):
+        return INT32
+    elif isinstance(value, float):
+        return FLOAT64
+    else:
+        raise TypeError(
+            f"Conversion of type '{type(value).__name__}' not implemented"
+        )
