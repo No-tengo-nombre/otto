@@ -1,5 +1,7 @@
 from typing import List, Self
 
+import numpy as np
+
 from otto_utils.logger import LOGGER
 import otto_ffi as _
 from _otto import ffi, lib as _ottol
@@ -45,9 +47,29 @@ class Vector[T]:
                     "Expected non-empty empty list (see `Vector.new` for empty lists)"
                 )
             dtype = dtypes.get_ctype(target[0])
+            if dtype is None:
+                raise TypeError(
+                    f"Conversion of type '{
+                        type(target[0]).__name__}' not implemented"
+                )
         vec = cls(dtype)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
+        _ottol.otto_vector_from_array(val, size, dtype.size, vec._cdata)
+        return vec
+
+    @classmethod
+    def from_numpy(cls, target: np.ndarray, dtype: dtypes.DataType = None):
+        if dtype is None:
+            dtype = dtypes._NP_TYPES.get(target.dtype.name)
+            if dtype is None:
+                raise TypeError(
+                    f"Conversion of type 'np.{
+                        target.dtype.name}' not implemented"
+                )
+        vec = cls(dtype)
+        size = len(target.flatten())
+        val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
         _ottol.otto_vector_from_array(val, size, dtype.size, vec._cdata)
         return vec
 
@@ -63,13 +85,11 @@ class Vector[T]:
     def data_size(self) -> int:
         return self._cdata.data_size
 
-    # TODO: Implement creation from arrays and lists
-
     def __del__(self):
         _ottol.otto_vector_cleanup(self._cdata)
 
     def __str__(self) -> str:
-        return f"Vector<{self._dtype.name}>[{self.len}/{self.capacity}]"
+        return f"{self._generic_str()}[{self.len}/{self.capacity}]"
 
     def __getitem__(self, key: int) -> T:
         return self.get(key)
@@ -92,10 +112,19 @@ class Vector[T]:
     def __len__(self) -> int:
         return self.len
 
+    def __array__(self) -> np.ndarray:
+        return np.array(self.to_list(), dtype=self._dtype.np)
+
     # TODO: Implement arithmetic operations using OpenCL kernels
 
     def string(self) -> str:
         return self.__str__()
+
+    def _generic_str(self) -> str:
+        return f"Vector<{self._dtype.name}>"
+
+    def content_string(self) -> str:
+        return f"{self._generic_str()}{self.to_list()}"
 
     def validate_index(self, idx: int) -> int:
         if idx >= self.len:
@@ -121,7 +150,8 @@ class Vector[T]:
     def to_list(self) -> List[T]:
         return list(self)
 
-    # TODO: Implement interpreting as different collections (e.g. numpy arrays)
+    def to_numpy(self) -> np.ndarray:
+        return np.array(self)
 
     def resize(self, new_capacity: int) -> None:
         _ottol.otto_vector_resize(self._cdata, new_capacity)
