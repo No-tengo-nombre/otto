@@ -32,3 +32,6 @@ def main():
     print(c)
     print(c.content_string())
     print(np.array(c))
+
+    d = Vector.new([1, 2, 3, 4])
+    print(d.content_string())
