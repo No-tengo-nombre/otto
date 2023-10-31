@@ -226,3 +226,40 @@ class Vector[T]:
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
         _ottol.otto_vector_extend_array(self._cdata, val, size)
+
+    def extend_from_numpy(self, target: np.ndarray):
+        target = target.flatten()
+        size = len(target)
+        val = ffi.new(f"{self._dtype.long_name}[]", target)
+        _ottol.otto_vector_extend_array(self._cdata, val, size)
+
+    def extend_from_iter(self, target: Iterable):
+        self.extend_from_list(iter(target))
+
+    @singledispatchmethod
+    def extend(self, target):
+        try:
+            LOGGER.warn("Trying to extend from invalid input type, trying as iter")
+            return self.extend_from_iter(iter(target))
+        except TypeError:
+            LOGGER.error("Trying to extend Vector from invalid type")
+            raise TypeError(
+                f"Could not extend `Vector` from type '{
+                    type(target).__name__}'"
+            )
+
+    @extend.register(list)
+    def _(self, target):
+        return self.extend_from_list(target)
+
+    @extend.register(np.ndarray)
+    def _(self, target):
+        return self.extend_from_numpy(target)
+
+    @extend.register(Iterator)
+    def _(self, target):
+        return self.extend_from_iter(target)
+
+    @extend.register(Iterable)
+    def _(self, target):
+        return self.extend_from_iter(iter(target))
