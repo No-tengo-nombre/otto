@@ -7,6 +7,8 @@ import otto_ffi as _
 from _otto import ffi, lib as _ottol
 
 from otto.cl.device import Device
+from otto.exceptions import OttoException
+from otto.status import ffi_call
 
 
 class Kernels(Enum):
@@ -51,23 +53,30 @@ class Runtime(metaclass=_RuntimeMeta):
         self._kernel_ht = ffi.NULL
 
         # Initialize the runtime
-        _ottol.otto_runtime_new(
+        ffi_call(_ottol.otto_runtime_new(
             self._ctx_props,
             self._q_props,
             self._dev.value,
             self._kernel_ht,
             self._cdata,
-        )
+        ), "Runtime creation failed")
 
         if kernels is not None:
             if kernel_build_options is None:
                 kernel_build_options = ""
             kernel_build_options = ffi.new(
                 "const char []", kernel_build_options.encode())
-            _ottol.otto_runtime_load_kernels(
-                self._cdata, kernels.value, kernel_build_options)
+            ffi_call(
+                _ottol.otto_runtime_load_kernels(
+                    self._cdata, kernels.value, kernel_build_options),
+                "Failed loading kernels",
+            )
 
     # TODO: Implement the rest of the methods
 
     def __del__(self):
-        _ottol.otto_runtime_cleanup(self._cdata)
+        try:
+            ffi_call(_ottol.otto_runtime_cleanup(
+                self._cdata), "Failed cleanup")
+        except OttoException as e:
+            LOGGER.error(f"Cleaning up runtime failed with exception '{e}'")
