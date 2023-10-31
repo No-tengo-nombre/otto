@@ -97,7 +97,7 @@ typedef struct _cl_context *cl_context;
 typedef struct _cl_command_queue *cl_command_queue;
 typedef struct _cl_platform_id *cl_platform_id;
 typedef struct _cl_device_id *cl_device_id;
-typedef struct _cl_uint *cl_uint;
+typedef unsigned int cl_uint;
 """
 
 FFI_CDEF = f"""
