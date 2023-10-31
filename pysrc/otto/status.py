@@ -15,7 +15,9 @@ class Status(Enum):
 def ffi_call(val, msg: str = None, *, exception_cls=OttoException):
     if val == Status.FAILURE.value:
         LOGGER.error(
-            f"Found a failed otto call {'' if msg is None else f'\'{msg}\''}")
+            f"Found a failed otto call %s",
+            "" if msg is None else f"'{msg}'"
+        )
         if msg is None:
             raise exception_cls("otto call failed")
         else:

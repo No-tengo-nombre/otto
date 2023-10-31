@@ -10,6 +10,8 @@ import otto_ffi as _
 from _otto import ffi, lib as _ottol
 
 from otto import dtypes
+from otto.exceptions import OttoException
+from otto.status import ffi_call
 
 
 class Vector[T]:
@@ -23,19 +25,22 @@ class Vector[T]:
     @classmethod
     def empty(cls, dtype: dtypes.DataType):
         vec = cls(dtype)
-        _ottol.otto_vector_new(vec._dsize, vec._cdata)
+        ffi_call(_ottol.otto_vector_new(vec._dsize, vec._cdata),
+                 "Failed creating empty vector")
         return vec
 
     @classmethod
     def zero(cls, size: int, dtype: dtypes.DataType):
         vec = cls(dtype)
-        _ottol.otto_vector_zero(size, vec._dsize, vec._cdata)
+        ffi_call(_ottol.otto_vector_zero(size, vec._dsize, vec._cdata),
+                 "Failed creating zero initialized vector")
         return vec
 
     @classmethod
     def with_capacity(cls, capacity: int, dtype: dtypes.DataType):
         vec = cls(dtype)
-        _ottol.otto_vector_with_capacity(capacity, vec._dsize, vec._cdata)
+        ffi_call(_ottol.otto_vector_with_capacity(capacity, vec._dsize,
+                 vec._cdata), f"Failed creating vector with capacity {capacity}")
         return vec
 
     @classmethod
@@ -57,7 +62,8 @@ class Vector[T]:
         vec = cls(dtype)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
-        _ottol.otto_vector_from_array(val, size, dtype.size, vec._cdata)
+        ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
+                 vec._cdata), "Failed creating vector from list")
         return vec
 
     @classmethod
@@ -74,7 +80,8 @@ class Vector[T]:
         vec = cls(dtype)
         size = len(target.flatten())
         val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
-        _ottol.otto_vector_from_array(val, size, dtype.size, vec._cdata)
+        ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
+                 vec._cdata), "Failed creating vector from numpy array")
         return vec
 
     @classmethod
@@ -146,7 +153,11 @@ class Vector[T]:
         return self._cdata.data_size
 
     def __del__(self):
-        _ottol.otto_vector_cleanup(self._cdata)
+        try:
+            ffi_call(_ottol.otto_vector_cleanup(
+                self._cdata), "Failed cleanup of vector")
+        except OttoException as e:
+            LOGGER.error(f"Cleaning up vector failed with exception '{e}'")
 
     def __str__(self) -> str:
         return f"{self._generic_str()}[{self.len}/{self.capacity}]"
@@ -199,14 +210,16 @@ class Vector[T]:
     def get(self, key: int) -> T:
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
-        _ottol.otto_vector_get(self._cdata, key, val)
+        ffi_call(_ottol.otto_vector_get(self._cdata, key, val),
+                 f"Failed getting element at index {key}")
         return val[0]
 
     def set_key(self, key: int, value) -> None:
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = value
-        _ottol.otto_vector_set(self._cdata, key, val)
+        ffi_call(_ottol.otto_vector_set(self._cdata, key, val),
+                 f"Failed setting element at key {key}")
 
     def to_list(self) -> List[T]:
         return list(self)
@@ -215,23 +228,27 @@ class Vector[T]:
         return np.array(self)
 
     def resize(self, new_capacity: int) -> None:
-        _ottol.otto_vector_resize(self._cdata, new_capacity)
+        ffi_call(_ottol.otto_vector_resize(
+            self._cdata, new_capacity), "Failed resizing")
 
     def push(self, element: T) -> None:
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = element
-        _ottol.otto_vector_push(self._cdata, val)
+        ffi_call(_ottol.otto_vector_push(
+            self._cdata, val), "Failed pushing element")
 
     def extend_from_list(self, target: List[T]):
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        _ottol.otto_vector_extend_array(self._cdata, val, size)
+        ffi_call(_ottol.otto_vector_extend_array(
+            self._cdata, val, size), "Failed extending from list")
 
     def extend_from_numpy(self, target: np.ndarray):
         target = target.flatten()
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        _ottol.otto_vector_extend_array(self._cdata, val, size)
+        ffi_call(_ottol.otto_vector_extend_array(
+            self._cdata, val, size), "Failed extending from numpy array")
 
     def extend_from_iter(self, target: Iterable):
         self.extend_from_list(iter(target))
@@ -239,7 +256,8 @@ class Vector[T]:
     @singledispatchmethod
     def extend(self, target):
         try:
-            LOGGER.warn("Trying to extend from invalid input type, trying as iter")
+            LOGGER.warn(
+                "Trying to extend from invalid input type, trying as iter")
             return self.extend_from_iter(iter(target))
         except TypeError:
             LOGGER.error("Trying to extend Vector from invalid type")
