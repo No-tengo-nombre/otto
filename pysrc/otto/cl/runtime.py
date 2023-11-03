@@ -53,6 +53,8 @@ class Runtime(metaclass=_RuntimeMeta):
         self._kernel_ht = ffi.NULL
 
         # Initialize the runtime
+        # TODO: Figure out why it fails if using CPU (likely an otto error)
+        LOGGER.debug("Using device %s: %d", self._dev.name, self._dev.value)
         ffi_call(_ottol.otto_runtime_new(
             self._ctx_props,
             self._q_props,
