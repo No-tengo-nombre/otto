@@ -13,7 +13,7 @@ examples=0
 testing=0
 verbose=0
 
-while getopts "hcxvisetrdwlG:R:P:" arg
+while getopts "hcxvisetrdwlpG:R:P:" arg
 do
     case "$arg" in
         c)
@@ -51,6 +51,9 @@ do
             ;;
         v)
             verbose=1
+            ;;
+        p)
+            python_install=1
             ;;
         G)
             force_generator="${OPTARG}"
@@ -122,4 +125,9 @@ if [[ "${example}" != "" ]]; then
     else
         ./bin/debug/ex.${example}
     fi
+fi
+
+if [ $python_install -eq 1 ]; then
+    echo -e "\n\n\x1b[32;20mInstalling Python wrapper\x1b[0m"
+    pip install -e .
 fi
