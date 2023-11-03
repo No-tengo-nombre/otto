@@ -15,7 +15,9 @@
   {                                                                            \
     cl_int err_ = x;                                                           \
     if (err_ != CL_SUCCESS) {                                                  \
-      logi_error(msg " [%d](%s)", #__VA_ARGS__, err_, get_cl_error_msg(err_)); \
+      const char *err_str = get_cl_error_msg(err_);                            \
+      logi_error(msg, #__VA_ARGS__);                                           \
+      logi_error("Found CL error %d '%s'", err_, err_str);                     \
       return OTTO_STATUS_FAILURE;                                              \
     }                                                                          \
   }
