@@ -15,10 +15,10 @@ def main(size=256):
     LOGGER.info("Creating vectors")
     a = Vector.from_numpy(np.arange(size)).to_device()
     b = Vector.from_numpy(size - np.arange(size)).to_device()
-    print(f"a = {a.content_string()}")
-    print(f"b = {b.content_string()}")
+    print(f"a = {a}")
+    print(f"b = {b}")
 
     out = a + b
 
     out.to_host()
-    print(f"out = {out.content_string()}")
+    print(f"out = {out}")

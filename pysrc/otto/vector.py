@@ -171,7 +171,7 @@ class Vector[T]:
             LOGGER.error(f"Cleaning up vector failed with exception '{e}'")
 
     def __str__(self) -> str:
-        return f"{self._generic_str()}[{self.len}/{self.capacity}]"
+        return self.content_string()
 
     def __getitem__(self, key: int) -> T:
         return self.get(key)
@@ -252,6 +252,9 @@ class Vector[T]:
 
     def content_string(self) -> str:
         return f"{self._generic_str()}{self.to_list()}"
+
+    def short_string(self) -> str:
+        return f"{self._generic_str()}[{self.len}/{self.capacity}]"
 
     def validate_index(self, idx: int) -> int:
         if idx >= self.len:
