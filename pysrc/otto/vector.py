@@ -1,4 +1,5 @@
 from collections.abc import Iterator, Iterable
+from enum import Enum
 from functools import singledispatchmethod
 from numbers import Real
 from typing import List, Self
@@ -14,37 +15,45 @@ from otto.exceptions import OttoException
 from otto.status import ffi_call
 
 
-class Vector[T]:
-    __slots__ = ("_cdata", "_dtype", "_dsize", "_index")
+class MemFlags(Enum):
+    READ = 1
+    WRITE = 2
+    READ_WRITE = 3
 
-    def __init__(self, dtype: dtypes.DataType):
+
+class Vector[T]:
+    __slots__ = ("_cdata", "_dtype", "_dsize", "_index", "ctx", "mode")
+
+    def __init__(self, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         self._cdata = ffi.new("otto_vector_t *")
         self._dtype = dtype
         self._dsize = self._dtype.size
+        self.ctx = None
+        self.mode = mode
 
     @classmethod
-    def empty(cls, dtype: dtypes.DataType):
-        vec = cls(dtype)
+    def empty(cls, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
+        vec = cls(dtype, mode)
         ffi_call(_ottol.otto_vector_new(vec._dsize, vec._cdata),
                  "Failed creating empty vector")
         return vec
 
     @classmethod
-    def zero(cls, size: int, dtype: dtypes.DataType):
-        vec = cls(dtype)
+    def zero(cls, size: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
+        vec = cls(dtype, mode)
         ffi_call(_ottol.otto_vector_zero(size, vec._dsize, vec._cdata),
                  "Failed creating zero initialized vector")
         return vec
 
     @classmethod
-    def with_capacity(cls, capacity: int, dtype: dtypes.DataType):
-        vec = cls(dtype)
+    def with_capacity(cls, capacity: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
+        vec = cls(dtype, mode)
         ffi_call(_ottol.otto_vector_with_capacity(capacity, vec._dsize,
                  vec._cdata), f"Failed creating vector with capacity {capacity}")
         return vec
 
     @classmethod
-    def from_list(cls, target: List[T], dtype: dtypes.DataType = None):
+    def from_list(cls, target: List[T], dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
         LOGGER.debug("Creating from list")
         # TODO: Fix the bug that happens when the first element is less general than the rest
         if dtype is None:
@@ -59,7 +68,7 @@ class Vector[T]:
                     f"Conversion of type '{
                         type(target[0]).__name__}' not implemented"
                 )
-        vec = cls(dtype)
+        vec = cls(dtype, mode)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
         ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
@@ -67,7 +76,7 @@ class Vector[T]:
         return vec
 
     @classmethod
-    def from_numpy(cls, target: np.ndarray, dtype: dtypes.DataType = None):
+    def from_numpy(cls, target: np.ndarray, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
         # TODO: Determine a more efficient way of creating from numpy array
         LOGGER.debug("Creating from numpy array")
         if dtype is None:
@@ -77,7 +86,7 @@ class Vector[T]:
                     f"Conversion of type 'np.{
                         target.dtype.name}' not implemented"
                 )
-        vec = cls(dtype)
+        vec = cls(dtype, mode)
         size = len(target.flatten())
         val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
         ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
@@ -85,7 +94,7 @@ class Vector[T]:
         return vec
 
     @classmethod
-    def from_iter(cls, target: Iterator, dtype: dtypes.DataType = None):
+    def from_iter(cls, target: Iterator, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
         LOGGER.debug("Creating from iterator")
         vals = list(target)
         if dtype is None:
@@ -100,14 +109,14 @@ class Vector[T]:
                     f"Conversion of type '{
                         type(vals[0]).__name__}' not implemented"
                 )
-        return cls.from_list(vals, dtype)
+        return cls.from_list(vals, dtype, mode)
 
     @singledispatchmethod
     @classmethod
-    def new(cls, target, dtype: dtypes.DataType = None):
+    def new(cls, target, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
         try:
             LOGGER.warn("Trying to iterate invalid input type")
-            return cls.from_iter(iter(target), dtype)
+            return cls.from_iter(iter(target), dtype, mode)
         except TypeError:
             LOGGER.error("Trying to create Vector from invalid type")
             raise TypeError(
@@ -117,28 +126,28 @@ class Vector[T]:
 
     @new.register(list)
     @classmethod
-    def _(cls, target: list, dtype: dtypes.DataType = None):
-        return cls.from_list(target, dtype)
+    def _(cls, target: list, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+        return cls.from_list(target, dtype, mode)
 
     @new.register(np.ndarray)
     @classmethod
-    def _(cls, target: np.ndarray, dtype: dtypes.DataType = None):
-        return cls.from_numpy(target, dtype)
+    def _(cls, target: np.ndarray, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+        return cls.from_numpy(target, dtype, mode)
 
     @new.register(Iterator)
     @classmethod
-    def _(cls, target: Iterator, dtype: dtypes.DataType = None):
-        return cls.from_iter(target, dtype)
+    def _(cls, target: Iterator, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+        return cls.from_iter(target, dtype, mode)
 
     @new.register(Iterable)
     @classmethod
-    def _(cls, target: Iterable, dtype: dtypes.DataType = None):
-        return cls.from_iter(iter(target), dtype)
+    def _(cls, target: Iterable, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+        return cls.from_iter(iter(target), dtype, mode)
 
     @new.register(Real)
     @classmethod
-    def _(cls, target: Real, dtype: dtypes.DataType = None):
-        return cls.from_list([target], dtype)
+    def _(cls, target: Real, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+        return cls.from_list([target], dtype, mode)
 
     @property
     def len(self) -> int:
@@ -281,3 +290,17 @@ class Vector[T]:
     @extend.register(Iterable)
     def _(self, target):
         return self.extend_from_iter(iter(target))
+
+    def set_mode(self, mode: MemFlags) -> Self:
+        LOGGER.debug("Setting vector as '%s'", mode.name)
+        self.mode = mode
+        return self
+
+    def set_read(self) -> Self:
+        return self.set_mode(MemFlags.READ)
+
+    def set_write(self) -> Self:
+        return self.set_mode(MemFlags.WRITE)
+
+    def set_read_write(self) -> Self:
+        return self.set_mode(MemFlags.READ_WRITE)
