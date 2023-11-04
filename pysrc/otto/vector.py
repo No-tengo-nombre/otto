@@ -313,6 +313,7 @@ class Vector[T]:
         if ctx is None:
             LOGGER.info("Getting default runtime")
             ctx = Runtime()
+        self.ctx = ctx
         _ottol.otto_vector_todevice_mode(self._cdata, ctx._cdata, mode.value)
         return self
 
