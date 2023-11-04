@@ -12,6 +12,7 @@ release_mode=0
 examples=0
 testing=0
 verbose=0
+python_install=0
 
 while getopts "hcxvisetrdwlpG:R:P:" arg
 do
