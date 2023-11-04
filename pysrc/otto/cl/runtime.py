@@ -29,7 +29,10 @@ class _RuntimeMeta(type):
                 LOGGER.debug("Registering new runtime instance")
                 instance = super().__call__(*args, **kwargs)
                 cls._instances[cls][id_hash] = instance
-        LOGGER.debug(f"Getting existing runtime instance, id {id_hash}")
+            else:
+                LOGGER.debug(
+                    f"Getting existing runtime instance, id {id_hash}"
+                )
         return cls._instances[cls][id_hash]
 
 
@@ -39,6 +42,7 @@ class Runtime(metaclass=_RuntimeMeta):
 
     def __init__(self, device: Device = Device.CPU, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, *, instance_id=None) -> None:
         # TODO: Add option to specify context and queue properties
+        LOGGER.info("Creating new runtime")
         self._id = instance_id
         self._cdata = ffi.new("otto_runtime_t *")
         if ctx_props is None:
@@ -64,6 +68,7 @@ class Runtime(metaclass=_RuntimeMeta):
         ), "Runtime creation failed")
 
         if kernels is not None:
+            LOGGER.info("Loading kernels '%s'", kernels.name)
             if kernel_build_options is None:
                 kernel_build_options = ""
             kernel_build_options = ffi.new(
