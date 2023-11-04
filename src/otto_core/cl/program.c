@@ -131,6 +131,10 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
   size_t count;
   size_t ker_count;
   switch (kernels) {
+  case OTTO_KERNELS_NONE:
+    logi_info("Using no kernels");
+    return OTTO_STATUS_SUCCESS;
+
   case OTTO_KERNELS_CORE:
     files = _OTTO_KERNELS_CORE;
     count = _OTTO_KERNELS_CORE_COUNT;

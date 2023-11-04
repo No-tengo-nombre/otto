@@ -11,11 +11,13 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val) {
   // heap allocated
   if (head->item == NULL) {
     // This should only happen if it is the first element
+    logi_debug("Writing first element");
     head->item = val;
     return OTTO_STATUS_SUCCESS;
   }
 
   // Go to the end
+  logi_debug("Going to end of linked list");
   while (head->next != NULL) {
     head = head->next;
   }
@@ -24,9 +26,11 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val) {
     logi_error("Could not allocate memory");
     return OTTO_STATUS_FAILURE;
   }
+  logi_debug("Writing to last node");
   node->item = val;
   node->next = NULL;
   head->next = node;
+  logi_debug("Returning");
   return OTTO_STATUS_SUCCESS;
 }
 

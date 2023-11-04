@@ -21,6 +21,8 @@ typedef struct otto_runtime {
   otto_kernelht_t *_kernels_ht;
   otto_kernelll_t *_kernels_ll;
   otto_kernel_args_t *kernel_hparams;
+  const char **_sources;
+  size_t _sources_count;
 } otto_runtime_t;
 """
 
@@ -29,6 +31,9 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                const cl_queue_properties *q_props,
                                const otto_device_t type,
                                otto_kernelht_t *kernel_ht, otto_runtime_t *out);
+otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
+                                        const otto_program_kernels_t kernels,
+                                        const char *build_options);
 
 otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx);
 

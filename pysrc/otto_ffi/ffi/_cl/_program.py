@@ -2,6 +2,12 @@ CTYPEDEF = """
 typedef struct otto_program {
   cl_program p;
 } otto_program_t;
+
+typedef enum otto_program_kernels {
+  OTTO_KERNELS_NONE,
+  OTTO_KERNELS_ALL,
+  OTTO_KERNELS_CORE,
+} otto_program_kernels_t;
 """
 
 CDEF = """

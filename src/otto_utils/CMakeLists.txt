@@ -8,4 +8,4 @@ add_library(${PROJECT_UTILS_NAME} ${UTILS_ROOT_HEADER} ${UTILS_ROOT_SOURCE}
 target_link_libraries(${PROJECT_UTILS_NAME} PUBLIC)
 target_include_directories(
   ${PROJECT_UTILS_NAME} PUBLIC ${PROJECT_BINARY_DIR} ${PROJECT_SOURCE_DIR}
-                               ${PROJECT_HEADERS} ${CMAKE_SOURCE_DIR})
+                               ${PROJECT_HEADERS} ${CMAKE_SOURCE_DIR} ${CMAKE_DEPENDENCIES_DIR}/OpenCL/include)

@@ -56,6 +56,10 @@ for f in files:
 # Parameters for the FFI
 
 LIB_TYPEDEF = """
+#define CL_MEM_READ_ONLY ...
+#define CL_MEM_WRITE_ONLY ...
+#define CL_MEM_READ_WRITE ...
+
 typedef struct UT_hash_bucket {
    struct UT_hash_handle *hh_head;
    unsigned count;
@@ -86,9 +90,24 @@ typedef struct UT_hash_handle {
 } UT_hash_handle;
 
 typedef char *va_list;
+
+typedef signed char cl_char;
+typedef unsigned char cl_uchar;
+typedef signed short cl_short;
+typedef unsigned short cl_ushort;
+typedef signed int cl_int;
+typedef unsigned int cl_uint;
+typedef signed long long cl_long;
+typedef unsigned long long cl_ulong;
+typedef unsigned short cl_half;
+typedef float cl_float;
+typedef double cl_double;
+
+typedef cl_ulong cl_bitfield;
+typedef cl_bitfield cl_mem_flags;
+
 typedef struct _cl_device_type *cl_device_type;
 typedef struct _cl_mem *cl_mem;
-typedef struct _cl_mem_flags *cl_mem_flags;
 typedef struct _cl_kernel *cl_kernel;
 typedef struct _cl_program *cl_program;
 typedef struct _cl_context_properties *cl_context_properties;
@@ -97,7 +116,6 @@ typedef struct _cl_context *cl_context;
 typedef struct _cl_command_queue *cl_command_queue;
 typedef struct _cl_platform_id *cl_platform_id;
 typedef struct _cl_device_id *cl_device_id;
-typedef struct _cl_uint *cl_uint;
 """
 
 FFI_CDEF = f"""
