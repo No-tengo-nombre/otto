@@ -23,7 +23,8 @@ class MemFlags(Enum):
 
 
 class Vector[T]:
-    __slots__ = ("_cdata", "_dtype", "_dsize", "_index", "ctx", "mode")
+    __slots__ = ("_cdata", "_dtype", "_dsize",
+                 "_index", "ctx", "mode", "hparams")
 
     def __init__(self, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         self._cdata = ffi.new("otto_vector_t *")
@@ -197,7 +198,51 @@ class Vector[T]:
         # TODO: Determine a more efficient way of converting to numpy array
         return np.array(self.to_list(), dtype=self._dtype.np)
 
-    # TODO: Implement arithmetic operations using OpenCL kernels
+    def __add__(self, rhs):
+        self._validate_runtime()
+        return self.ctx.call_binop_kernel_no_out("otto_vector_add", self, rhs, None)
+
+    def __sub__(self, rhs):
+        self._validate_runtime()
+        return self.ctx.call_binop_kernel_no_out("otto_vector_sub", self, rhs, None)
+
+    def __mul__(self, rhs):
+        self._validate_runtime()
+        return self.ctx.call_binop_kernel_no_out("otto_vector_mul", self, rhs, None)
+
+    def __matmul__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __truediv__(self, rhs):
+        self._validate_runtime()
+        return self.ctx.call_binop_kernel_no_out("otto_vector_div", self, rhs, None)
+
+    def __floordiv__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __mod__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __divmod__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __pow__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __lshift__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __rshift__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __and__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __xor__(self, rhs):
+        raise NotImplementedError("Method not implemented")
+
+    def __or__(self, rhs):
+        raise NotImplementedError("Method not implemented")
 
     def string(self) -> str:
         return self.__str__()
@@ -230,6 +275,10 @@ class Vector[T]:
         val[0] = value
         ffi_call(_ottol.otto_vector_set(self._cdata, key, val),
                  f"Failed setting element at key {key}")
+
+    def _validate_runtime(self):
+        if self.ctx is None:
+            self.ctx = Runtime()
 
     def to_list(self) -> List[T]:
         return list(self)

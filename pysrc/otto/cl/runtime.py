@@ -50,17 +50,17 @@ class _RuntimeMeta(type):
 
 class Runtime(metaclass=_RuntimeMeta):
     __slots__ = ("_id", "_cdata", "_ctx_props",
-                 "_q_props", "_dev", "_kernel_ht", "hparams")
+                 "_q_props", "_dev", "_kernel_ht")
 
     cls_device = Device.CPU
     cls_kernels = Kernels.CORE
+    hparams = None
 
-    def __init__(self, device: Device = None, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, hparams: KernelArgs | dict = None, *, instance_id=None) -> None:
+    def __init__(self, device: Device = None, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, *, instance_id=None) -> None:
         # TODO: Add option to specify context and queue properties
         LOGGER.info("Creating new runtime")
         self._id = instance_id
         self._cdata = ffi.new("otto_runtime_t *")
-        self.hparams = hparams
 
         if ctx_props is None:
             self._ctx_props = ffi.NULL
