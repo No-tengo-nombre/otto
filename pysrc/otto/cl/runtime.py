@@ -1,3 +1,4 @@
+from dataclasses import dataclass, asdict
 from enum import Enum
 from typing import Hashable
 from threading import Lock
@@ -7,14 +8,24 @@ import otto_ffi as _
 from _otto import ffi, lib as _ottol
 
 from otto.cl.device import Device
-from otto.exceptions import OttoException
+from otto.exceptions import OttoException, HyperparametersException
 from otto.status import ffi_call
+
+
+GMEM_SIZE = 8
 
 
 class Kernels(Enum):
     NONE = _ottol.OTTO_KERNELS_NONE
     ALL = _ottol.OTTO_KERNELS_ALL
     CORE = _ottol.OTTO_KERNELS_CORE
+
+
+@dataclass
+class KernelArgs:
+    work_dim: int
+    global_size: int
+    local_size: int
 
 
 class _RuntimeMeta(type):
@@ -39,16 +50,17 @@ class _RuntimeMeta(type):
 
 class Runtime(metaclass=_RuntimeMeta):
     __slots__ = ("_id", "_cdata", "_ctx_props",
-                 "_q_props", "_dev", "_kernel_ht")
+                 "_q_props", "_dev", "_kernel_ht", "hparams")
 
     cls_device = Device.CPU
     cls_kernels = Kernels.CORE
 
-    def __init__(self, device: Device = None, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, *, instance_id=None) -> None:
+    def __init__(self, device: Device = None, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, hparams: KernelArgs | dict = None, *, instance_id=None) -> None:
         # TODO: Add option to specify context and queue properties
         LOGGER.info("Creating new runtime")
         self._id = instance_id
         self._cdata = ffi.new("otto_runtime_t *")
+        self.hparams = hparams
 
         if ctx_props is None:
             self._ctx_props = ffi.NULL
@@ -102,3 +114,43 @@ class Runtime(metaclass=_RuntimeMeta):
                 self._cdata), "Failed cleanup")
         except OttoException as e:
             LOGGER.error(f"Cleaning up runtime failed with exception '{e}'")
+
+    def call_kernel(self, name: str, *args, hparams: KernelArgs | dict = None):
+        if hparams is None:
+            if self.hparams is None:
+                raise HyperparametersException(
+                    "Hyperparameters were not given"
+                )
+            hparams = self.hparams
+        if isinstance(hparams, KernelArgs):
+            hparams = asdict(hparams)
+
+        if "global_size" not in hparams:
+            hparams["global_size"] = args[0].capacity
+
+        hparams_ptr = ffi.new("otto_kernel_args_t *", hparams)
+        kernel_args = sum([[GMEM_SIZE, a] for a in args], [])
+        _ottol.otto_runtime_call_kernel(self._cdata, ffi.new(
+            "const char[]", name.encode()), hparams_ptr, *kernel_args)
+
+    def call_binop_kernel(self, name: str, lhs, rhs, out, hparams: KernelArgs | dict = None):
+        if hparams is None:
+            if self.hparams is None:
+                raise HyperparametersException(
+                    "Hyperparameters were not given"
+                )
+            hparams = self.hparams
+        if isinstance(hparams, KernelArgs):
+            hparams = asdict(hparams)
+
+        if "global_size" not in hparams:
+            hparams["global_size"] = lhs.capacity
+        hparams_ptr = ffi.new("otto_kernel_args_t *", hparams)
+
+        _ottol.otto_runtime_call_kernel_binop(self._cdata, ffi.new(
+            "const char[]", name.encode()), hparams_ptr, lhs._cdata, rhs._cdata, out._cdata)
+
+    def call_binop_kernel_no_out(self, name: str, lhs, rhs, hparams: KernelArgs | dict = None):
+        out = lhs.create_from().set_write().to_device(self)
+        self.call_binop_kernel(name, lhs, rhs, out, hparams)
+        return out

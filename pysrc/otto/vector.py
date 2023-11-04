@@ -332,3 +332,6 @@ class Vector[T]:
     def to_host(self, total=0) -> Self:
         _ottol.otto_vector_tohost(self._cdata, total)
         return self
+
+    def create_from(self) -> Self:
+        return Vector.with_capacity(self.capacity, self._dtype, self.mode)
