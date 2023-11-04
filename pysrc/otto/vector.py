@@ -11,14 +11,15 @@ import otto_ffi as _
 from _otto import ffi, lib as _ottol
 
 from otto import dtypes
+from otto.cl.runtime import Runtime
 from otto.exceptions import OttoException
 from otto.status import ffi_call
 
 
 class MemFlags(Enum):
-    READ = 1
-    WRITE = 2
-    READ_WRITE = 3
+    READ = _ottol.CL_MEM_READ_ONLY
+    WRITE = _ottol.CL_MEM_WRITE_ONLY
+    READ_WRITE = _ottol.CL_MEM_READ_WRITE
 
 
 class Vector[T]:
@@ -304,3 +305,29 @@ class Vector[T]:
 
     def set_read_write(self) -> Self:
         return self.set_mode(MemFlags.READ_WRITE)
+
+    def to_device_mode(self, ctx: Runtime = None, mode: MemFlags = None) -> Self:
+        if mode is None:
+            mode = self.mode
+
+        if ctx is None:
+            LOGGER.info("Getting default runtime")
+            ctx = Runtime()
+        _ottol.otto_vector_todevice_mode(self._cdata, ctx._cdata, mode.value)
+        return self
+
+    def to_device_read(self, ctx: Runtime = None) -> Self:
+        return self.to_device_mode(ctx, MemFlags.READ)
+
+    def to_device_write(self, ctx: Runtime = None) -> Self:
+        return self.to_device_mode(ctx, MemFlags.WRITE)
+
+    def to_device_read_write(self, ctx: Runtime = None) -> Self:
+        return self.to_device_mode(ctx, MemFlags.READ_WRITE)
+
+    def to_device(self, ctx: Runtime = None) -> Self:
+        return self.to_device_mode(ctx, self.mode)
+
+    def to_host(self, total=0) -> Self:
+        _ottol.otto_vector_tohost(self._cdata, total)
+        return self
