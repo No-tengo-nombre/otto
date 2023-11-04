@@ -106,8 +106,6 @@ class Runtime(metaclass=_RuntimeMeta):
                 "Failed loading kernels",
             )
 
-    # TODO: Implement the rest of the methods
-
     def __del__(self):
         try:
             ffi_call(_ottol.otto_runtime_cleanup(
