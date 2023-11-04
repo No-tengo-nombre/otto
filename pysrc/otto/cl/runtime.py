@@ -12,6 +12,7 @@ from otto.status import ffi_call
 
 
 class Kernels(Enum):
+    NONE = _ottol.OTTO_KERNELS_NONE
     ALL = _ottol.OTTO_KERNELS_ALL
     CORE = _ottol.OTTO_KERNELS_CORE
 
@@ -40,20 +41,34 @@ class Runtime(metaclass=_RuntimeMeta):
     __slots__ = ("_id", "_cdata", "_ctx_props",
                  "_q_props", "_dev", "_kernel_ht")
 
-    def __init__(self, device: Device = Device.CPU, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, *, instance_id=None) -> None:
+    cls_device = Device.CPU
+    cls_kernels = Kernels.CORE
+
+    def __init__(self, device: Device = None, kernels: Kernels = None, ctx_props=None, queue_props=None, kernel_build_options=None, *, instance_id=None) -> None:
         # TODO: Add option to specify context and queue properties
         LOGGER.info("Creating new runtime")
         self._id = instance_id
         self._cdata = ffi.new("otto_runtime_t *")
+
         if ctx_props is None:
             self._ctx_props = ffi.NULL
         else:
             self._ctx_props = ctx_props
+
         if queue_props is None:
             self._q_props = ffi.NULL
         else:
             self._q_props = queue_props
-        self._dev = device
+
+        if device is None:
+            self._dev = self.cls_device
+        else:
+            self._dev = device
+
+        if kernels is None:
+            otto_kernels = self.cls_kernels
+        else:
+            otto_kernels = kernels
         self._kernel_ht = ffi.NULL
 
         # Initialize the runtime
@@ -67,15 +82,15 @@ class Runtime(metaclass=_RuntimeMeta):
             self._cdata,
         ), "Runtime creation failed")
 
-        if kernels is not None:
-            LOGGER.info("Loading kernels '%s'", kernels.name)
+        if otto_kernels is not Kernels.NONE:
+            LOGGER.info("Loading kernels '%s'", otto_kernels.name)
             if kernel_build_options is None:
                 kernel_build_options = ""
             kernel_build_options = ffi.new(
                 "const char []", kernel_build_options.encode())
             ffi_call(
                 _ottol.otto_runtime_load_kernels(
-                    self._cdata, kernels.value, kernel_build_options),
+                    self._cdata, otto_kernels.value, kernel_build_options),
                 "Failed loading kernels",
             )
 
