@@ -50,7 +50,7 @@ int main(void) {
       .local_size = 64,
   };
   log_info("Calling kernel directly from runtime");
-  otto_runtime_call_kernel_binop(&ctx, "otto_vector_add", &hparams, &a, &b,
+  otto_runtime_call_kernel_binop(&ctx, "otto_vector_add__i32", &hparams, &a, &b,
                                  &out);
   log_info("Reading from the output buffer");
   otto_vector_tohost(&out, 0);
