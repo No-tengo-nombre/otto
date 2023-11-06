@@ -198,24 +198,36 @@ class Vector[T]:
         # TODO: Determine a more efficient way of converting to numpy array
         return np.array(self.to_list(), dtype=self._dtype.np)
 
+    def add(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_add__{self._dtype.name}", self, rhs, None)
+
+    def sub(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_sub__{self._dtype.name}", self, rhs, None)
+
+    def mul(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_mul__{self._dtype.name}", self, rhs, None)
+
+    def truediv(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_div__{self._dtype.name}", self, rhs, None)
+
     def __add__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_add__{self._dtype.name}", self, rhs, None)
+        return self.add(rhs)
 
     def __sub__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_sub__{self._dtype.name}", self, rhs, None)
+        return self.sub(rhs)
 
     def __mul__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_mul__{self._dtype.name}", self, rhs, None)
+        return self.mul(rhs)
 
     def __matmul__(self, rhs):
         raise NotImplementedError("Method not implemented")
 
     def __truediv__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_div__{self._dtype.name}", self, rhs, None)
+        return self.truediv(rhs)
 
     def __floordiv__(self, rhs):
         raise NotImplementedError("Method not implemented")
