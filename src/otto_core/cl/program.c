@@ -18,7 +18,50 @@ const char *_OTTO_KERNELS_CORE[] = {
 };
 const char *_OTTO_KERNELS_CORE_NAMES[] = {
     // Vectors
-    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    "otto_vector_add__u8",
+    "otto_vector_add__u16",
+    "otto_vector_add__u32",
+    "otto_vector_add__u64",
+    "otto_vector_add__i8",
+    "otto_vector_add__i16",
+    "otto_vector_add__i32",
+    "otto_vector_add__i64",
+    "otto_vector_add__f32",
+    "otto_vector_add__f64",
+
+    "otto_vector_sub__u8",
+    "otto_vector_sub__u16",
+    "otto_vector_sub__u32",
+    "otto_vector_sub__u64",
+    "otto_vector_sub__i8",
+    "otto_vector_sub__i16",
+    "otto_vector_sub__i32",
+    "otto_vector_sub__i64",
+    "otto_vector_sub__f32",
+    "otto_vector_sub__f64",
+
+    "otto_vector_mul__u8",
+    "otto_vector_mul__u16",
+    "otto_vector_mul__u32",
+    "otto_vector_mul__u64",
+    "otto_vector_mul__i8",
+    "otto_vector_mul__i16",
+    "otto_vector_mul__i32",
+    "otto_vector_mul__i64",
+    "otto_vector_mul__f32",
+    "otto_vector_mul__f64",
+
+    "otto_vector_div__u8",
+    "otto_vector_div__u16",
+    "otto_vector_div__u32",
+    "otto_vector_div__u64",
+    "otto_vector_div__i8",
+    "otto_vector_div__i16",
+    "otto_vector_div__i32",
+    "otto_vector_div__i64",
+    "otto_vector_div__f32",
+    "otto_vector_div__f64",
+
     // Matrices
 };
 const size_t _OTTO_KERNELS_CORE_COUNT =
@@ -32,7 +75,50 @@ const char *_OTTO_KERNELS_ALL[] = {
 };
 const char *_OTTO_KERNELS_ALL_NAMES[] = {
     // Vectors
-    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    "otto_vector_add__u8",
+    "otto_vector_add__u16",
+    "otto_vector_add__u32",
+    "otto_vector_add__u64",
+    "otto_vector_add__i8",
+    "otto_vector_add__i16",
+    "otto_vector_add__i32",
+    "otto_vector_add__i64",
+    "otto_vector_add__f32",
+    "otto_vector_add__f64",
+
+    "otto_vector_sub__u8",
+    "otto_vector_sub__u16",
+    "otto_vector_sub__u32",
+    "otto_vector_sub__u64",
+    "otto_vector_sub__i8",
+    "otto_vector_sub__i16",
+    "otto_vector_sub__i32",
+    "otto_vector_sub__i64",
+    "otto_vector_sub__f32",
+    "otto_vector_sub__f64",
+
+    "otto_vector_mul__u8",
+    "otto_vector_mul__u16",
+    "otto_vector_mul__u32",
+    "otto_vector_mul__u64",
+    "otto_vector_mul__i8",
+    "otto_vector_mul__i16",
+    "otto_vector_mul__i32",
+    "otto_vector_mul__i64",
+    "otto_vector_mul__f32",
+    "otto_vector_mul__f64",
+
+    "otto_vector_div__u8",
+    "otto_vector_div__u16",
+    "otto_vector_div__u32",
+    "otto_vector_div__u64",
+    "otto_vector_div__i8",
+    "otto_vector_div__i16",
+    "otto_vector_div__i32",
+    "otto_vector_div__i64",
+    "otto_vector_div__f32",
+    "otto_vector_div__f64",
+
     // Matrices
 };
 const size_t _OTTO_KERNELS_ALL_COUNT =

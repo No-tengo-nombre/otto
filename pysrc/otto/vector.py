@@ -200,22 +200,22 @@ class Vector[T]:
 
     def __add__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_add", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_add__{self._dtype.name}", self, rhs, None)
 
     def __sub__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_sub", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_sub__{self._dtype.name}", self, rhs, None)
 
     def __mul__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_mul", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_mul__{self._dtype.name}", self, rhs, None)
 
     def __matmul__(self, rhs):
         raise NotImplementedError("Method not implemented")
 
     def __truediv__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_div", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_div__{self._dtype.name}", self, rhs, None)
 
     def __floordiv__(self, rhs):
         raise NotImplementedError("Method not implemented")
