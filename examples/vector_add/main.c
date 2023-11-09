@@ -62,7 +62,7 @@ int main(void) {
   };
 
   log_info("Calling kernel directly from runtime");
-  OTTO_CALL(otto_runtime_call_kernel_binop(&ctx, "otto_vector_add", &hparams,
+  OTTO_CALL(otto_runtime_call_kernel_binop(&ctx, "otto_vector_add__i32", &hparams,
                                            &a, &b, &out),
             "Failed calling kernel");
 
