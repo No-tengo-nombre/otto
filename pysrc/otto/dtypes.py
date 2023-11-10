@@ -32,6 +32,7 @@ INT64 = DataType(8, "i64", "int64_t", np.int64)
 
 FLOAT32 = DataType(4, "f32", "float", np.float32)
 FLOAT64 = DataType(8, "f64", "double", np.float64)
+
 _NP_TYPES = {
     "uint8": UINT8,
     "uint16": UINT16,
