@@ -189,7 +189,7 @@ otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
 
     size = get_file_size(f);
     logi_debug("File size: %i", size);
-    source = malloc(size * sizeof(char));
+    source = malloc((size + 1) * sizeof(char));
     if (source == NULL) {
       logi_warn("Could not allocate contents");
       continue;
