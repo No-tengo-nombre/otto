@@ -260,3 +260,21 @@ __kernel void otto_vector_div__f64(__global const f64_t *lhs,
   int i = get_global_id(0);
   out[i] = lhs[i] / rhs[i];
 }
+
+/* Vector operations */
+
+__kernel void otto_vector_dot__i32(__global const i32_t *lhs,
+                                   __global const i32_t *rhs,
+                                   __global i32_t *out) {
+  int gid = get_global_id(0);
+  out[gid] = lhs[gid] * rhs[gid];
+
+  // Perform parallel reduction to calculate the dot product
+  work_group_barrier(CLK_LOCAL_MEM_FENCE);
+  for (int stride = get_global_size(0) / 2; stride > 0; stride >>= 1) {
+    if (gid < stride) {
+      out[gid] += out[gid + stride];
+    }
+    work_group_barrier(CLK_LOCAL_MEM_FENCE);
+  }
+}

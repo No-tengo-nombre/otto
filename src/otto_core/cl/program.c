@@ -62,6 +62,8 @@ const char *_OTTO_KERNELS_CORE_NAMES[] = {
     "otto_vector_div__f32",
     "otto_vector_div__f64",
 
+    "otto_vector_dot__i32",
+
     // Matrices
 };
 const size_t _OTTO_KERNELS_CORE_COUNT =
