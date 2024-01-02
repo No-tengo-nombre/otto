@@ -8,7 +8,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_new(void) {
+otto_status_t test_new(void) {
   otto_vector_t vec;
 
   log_debug("Creating vector");
@@ -19,10 +19,10 @@ int test_new(void) {
   OTTO_ASSERT_EQI(vec.capacity, 0);
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
   OTTO_ASSERT_EQI(vec.len, 0);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_zero(void) {
+otto_status_t test_zero(void) {
   otto_vector_t vec;
   size_t len = 10;
 
@@ -35,10 +35,10 @@ int test_zero(void) {
     OTTO_ASSERT_EQI(*(uint32_t *)((char *)vec.data + i * sizeof(uint32_t)), 0);
   }
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_with_capacity(void) {
+otto_status_t test_with_capacity(void) {
   otto_vector_t vec;
 
   log_debug("Creating vector");
@@ -51,10 +51,10 @@ int test_with_capacity(void) {
   OTTO_ASSERT_EQI(vec.data_size, sizeof(uint32_t));
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
   OTTO_ASSERT_EQI(vec.len, 0);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_from_array(void) {
+otto_status_t test_from_array(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -70,7 +70,7 @@ int test_from_array(void) {
   }
   OTTO_ASSERT_EQI(vec.device, OTTO_DEVICE_CPU);
 
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 int main(void) {

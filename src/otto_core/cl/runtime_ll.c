@@ -13,7 +13,7 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val) {
     // This should only happen if it is the first element
     logi_debug("Writing first element");
     head->item = val;
-    return OTTO_SUCCESS;
+    return OTTO_STATUS_SUCCESS;
   }
 
   // Go to the end
@@ -24,23 +24,23 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val) {
   otto_kernelll_t *node = malloc(sizeof(otto_kernelll_t));
   if (node == NULL) {
     logi_error("Could not allocate memory");
-    return OTTO_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate memory");
   }
   logi_debug("Writing to last node");
   node->item = val;
   node->next = NULL;
   head->next = node;
   logi_debug("Returning");
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_kernelll_cleanup(otto_kernelll_t *head) {
   if (head == NULL) {
-    return OTTO_SUCCESS;
+    return OTTO_STATUS_SUCCESS;
   }
   otto_kernelll_cleanup(head->next); // This never fails
   free(head->item->kernel);
   free(head->item); // Frees the hash table entry associated
   free(head);
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }

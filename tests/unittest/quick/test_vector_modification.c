@@ -7,7 +7,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_push(void) {
+otto_status_t test_push(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -25,9 +25,9 @@ int test_push(void) {
   OTTO_ASSERT_EQI(vec.capacity, 9);
 
   log_debug("Checking border scenario");
-  if (otto_vector_push(&vec, NULL) != OTTO_FAILURE) {
+  if (otto_vector_push(&vec, NULL).status != OTTO_FAILURE) {
     log_fatal("Pushing NULL did not fail");
-    return TEST_FAIL;
+    return OTTO_STATUS_FAILURE("Expected fail pushing element");
   }
   log_debug("Checking that the failed push does not modify the vector");
   OTTO_ASSERT_EQI(vec.len, 9);
@@ -37,10 +37,10 @@ int test_push(void) {
   uint32_t contained_val;
   OTTO_CALL(otto_vector_get(&vec, 8, &contained_val), "Failed getting vec[8]");
   OTTO_ASSERT_EQI(contained_val, val);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_push2(void) {
+otto_status_t test_push2(void) {
   otto_vector_t vec;
   size_t capacity = 8;
 
@@ -60,10 +60,10 @@ int test_push2(void) {
   uint32_t contained_val;
   OTTO_CALL(otto_vector_get(&vec, 0, &contained_val), "Failed getting vec[0]");
   OTTO_ASSERT_EQI(contained_val, val);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_extend_array(void) {
+otto_status_t test_extend_array(void) {
   otto_vector_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -83,9 +83,9 @@ int test_extend_array(void) {
   OTTO_ASSERT_EQI(vec.capacity, 11);
 
   log_debug("Checking border scenario");
-  if (otto_vector_extend_array(&vec, NULL, 10010) != OTTO_FAILURE) {
+  if (otto_vector_extend_array(&vec, NULL, 10010).status != OTTO_FAILURE) {
     log_fatal("Extending with NULL did not fail");
-    return TEST_FAIL;
+    return OTTO_STATUS_FAILURE("Expected fail extending");
   }
   log_debug("Checking that the failed extend does not modify the vector");
   OTTO_ASSERT_EQI(vec.len, 11);
@@ -104,7 +104,7 @@ int test_extend_array(void) {
     OTTO_ASSERT_EQI(contained_val, values[i]);
   }
   log_debug("Found no issues");
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 int main(void) {

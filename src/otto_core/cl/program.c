@@ -12,6 +12,8 @@
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
+// clang-format off
+
 const char *_OTTO_KERNELS_CORE[] = {
     OTTO_CLKERNEL("vector/elementary.cl"),
     OTTO_CLKERNEL("matrix/elementary.cl"),
@@ -128,6 +130,8 @@ const size_t _OTTO_KERNELS_ALL_COUNT =
 const size_t _OTTO_KERNELS_ALL_NAMES_COUNT =
     sizeof(_OTTO_KERNELS_ALL_NAMES) / sizeof(char *);
 
+// clang-format on
+
 int64_t get_file_size(FILE *file) {
   fseek(file, 0, SEEK_END);
   int64_t size = ftell(file);
@@ -147,7 +151,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
       clCreateProgramWithSource(ctx->ctx, count, sources, NULL, &status);
   if (status != CL_SUCCESS) {
     logi_error("Could not create program from sources (%d)", status);
-    return OTTO_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not create program from sources");
   }
 
   otto_program_t prog = {
@@ -156,7 +160,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
 
   if (build_options != NULL) {
     otto_status_t s = otto_program_build(&prog, ctx, build_options);
-    if (s != OTTO_SUCCESS) {
+    if (s.status != OTTO_SUCCESS) {
       logi_error("Failed to build, make sure to run `otto_program_build` "
                  "on the program to try again");
     }
@@ -165,7 +169,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
               "on the program");
   }
   *out = prog;
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
@@ -175,7 +179,7 @@ otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
   char **sources = malloc(count * sizeof(char *));
   if (sources == NULL) {
     logi_error("Could not allocate files");
-    return OTTO_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate files");
   }
   FILE *f;
   char *source;
@@ -221,7 +225,7 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
   switch (kernels) {
   case OTTO_KERNELS_NONE:
     logi_info("Using no kernels");
-    return OTTO_SUCCESS;
+    return OTTO_STATUS_SUCCESS;
 
   case OTTO_KERNELS_CORE:
     files = _OTTO_KERNELS_CORE;
@@ -241,7 +245,7 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
 
   default:
     logi_error("Could not interpret kernels");
-    return OTTO_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not interpret kernels");
   }
 
   logi_debug("Loading %i files", count);
@@ -255,13 +259,13 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
     OTTO_CALL_I(otto_kernel_new(out, *ker_names, 3, ctx, NULL),
                 "Could not load kernel '%s'", *ker_names);
   }
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_program_cleanup(const otto_program_t *prog) {
   OTTO_CL_CALL_I(clReleaseProgram(prog->p), "Failed releasing program (%d)",
                  err_);
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_program_build(const otto_program_t *prog,
@@ -271,5 +275,5 @@ otto_status_t otto_program_build(const otto_program_t *prog,
   OTTO_CL_CALL_I(clBuildProgram(prog->p, ctx->device_num, &ctx->devices,
                                 options, NULL, NULL),
                  "Failed building program");
-  return OTTO_SUCCESS;
+  return OTTO_STATUS_SUCCESS;
 }

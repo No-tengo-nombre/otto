@@ -7,7 +7,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-int test_get(void) {
+otto_status_t test_get(void) {
   otto_vector_t vec;
   uint32_t data[] = {7, 6, 5, 4, 3, 2, 1, 0};
   size_t len = 8;
@@ -24,18 +24,18 @@ int test_get(void) {
   }
 
   log_debug("Checking border scenarios");
-  if (otto_vector_get(&vec, len, &val) != OTTO_FAILURE) {
+  if (otto_vector_get(&vec, len, &val).status != OTTO_FAILURE) {
     log_fatal("Getting element %d did not fail", len);
-    return TEST_FAIL;
+    return OTTO_STATUS_FAILURE("Expected fail getting element");
   }
 
   // Check that the failed call to otto_vector_get did not accidentally
   // modify val
   OTTO_ASSERT_EQI(val, data[len - 1]);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
-int test_set(void) {
+otto_status_t test_set(void) {
   otto_vector_t vec;
   uint32_t data[] = {7, 6, 5, 4, 3, 2, 1, 0};
   size_t len = 8;
@@ -72,15 +72,15 @@ int test_set(void) {
   }
 
   log_debug("Checking border scenarios");
-  if (otto_vector_set(&vec, len - 1, NULL) != OTTO_FAILURE) {
+  if (otto_vector_set(&vec, len - 1, NULL).status != OTTO_FAILURE) {
     log_fatal("Setting element %d did not fail", len - 1);
-    return TEST_FAIL;
+    return OTTO_STATUS_FAILURE("Expected fail setting element");
   }
 
   // Check that the failed call to otto_vector_get did not accidentally
   // modify val
   OTTO_ASSERT_EQI(val, data[len - 1]);
-  return TEST_PASS;
+  return OTTO_STATUS_SUCCESS;
 }
 
 int main(void) {
