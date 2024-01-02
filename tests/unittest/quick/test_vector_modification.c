@@ -25,7 +25,7 @@ int test_push(void) {
   OTTO_ASSERT_EQI(vec.capacity, 9);
 
   log_debug("Checking border scenario");
-  if (otto_vector_push(&vec, NULL) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_push(&vec, NULL) != OTTO_FAILURE) {
     log_fatal("Pushing NULL did not fail");
     return TEST_FAIL;
   }
@@ -83,7 +83,7 @@ int test_extend_array(void) {
   OTTO_ASSERT_EQI(vec.capacity, 11);
 
   log_debug("Checking border scenario");
-  if (otto_vector_extend_array(&vec, NULL, 10010) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_extend_array(&vec, NULL, 10010) != OTTO_FAILURE) {
     log_fatal("Extending with NULL did not fail");
     return TEST_FAIL;
   }

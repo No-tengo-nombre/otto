@@ -13,9 +13,9 @@ otto_status_t otto_device_as_cl(const otto_device_t dev, cl_device_type *out) {
     break;
   default:
     logi_warn("Requested device not implemented");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_device_name(const otto_device_t dev, const char **out) {
@@ -29,7 +29,7 @@ otto_status_t otto_device_name(const otto_device_t dev, const char **out) {
     break;
   default:
     logi_warn("Requested device not found");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }

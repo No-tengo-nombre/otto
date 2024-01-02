@@ -10,17 +10,17 @@
 
 otto_status_t otto_vector_setread(otto_vector_t *vec) {
   vec->flags = CL_MEM_READ_ONLY;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_vector_setwrite(otto_vector_t *vec) {
   vec->flags = CL_MEM_WRITE_ONLY;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_vector_setreadwrite(otto_vector_t *vec) {
   vec->flags = CL_MEM_READ_WRITE;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
@@ -33,7 +33,7 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
   logi_info("Sending vector to device '%s'", dev_name);
   if (vec == NULL) {
     logi_error("Can not register NULL vector");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   cl_int status = CL_SUCCESS;
@@ -41,7 +41,7 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
                                NULL, &status);
   if (gmem == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating buffer (%d)", status);
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   if (flags == CL_MEM_READ_ONLY) {
@@ -56,7 +56,7 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
   vec->gmem = gmem;
   vec->device = ctx->dev;
   vec->ctx = ctx;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_vector_todevice(otto_vector_t *vec,
@@ -90,5 +90,5 @@ otto_status_t otto_vector_tohost(otto_vector_t *vec, uint64_t total) {
                                      NULL),
                  "Failed sending to host");
   vec->len = total;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }

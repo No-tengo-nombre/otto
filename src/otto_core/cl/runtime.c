@@ -22,7 +22,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                otto_kernelht_t *kernel_ht,
                                otto_runtime_t *out) {
   if (out == NULL) {
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   cl_device_type dev = CL_DEVICE_TYPE_DEFAULT;
@@ -55,7 +55,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       clCreateContext(ctx_props, device_num, &devices, NULL, NULL, &status);
   if (ctx == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating context");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   logi_info("Creating command queue");
@@ -63,14 +63,14 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       clCreateCommandQueueWithProperties(ctx, devices, q_props, &status);
   if (cq == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating command queue");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   logi_debug("Allocating memory for the linked list");
   otto_kernelll_t *node = malloc(sizeof(otto_kernelll_t));
   if (node == NULL) {
     logi_error("Could not allocate memory for linked list");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
   node->item = NULL;
   node->next = NULL;
@@ -91,7 +91,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       ._sources_count = 0,
   };
   *out = result;
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
@@ -101,7 +101,7 @@ otto_status_t otto_runtime_load_kernels(otto_runtime_t *ctx,
   OTTO_CALL_I(otto_program_from_default(ctx, kernels, build_options, &prog),
               "Could not load program");
   OTTO_CALL_I(otto_program_cleanup(&prog), "Failed cleaning up the program");
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 void cleanup_sources(const char **sources, const size_t count) {
@@ -122,7 +122,7 @@ otto_status_t otto_runtime_cleanup(const otto_runtime_t *ctx) {
   OTTO_CL_CALL_I(clReleaseCommandQueue(ctx->cq),
                  "Failed releasing command queue");
   OTTO_CL_CALL_I(clReleaseContext(ctx->ctx), "Failed releasing context");
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
@@ -137,7 +137,7 @@ otto_status_t otto_runtime_add_kernel(otto_runtime_t *ctx, const char *name,
   HASH_ADD_STR(ctx->_kernels_ht, name, item);
   logi_debug("Pushing to linked list");
   otto_kernelll_push(ctx->_kernels_ll, item);
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
@@ -147,18 +147,18 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
 
   if (ctx->_kernels_ht == NULL) {
     logi_error("Hash table in the current runtime is NULL");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
   logi_debug("Finding '%s' in hashtable", name);
   HASH_FIND_STR(ctx->_kernels_ht, name, item);
   logi_debug("Copying data to output");
   if (item == NULL) {
     logi_error("Could not find kernel");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
   *out = *item->kernel;
   logi_debug("Finished copying data");
-  return OTTO_STATUS_SUCCESS;
+  return OTTO_SUCCESS;
 }
 
 otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
@@ -167,7 +167,7 @@ otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
                                         va_list args) {
   if (ctx == NULL) {
     logi_error("Runtime is NULL");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_FAILURE;
   }
 
   otto_kernel_t ker;

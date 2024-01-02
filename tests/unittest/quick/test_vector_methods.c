@@ -24,7 +24,7 @@ int test_get(void) {
   }
 
   log_debug("Checking border scenarios");
-  if (otto_vector_get(&vec, len, &val) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_get(&vec, len, &val) != OTTO_FAILURE) {
     log_fatal("Getting element %d did not fail", len);
     return TEST_FAIL;
   }
@@ -72,7 +72,7 @@ int test_set(void) {
   }
 
   log_debug("Checking border scenarios");
-  if (otto_vector_set(&vec, len - 1, NULL) != OTTO_STATUS_FAILURE) {
+  if (otto_vector_set(&vec, len - 1, NULL) != OTTO_FAILURE) {
     log_fatal("Setting element %d did not fail", len - 1);
     return TEST_FAIL;
   }
