@@ -10,6 +10,7 @@ extern "C" {
 typedef enum otto_status {
   OTTO_SUCCESS = 0,
   OTTO_FAILURE = 1,
+  OTTO_ERR_ARGS = 2,
 } otto_status_t;
 
 #ifdef __cplusplus
