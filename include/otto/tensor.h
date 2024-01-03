@@ -36,6 +36,8 @@ otto_status_t otto_tensor_zero(const size_t rank, size_t *shape,
 
 /* Tensor attributes */
 
+otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat,
+                                          const size_t *idx, size_t *out);
 otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
                               void *out);
 otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
