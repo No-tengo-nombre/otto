@@ -12,5 +12,5 @@ This file contains a list of the TODO tasks found within the source code.
 - **(`./pysrc/otto/vector.py`)** Determine a more efficient way of converting to numpy array
 - **(`./pysrc/otto/__init__.py`)** Wrap the entire library
 - **(`./pysrc/otto_ffi/__init__.py`)** Update the FFI to account for the interface changes
-- **(`./src/otto_core/tensor.c`)** Test this implementation
+- **(`./src/otto_core/tensor_attrs.c`)** Test this implementation
 - **(`./tools/gen_todo.sh`)** Ignore TODOs in dependencies
