@@ -72,4 +72,5 @@ otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
   OTTO_CALL_I(otto_vector_set(&mat->vec, index, src),
               "Failed setting index from underlying vector");
   return OTTO_STATUS_SUCCESS;
+  // TODO: Test this implementation
 }
