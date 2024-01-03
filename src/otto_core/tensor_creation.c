@@ -34,3 +34,9 @@ otto_status_t otto_tensor_zero(const size_t rank, size_t *shape,
   *out = result;
   return OTTO_STATUS_SUCCESS;
 }
+
+otto_status_t otto_tensor_from_array(const void *data, const size_t rank,
+                                     size_t *shape, const size_t data_size,
+                                     otto_tensor_t *out) {
+  return OTTO_STATUS_FAILURE("Not implemented");
+}
