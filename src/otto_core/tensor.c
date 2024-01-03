@@ -6,6 +6,19 @@
 
 #include <stdint.h>
 
+size_t calculate_index(const size_t *idx, const size_t rank,
+                       const size_t *shapes) {
+  size_t index = 0;
+  for (int k = 0; k < rank; k++) {
+    size_t s = 1;
+    for (int n = k + 1; n < rank; n++) {
+      s *= shapes[n];
+    }
+    index += s * (*idx++);
+  }
+  return index;
+}
+
 // otto_status_t otto_tensor_new(otto_tensor_t *out) {
 //   otto_tensor_t result = {
 //       .vec = NULL,
@@ -37,16 +50,7 @@ otto_status_t otto_tensor_zero(const size_t rank, size_t *shape,
 
 otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
                               void *out) {
-  size_t index = 0;
-  const size_t *shapes = mat->shape;
-  for (int k = 0; k < mat->rank; k++) {
-    size_t s = 1;
-    for (int n = k + 1; n < mat->rank; n++) {
-      s *= shapes[n];
-    }
-    logi_debug("s %i", s);
-    index += s * (*idx++);
-  }
+  size_t index = calculate_index(idx, mat->rank, mat->shape);
   if (index < 0 || index >= mat->vec.len) {
     logi_error("Index %i out of bounds", index);
     return OTTO_STATUS_FAILURE("Index out of bounds");
