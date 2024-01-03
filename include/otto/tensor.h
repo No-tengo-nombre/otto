@@ -37,6 +37,9 @@ otto_status_t otto_tensor_from_array(const void *data, const size_t rank,
 // otto_status_t otto_tensor_from_vector(otto_vector_t *vec, const size_t rank,
 //                                       const int64_t *shape);
 
+/* Tensor finalization */
+otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat);
+
 /* Tensor attributes */
 
 otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat,

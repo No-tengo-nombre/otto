@@ -40,3 +40,9 @@ otto_status_t otto_tensor_from_array(const void *data, const size_t rank,
                                      otto_tensor_t *out) {
   return OTTO_STATUS_FAILURE("Not implemented");
 }
+
+otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat) {
+  OTTO_CALL_I(otto_vector_cleanup(&mat->vec),
+              "Failed cleaning up underlying vector");
+  return OTTO_STATUS_SUCCESS;
+}
