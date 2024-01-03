@@ -63,5 +63,13 @@ otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
 
 otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
                               const void *src) {
-  return OTTO_STATUS_FAILURE("Not implemented");
+  size_t index = calculate_index(idx, mat->rank, mat->shape);
+  if (index < 0 || index >= mat->vec.len) {
+    logi_error("Index %i out of bounds", index);
+    return OTTO_STATUS_FAILURE("Index out of bounds");
+  }
+  logi_debug("Setting index %i", index);
+  OTTO_CALL_I(otto_vector_set(&mat->vec, index, src),
+              "Failed setting index from underlying vector");
+  return OTTO_STATUS_SUCCESS;
 }
