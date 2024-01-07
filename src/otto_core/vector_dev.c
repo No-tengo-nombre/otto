@@ -33,7 +33,7 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
   logi_info("Sending vector to device '%s'", dev_name);
   if (vec == NULL) {
     logi_error("Can not register NULL vector");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Can not register NULL vector");
   }
 
   cl_int status = CL_SUCCESS;
@@ -41,7 +41,7 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
                                NULL, &status);
   if (gmem == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating buffer (%d)", status);
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Failed creating buffer");
   }
 
   if (flags == CL_MEM_READ_ONLY) {

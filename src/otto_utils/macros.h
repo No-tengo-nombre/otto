@@ -6,9 +6,9 @@
 #include <ottou/macros.h>
 
 #define OTTO_CALL_I(x, msg, ...)                                               \
-  if (x != OTTO_STATUS_SUCCESS) {                                              \
+  if (x.status != OTTO_SUCCESS) {                                              \
     logi_error(msg, #__VA_ARGS__);                                             \
-    return OTTO_STATUS_FAILURE;                                                \
+    return OTTO_STATUS_FAILURE(msg);                                           \
   }
 
 #define OTTO_CL_CALL_I(x, msg, ...)                                            \
@@ -18,6 +18,6 @@
       const char *err_str = get_cl_error_msg(err_);                            \
       logi_error(msg, #__VA_ARGS__);                                           \
       logi_error("Found CL error %d '%s'", err_, err_str);                     \
-      return OTTO_STATUS_FAILURE;                                              \
+      return OTTO_STATUS_FAILURE(msg);                                         \
     }                                                                          \
   }

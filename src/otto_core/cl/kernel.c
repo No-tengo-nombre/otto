@@ -18,14 +18,14 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
   cl_kernel k = clCreateKernel(prog->p, name, &status);
   if (k == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating kernel '%s' (%d)", name, status);
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Failed creating kernel");
   }
 
   logi_info("Allocating memory for the kernel");
   otto_kernel_t *kernel_ptr = malloc(sizeof(otto_kernel_t));
   if (kernel_ptr == NULL) {
     logi_error("Could not allocate memory");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate memory");
   }
 
   logi_info("Assembling struct");
@@ -52,7 +52,7 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
                                 va_list args) {
   if (ker == NULL) {
     logi_error("Can not call NULL pointer as kernel");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Can not call NULL pointer as kernel");
   }
 
   logi_info("Calling kernel '%s'", ker->name);
@@ -64,28 +64,27 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
                    "Failed passing %d-th arg to the kernel", i);
   }
 
-  otto_status_t s = OTTO_STATUS_SUCCESS;
+  enum otto_status s = OTTO_SUCCESS;
   // Try to call with passed hparams first
   if (hparams != NULL) {
     logi_debug("Calling with given hparams");
     s = clEnqueueNDRangeKernel(ctx->cq, ker->k, hparams->work_dim, NULL,
                                &hparams->global_size, &hparams->local_size, 0,
                                NULL, NULL);
-    if (s != OTTO_STATUS_SUCCESS) {
+    if (s != OTTO_SUCCESS) {
       logi_warn("Calling with given hparams failed");
     }
   }
 
   // Call with derived hparams if none were passed or calling with passed failed
-  if ((hparams == NULL || s == OTTO_STATUS_FAILURE) &&
-      ctx->kernel_hparams != NULL) {
+  if ((hparams == NULL || s == OTTO_FAILURE) && ctx->kernel_hparams != NULL) {
     logi_debug("Defaulting to derived hparams");
     s = clEnqueueNDRangeKernel(ctx->cq, ker->k, ctx->kernel_hparams->work_dim,
                                NULL, &ctx->kernel_hparams->global_size,
                                &ctx->kernel_hparams->local_size, 0, NULL, NULL);
-    if (s != OTTO_STATUS_SUCCESS) {
+    if (s != OTTO_SUCCESS) {
       logi_error("Calling with derived hparams failed");
-      return OTTO_STATUS_FAILURE;
+      return OTTO_STATUS_FAILURE("Calling kernel witwh derived hparams failed");
     }
   }
 
@@ -94,7 +93,7 @@ otto_status_t otto_kernel_vcall(const otto_kernel_t *ker,
     logi_error("No hyperparameters were found. Either pass them as an argument "
                "to use them locally, or keep them in the `kernel_hparams` "
                "attribute in the runtime to use them globally");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("No hparams found");
   }
 
   return OTTO_STATUS_SUCCESS;

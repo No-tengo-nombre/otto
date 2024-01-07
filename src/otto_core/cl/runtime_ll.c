@@ -24,7 +24,7 @@ otto_status_t otto_kernelll_push(otto_kernelll_t *head, otto_kernelht_t *val) {
   otto_kernelll_t *node = malloc(sizeof(otto_kernelll_t));
   if (node == NULL) {
     logi_error("Could not allocate memory");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate memory");
   }
   logi_debug("Writing to last node");
   node->item = val;

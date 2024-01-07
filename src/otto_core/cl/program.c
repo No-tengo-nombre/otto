@@ -12,13 +12,60 @@
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
+// clang-format off
+
 const char *_OTTO_KERNELS_CORE[] = {
     OTTO_CLKERNEL("vector/elementary.cl"),
     OTTO_CLKERNEL("matrix/elementary.cl"),
 };
 const char *_OTTO_KERNELS_CORE_NAMES[] = {
     // Vectors
-    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    "otto_vector_add__u8",
+    "otto_vector_add__u16",
+    "otto_vector_add__u32",
+    "otto_vector_add__u64",
+    "otto_vector_add__i8",
+    "otto_vector_add__i16",
+    "otto_vector_add__i32",
+    "otto_vector_add__i64",
+    "otto_vector_add__f32",
+    "otto_vector_add__f64",
+
+    "otto_vector_sub__u8",
+    "otto_vector_sub__u16",
+    "otto_vector_sub__u32",
+    "otto_vector_sub__u64",
+    "otto_vector_sub__i8",
+    "otto_vector_sub__i16",
+    "otto_vector_sub__i32",
+    "otto_vector_sub__i64",
+    "otto_vector_sub__f32",
+    "otto_vector_sub__f64",
+
+    "otto_vector_mul__u8",
+    "otto_vector_mul__u16",
+    "otto_vector_mul__u32",
+    "otto_vector_mul__u64",
+    "otto_vector_mul__i8",
+    "otto_vector_mul__i16",
+    "otto_vector_mul__i32",
+    "otto_vector_mul__i64",
+    "otto_vector_mul__f32",
+    "otto_vector_mul__f64",
+
+    "otto_vector_div__u8",
+    "otto_vector_div__u16",
+    "otto_vector_div__u32",
+    "otto_vector_div__u64",
+    "otto_vector_div__i8",
+    "otto_vector_div__i16",
+    "otto_vector_div__i32",
+    "otto_vector_div__i64",
+    "otto_vector_div__f32",
+    "otto_vector_div__f64",
+
+    "otto_vector_dot__i32",
+
     // Matrices
 };
 const size_t _OTTO_KERNELS_CORE_COUNT =
@@ -32,13 +79,58 @@ const char *_OTTO_KERNELS_ALL[] = {
 };
 const char *_OTTO_KERNELS_ALL_NAMES[] = {
     // Vectors
-    "otto_vector_add", "otto_vector_sub", "otto_vector_mul", "otto_vector_div",
+    "otto_vector_add__u8",
+    "otto_vector_add__u16",
+    "otto_vector_add__u32",
+    "otto_vector_add__u64",
+    "otto_vector_add__i8",
+    "otto_vector_add__i16",
+    "otto_vector_add__i32",
+    "otto_vector_add__i64",
+    "otto_vector_add__f32",
+    "otto_vector_add__f64",
+
+    "otto_vector_sub__u8",
+    "otto_vector_sub__u16",
+    "otto_vector_sub__u32",
+    "otto_vector_sub__u64",
+    "otto_vector_sub__i8",
+    "otto_vector_sub__i16",
+    "otto_vector_sub__i32",
+    "otto_vector_sub__i64",
+    "otto_vector_sub__f32",
+    "otto_vector_sub__f64",
+
+    "otto_vector_mul__u8",
+    "otto_vector_mul__u16",
+    "otto_vector_mul__u32",
+    "otto_vector_mul__u64",
+    "otto_vector_mul__i8",
+    "otto_vector_mul__i16",
+    "otto_vector_mul__i32",
+    "otto_vector_mul__i64",
+    "otto_vector_mul__f32",
+    "otto_vector_mul__f64",
+
+    "otto_vector_div__u8",
+    "otto_vector_div__u16",
+    "otto_vector_div__u32",
+    "otto_vector_div__u64",
+    "otto_vector_div__i8",
+    "otto_vector_div__i16",
+    "otto_vector_div__i32",
+    "otto_vector_div__i64",
+    "otto_vector_div__f32",
+    "otto_vector_div__f64",
+
     // Matrices
 };
 const size_t _OTTO_KERNELS_ALL_COUNT =
     sizeof(_OTTO_KERNELS_ALL) / sizeof(char *);
 const size_t _OTTO_KERNELS_ALL_NAMES_COUNT =
     sizeof(_OTTO_KERNELS_ALL_NAMES) / sizeof(char *);
+
+// clang-format on
 
 int64_t get_file_size(FILE *file) {
   fseek(file, 0, SEEK_END);
@@ -59,7 +151,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
       clCreateProgramWithSource(ctx->ctx, count, sources, NULL, &status);
   if (status != CL_SUCCESS) {
     logi_error("Could not create program from sources (%d)", status);
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not create program from sources");
   }
 
   otto_program_t prog = {
@@ -68,7 +160,7 @@ otto_status_t otto_program_from_sources(const otto_runtime_t *ctx,
 
   if (build_options != NULL) {
     otto_status_t s = otto_program_build(&prog, ctx, build_options);
-    if (s != OTTO_STATUS_SUCCESS) {
+    if (s.status != OTTO_SUCCESS) {
       logi_error("Failed to build, make sure to run `otto_program_build` "
                  "on the program to try again");
     }
@@ -87,7 +179,7 @@ otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
   char **sources = malloc(count * sizeof(char *));
   if (sources == NULL) {
     logi_error("Could not allocate files");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate files");
   }
   FILE *f;
   char *source;
@@ -103,7 +195,7 @@ otto_status_t otto_program_from_files(otto_runtime_t *ctx, const char **files,
 
     size = get_file_size(f);
     logi_debug("File size: %i", size);
-    source = malloc(size * sizeof(char));
+    source = malloc((size + 1) * sizeof(char));
     if (source == NULL) {
       logi_warn("Could not allocate contents");
       continue;
@@ -153,7 +245,7 @@ otto_status_t otto_program_from_default(otto_runtime_t *ctx,
 
   default:
     logi_error("Could not interpret kernels");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not interpret kernels");
   }
 
   logi_debug("Loading %i files", count);

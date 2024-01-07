@@ -171,7 +171,7 @@ class Vector[T]:
             LOGGER.error(f"Cleaning up vector failed with exception '{e}'")
 
     def __str__(self) -> str:
-        return f"{self._generic_str()}[{self.len}/{self.capacity}]"
+        return self.content_string()
 
     def __getitem__(self, key: int) -> T:
         return self.get(key)
@@ -198,24 +198,36 @@ class Vector[T]:
         # TODO: Determine a more efficient way of converting to numpy array
         return np.array(self.to_list(), dtype=self._dtype.np)
 
+    def add(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_add__{self._dtype.name}", self, rhs, None)
+
+    def sub(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_sub__{self._dtype.name}", self, rhs, None)
+
+    def mul(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_mul__{self._dtype.name}", self, rhs, None)
+
+    def truediv(self, rhs):
+        return self.ctx.call_binop_kernel_no_out(f"otto_vector_div__{self._dtype.name}", self, rhs, None)
+
     def __add__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_add", self, rhs, None)
+        return self.add(rhs)
 
     def __sub__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_sub", self, rhs, None)
+        return self.sub(rhs)
 
     def __mul__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_mul", self, rhs, None)
+        return self.mul(rhs)
 
     def __matmul__(self, rhs):
         raise NotImplementedError("Method not implemented")
 
     def __truediv__(self, rhs):
         self._validate_runtime()
-        return self.ctx.call_binop_kernel_no_out("otto_vector_div", self, rhs, None)
+        return self.truediv(rhs)
 
     def __floordiv__(self, rhs):
         raise NotImplementedError("Method not implemented")
@@ -252,6 +264,9 @@ class Vector[T]:
 
     def content_string(self) -> str:
         return f"{self._generic_str()}{self.to_list()}"
+
+    def short_string(self) -> str:
+        return f"{self._generic_str()}[{self.len}/{self.capacity}]"
 
     def validate_index(self, idx: int) -> int:
         if idx >= self.len:

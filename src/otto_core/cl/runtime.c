@@ -22,7 +22,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
                                otto_kernelht_t *kernel_ht,
                                otto_runtime_t *out) {
   if (out == NULL) {
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("out variable can not be NULL");
   }
 
   cl_device_type dev = CL_DEVICE_TYPE_DEFAULT;
@@ -55,7 +55,7 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       clCreateContext(ctx_props, device_num, &devices, NULL, NULL, &status);
   if (ctx == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating context");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Failed creating context");
   }
 
   logi_info("Creating command queue");
@@ -63,14 +63,14 @@ otto_status_t otto_runtime_new(const cl_context_properties *ctx_props,
       clCreateCommandQueueWithProperties(ctx, devices, q_props, &status);
   if (cq == NULL || status != CL_SUCCESS) {
     logi_error("Failed creating command queue");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Failed creating command queue");
   }
 
   logi_debug("Allocating memory for the linked list");
   otto_kernelll_t *node = malloc(sizeof(otto_kernelll_t));
   if (node == NULL) {
     logi_error("Could not allocate memory for linked list");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate memory for linked list");
   }
   node->item = NULL;
   node->next = NULL;
@@ -147,14 +147,14 @@ otto_status_t otto_runtime_get_kernel(const otto_runtime_t *ctx,
 
   if (ctx->_kernels_ht == NULL) {
     logi_error("Hash table in the current runtime is NULL");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Hash table in the current runtime is NULL");
   }
   logi_debug("Finding '%s' in hashtable", name);
   HASH_FIND_STR(ctx->_kernels_ht, name, item);
   logi_debug("Copying data to output");
   if (item == NULL) {
     logi_error("Could not find kernel");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not find kernel");
   }
   *out = *item->kernel;
   logi_debug("Finished copying data");
@@ -167,7 +167,7 @@ otto_status_t otto_runtime_vcall_kernel(const otto_runtime_t *ctx,
                                         va_list args) {
   if (ctx == NULL) {
     logi_error("Runtime is NULL");
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Runtime is NULL");
   }
 
   otto_kernel_t ker;

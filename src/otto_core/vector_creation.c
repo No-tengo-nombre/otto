@@ -26,7 +26,7 @@ otto_status_t otto_vector_zero(const size_t len, const size_t data_size,
                                otto_vector_t *out) {
   void *data = calloc(len, data_size);
   if (data == NULL) {
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate data");
   }
 
   otto_vector_t result = {
@@ -48,7 +48,7 @@ otto_status_t otto_vector_with_capacity(const size_t capacity,
                                         otto_vector_t *out) {
   void *data = malloc(data_size * capacity);
   if (data == NULL) {
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate data");
   }
 
   otto_vector_t result = {
@@ -70,7 +70,7 @@ otto_status_t otto_vector_from_array(const void *data, const size_t len,
                                      otto_vector_t *out) {
   void *new_data = malloc(len * data_size);
   if (new_data == NULL) {
-    return OTTO_STATUS_FAILURE;
+    return OTTO_STATUS_FAILURE("Could not allocate data");
   }
 
   memcpy(new_data, data, len * data_size);
