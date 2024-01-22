@@ -6,7 +6,7 @@
 #include <ottou/log.h>
 #include <ottou/macros.h>
 
-otto_status_t test_creation_zero() {
+otto_status_t test_creation_zero1() {
   otto_tensor_t mat;
   size_t shape[] = {5, 3, 4};
   OTTO_CALL(otto_tensor_zero(3, shape, sizeof(uint32_t), &mat),
@@ -36,7 +36,7 @@ otto_status_t test_creation_zero2() {
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t test_methods_get() {
+otto_status_t test_methods_get1() {
   otto_tensor_t mat;
   size_t shape[] = {5, 3, 4};
   otto_tensor_zero(3, shape, sizeof(int32_t), &mat);
@@ -69,9 +69,9 @@ otto_status_t test_methods_get3() {
 }
 
 int main() {
-  OTTO_CALL_TEST(test_creation_zero);
+  OTTO_CALL_TEST(test_creation_zero1);
   OTTO_CALL_TEST(test_creation_zero2);
-  OTTO_CALL_TEST(test_methods_get);
+  OTTO_CALL_TEST(test_methods_get1);
   OTTO_CALL_TEST(test_methods_get2);
   OTTO_CALL_TEST(test_methods_get3);
   return TEST_PASS;

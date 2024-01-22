@@ -149,7 +149,7 @@ otto_status_t test_methods_set(void) {
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t test_modification_push(void) {
+otto_status_t test_modification_push1(void) {
   otto_buffer_t vec;
   uint32_t data[] = {0, 1, 2, 3, 4, 5, 6, 7};
   size_t len = 8;
@@ -258,7 +258,7 @@ int main(void) {
   OTTO_CALL_TEST(test_methods_get);
   OTTO_CALL_TEST(test_methods_set);
 
-  OTTO_CALL_TEST(test_modification_push);
+  OTTO_CALL_TEST(test_modification_push1);
   OTTO_CALL_TEST(test_modification_push2);
   OTTO_CALL_TEST(test_modification_extend_array);
 
