@@ -68,11 +68,29 @@ otto_status_t test_methods_get3() {
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t test_methods_set() {
+  otto_tensor_t mat;
+  size_t shape[] = {5, 3, 4};
+  otto_tensor_zero(3, shape, sizeof(int32_t), &mat);
+  int32_t val = 123535;
+  size_t index[] = {4, 2, 3};
+  OTTO_CALL(otto_tensor_set(&mat, index, &val), "Failed setting element");
+
+  int32_t test_val = 1235;
+  size_t other_index[] = {4, 2, 2};
+  OTTO_CALL(otto_tensor_get(&mat, index, &test_val), "Failed getting element");
+  OTTO_ASSERT_EQI(test_val, 123535);
+  OTTO_CALL(otto_tensor_get(&mat, other_index, &test_val), "Failed getting other element");
+  OTTO_ASSERT_EQI(test_val, 0);
+  return OTTO_STATUS_SUCCESS;
+}
+
 int main() {
   OTTO_CALL_TEST(test_creation_zero1);
   OTTO_CALL_TEST(test_creation_zero2);
   OTTO_CALL_TEST(test_methods_get1);
   OTTO_CALL_TEST(test_methods_get2);
   OTTO_CALL_TEST(test_methods_get3);
+  OTTO_CALL_TEST(test_methods_set);
   return TEST_PASS;
 }
