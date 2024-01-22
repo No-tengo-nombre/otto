@@ -6,7 +6,7 @@
 #include <otto/cl/program.h>
 #include <otto/cl/runtime.h>
 #include <otto/status.h>
-#include <otto/vector.h>
+#include <otto/buffer.h>
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
@@ -37,7 +37,7 @@ otto_status_t otto_kernel_new(const otto_program_t *prog, const char *name,
   *kernel_ptr = kernel;
   logi_info("Adding kernel to runtime");
   OTTO_CALL_I(otto_runtime_add_kernel(ctx, name, kernel_ptr),
-              "Failed adding vector to hash table");
+              "Failed adding buffer to hash table");
 
   if (out != NULL) {
     logi_info("Copying output");
@@ -112,9 +112,9 @@ otto_status_t otto_kernel_call(const otto_kernel_t *ker,
 otto_status_t otto_kernel_call_binop(const otto_kernel_t *ker,
                                      const otto_runtime_t *ctx,
                                      const otto_kernel_args_t *hparams,
-                                     const otto_vector_t *a,
-                                     const otto_vector_t *b,
-                                     otto_vector_t *out) {
+                                     const otto_buffer_t *a,
+                                     const otto_buffer_t *b,
+                                     otto_buffer_t *out) {
   return otto_kernel_call(ker, ctx, hparams, OTTO_PVECTORARG(a),
                           OTTO_PVECTORARG(b), OTTO_PVECTORARG(out));
 }

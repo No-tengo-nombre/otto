@@ -16,7 +16,7 @@ https://www.eriksmistad.no/getting-started-with-opencl-and-gpu-computing/
 #define MAX_SOURCE_SIZE (0x100000)
 
 int main(void) {
-  // Create the two input vectors
+  // Create the two input buffers
   int i;
   const int LIST_SIZE = 1024;
   int *A = (int *)malloc(sizeof(int) * LIST_SIZE);
@@ -31,7 +31,7 @@ int main(void) {
   char *source_str;
   size_t source_size;
 
-  fp = fopen("examples/raw_ocl/kernels/vector_add.cl", "r");
+  fp = fopen("examples/raw_ocl/kernels/buffer_add.cl", "r");
   if (!fp) {
     fprintf(stderr, "Failed to load kernel.\n");
     exit(1);
@@ -56,7 +56,7 @@ int main(void) {
   cl_command_queue command_queue =
       clCreateCommandQueueWithProperties(context, device_id, 0, &ret);
 
-  // Create memory buffers on the device for each vector
+  // Create memory buffers on the device for each buffer
   cl_mem a_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY,
                                     LIST_SIZE * sizeof(int), NULL, &ret);
   cl_mem b_mem_obj = clCreateBuffer(context, CL_MEM_READ_ONLY,
@@ -79,7 +79,7 @@ int main(void) {
   ret = clBuildProgram(program, 1, &device_id, NULL, NULL, NULL);
 
   // Create the OpenCL kernel
-  cl_kernel kernel = clCreateKernel(program, "otto_vector_add", &ret);
+  cl_kernel kernel = clCreateKernel(program, "otto_buffer_add", &ret);
 
   // Set the arguments of the kernel
   ret = clSetKernelArg(kernel, 0, sizeof(cl_mem), (void *)&a_mem_obj);

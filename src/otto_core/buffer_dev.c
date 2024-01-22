@@ -4,36 +4,36 @@
 #include <otto/cl/runtime.h>
 #include <otto/devices.h>
 #include <otto/status.h>
-#include <otto/vector.h>
+#include <otto/buffer.h>
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
-otto_status_t otto_vector_setread(otto_vector_t *vec) {
+otto_status_t otto_buffer_setread(otto_buffer_t *vec) {
   vec->flags = CL_MEM_READ_ONLY;
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_setwrite(otto_vector_t *vec) {
+otto_status_t otto_buffer_setwrite(otto_buffer_t *vec) {
   vec->flags = CL_MEM_WRITE_ONLY;
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_setreadwrite(otto_vector_t *vec) {
+otto_status_t otto_buffer_setreadwrite(otto_buffer_t *vec) {
   vec->flags = CL_MEM_READ_WRITE;
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
+otto_status_t otto_buffer_todevice_mode(otto_buffer_t *vec,
                                         const otto_runtime_t *ctx,
                                         const cl_mem_flags flags) {
   const char *dev_name;
   OTTO_CALL_I(otto_device_name(ctx->dev, &dev_name),
               "Requested device not implemented");
 
-  logi_info("Sending vector to device '%s'", dev_name);
+  logi_info("Sending buffer to device '%s'", dev_name);
   if (vec == NULL) {
-    logi_error("Can not register NULL vector");
-    return OTTO_STATUS_FAILURE("Can not register NULL vector");
+    logi_error("Can not register NULL buffer");
+    return OTTO_STATUS_FAILURE("Can not register NULL buffer");
   }
 
   cl_int status = CL_SUCCESS;
@@ -59,22 +59,22 @@ otto_status_t otto_vector_todevice_mode(otto_vector_t *vec,
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_todevice(otto_vector_t *vec,
+otto_status_t otto_buffer_todevice(otto_buffer_t *vec,
                                    const otto_runtime_t *ctx) {
-  return otto_vector_todevice_mode(vec, ctx, vec->flags);
+  return otto_buffer_todevice_mode(vec, ctx, vec->flags);
 }
 
-otto_status_t otto_vector_todevice_read(otto_vector_t *vec,
+otto_status_t otto_buffer_todevice_read(otto_buffer_t *vec,
                                         const otto_runtime_t *ctx) {
-  return otto_vector_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
+  return otto_buffer_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
 }
 
-otto_status_t otto_vector_todevice_write(otto_vector_t *vec,
+otto_status_t otto_buffer_todevice_write(otto_buffer_t *vec,
                                          const otto_runtime_t *ctx) {
-  return otto_vector_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
+  return otto_buffer_todevice_mode(vec, ctx, CL_MEM_READ_ONLY);
 }
 
-otto_status_t otto_vector_tohost(otto_vector_t *vec, uint64_t total) {
+otto_status_t otto_buffer_tohost(otto_buffer_t *vec, uint64_t total) {
   if (total > vec->capacity) {
     logi_warn(
         "Trying to fetch more data than capacity, some data will be lost");

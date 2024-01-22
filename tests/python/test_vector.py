@@ -1,9 +1,9 @@
-from otto import Vector, dtypes
+from otto import Buffer, dtypes
 
 
 def test_zero_i32():
     CAP = 10
-    a = Vector.zero(CAP, dtypes.INT32)
+    a = Buffer.zero(CAP, dtypes.INT32)
     assert a.len == CAP
     assert a.capacity == CAP
     for i in range(CAP):
@@ -28,7 +28,7 @@ def test_zero_i32():
 
 
 def test_list_i32():
-    b = Vector.from_list([1, 25, 2, 111, -1])
+    b = Buffer.from_list([1, 25, 2, 111, -1])
     assert b.to_list() == [1, 25, 2, 111, -1]
     assert b.len == 5
     assert b.capacity == 5
@@ -36,7 +36,7 @@ def test_list_i32():
 
 def test_zero_f64():
     CAP = 10
-    a = Vector.zero(CAP, dtypes.FLOAT64)
+    a = Buffer.zero(CAP, dtypes.FLOAT64)
     assert a.len == CAP
     assert a.capacity == CAP
     for i in range(CAP):
@@ -61,7 +61,7 @@ def test_zero_f64():
 
 
 def test_list_f64():
-    b = Vector.from_list([1.15, 25.2, 2.7, 111.1245125, 0.0, -1])
+    b = Buffer.from_list([1.15, 25.2, 2.7, 111.1245125, 0.0, -1])
     assert b.to_list() == [1.15, 25.2, 2.7, 111.1245125, 0.0, -1.0]
     assert b.len == 6
     assert b.capacity == 6

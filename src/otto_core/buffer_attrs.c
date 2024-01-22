@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include <otto/status.h>
-#include <otto/vector.h>
+#include <otto/buffer.h>
 #include <otto_utils/vendor/log.h>
 
-otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
+otto_status_t otto_buffer_get(const otto_buffer_t *vec, const size_t i,
                               void *out) {
   if (vec->data == NULL || i >= vec->len || out == NULL) {
     return OTTO_STATUS_FAILURE("Invalid data or index");
@@ -15,7 +15,7 @@ otto_status_t otto_vector_get(const otto_vector_t *vec, const size_t i,
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
+otto_status_t otto_buffer_set(otto_buffer_t *vec, const size_t i,
                               const void *src) {
   if (vec->data == NULL || i >= vec->len || src == NULL) {
     return OTTO_STATUS_FAILURE("Invalid data or index");
@@ -24,7 +24,7 @@ otto_status_t otto_vector_set(otto_vector_t *vec, const size_t i,
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_resize(otto_vector_t *vec,
+otto_status_t otto_buffer_resize(otto_buffer_t *vec,
                                  const size_t new_capacity) {
   void *data = realloc(vec->data, new_capacity * vec->data_size);
   if (data == NULL) {
@@ -39,13 +39,13 @@ otto_status_t otto_vector_resize(otto_vector_t *vec,
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_push(otto_vector_t *vec, const void *src) {
+otto_status_t otto_buffer_push(otto_buffer_t *vec, const void *src) {
   if (src == NULL) {
     return OTTO_STATUS_FAILURE("src points to invalid data");
   }
 
   if (vec->len == vec->capacity) {
-    // The vector is full so we have to reallocate
+    // The buffer is full so we have to reallocate
     void *new_data = realloc(vec->data, (vec->capacity + 1) * vec->data_size);
     if (new_data == NULL) {
       return OTTO_STATUS_FAILURE("Could not reallocate data");
@@ -63,7 +63,7 @@ otto_status_t otto_vector_push(otto_vector_t *vec, const void *src) {
   return OTTO_STATUS_SUCCESS;
 }
 
-otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
+otto_status_t otto_buffer_extend_array(otto_buffer_t *vec, const void *src,
                                        const size_t len) {
   if (src == NULL) {
     return OTTO_STATUS_FAILURE("src points to invalid data");
@@ -71,9 +71,9 @@ otto_status_t otto_vector_extend_array(otto_vector_t *vec, const void *src,
 
   uint32_t delta = len - (vec->capacity - vec->len);
   if (delta > 0) {
-    // The vector does not have enough space so we have to allocate more
+    // The buffer does not have enough space so we have to allocate more
     // memory
-    logi_info("Allocating memory for extension of vector");
+    logi_info("Allocating memory for extension of buffer");
     logi_debug("Allocating %d more bytes", delta);
     void *new_data =
         realloc(vec->data, (vec->capacity + delta) * vec->data_size);

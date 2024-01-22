@@ -1,6 +1,6 @@
 #include <otto/status.h>
 #include <otto/tensor.h>
-#include <otto/vector.h>
+#include <otto/buffer.h>
 #include <otto_utils/macros.h>
 #include <otto_utils/vendor/log.h>
 
@@ -30,8 +30,8 @@ otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
   OTTO_CALL_I(otto_tensor_calculate_index(mat, idx, &index),
               "Index out of bounds");
   logi_debug("Getting index %i", index);
-  OTTO_CALL_I(otto_vector_get(&mat->vec, index, out),
-              "Failed getting index from underlying vector");
+  OTTO_CALL_I(otto_buffer_get(&mat->vec, index, out),
+              "Failed getting index from underlying buffer");
   return OTTO_STATUS_SUCCESS;
 }
 
@@ -41,8 +41,8 @@ otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
   OTTO_CALL_I(otto_tensor_calculate_index(mat, idx, &index),
               "Index out of bounds");
   logi_debug("Setting index %i", index);
-  OTTO_CALL_I(otto_vector_set(&mat->vec, index, src),
-              "Failed setting index from underlying vector");
+  OTTO_CALL_I(otto_buffer_set(&mat->vec, index, src),
+              "Failed setting index from underlying buffer");
   return OTTO_STATUS_SUCCESS;
   // TODO: Test this implementation
 }

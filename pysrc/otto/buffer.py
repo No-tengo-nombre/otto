@@ -22,12 +22,12 @@ class MemFlags(Enum):
     READ_WRITE = _ottol.CL_MEM_READ_WRITE
 
 
-class Vector[T]:
+class Buffer[T]:
     __slots__ = ("_cdata", "_dtype", "_dsize",
                  "_index", "ctx", "mode", "hparams")
 
     def __init__(self, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
-        self._cdata = ffi.new("otto_vector_t *")
+        self._cdata = ffi.new("otto_buffer_t *")
         self._dtype = dtype
         self._dsize = self._dtype.size
         self.ctx = None
@@ -36,22 +36,22 @@ class Vector[T]:
     @classmethod
     def empty(cls, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_vector_new(vec._dsize, vec._cdata),
-                 "Failed creating empty vector")
+        ffi_call(_ottol.otto_buffer_new(vec._dsize, vec._cdata),
+                 "Failed creating empty buffer")
         return vec
 
     @classmethod
     def zero(cls, size: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_vector_zero(size, vec._dsize, vec._cdata),
-                 "Failed creating zero initialized vector")
+        ffi_call(_ottol.otto_buffer_zero(size, vec._dsize, vec._cdata),
+                 "Failed creating zero initialized buffer")
         return vec
 
     @classmethod
     def with_capacity(cls, capacity: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_vector_with_capacity(capacity, vec._dsize,
-                 vec._cdata), f"Failed creating vector with capacity {capacity}")
+        ffi_call(_ottol.otto_buffer_with_capacity(capacity, vec._dsize,
+                 vec._cdata), f"Failed creating buffer with capacity {capacity}")
         return vec
 
     @classmethod
@@ -62,7 +62,7 @@ class Vector[T]:
             if target == []:
                 LOGGER.error("Found empty list, raising exception")
                 raise ValueError(
-                    "Expected non-empty empty list (see `Vector.empty` for empty initialization)"
+                    "Expected non-empty empty list (see `Buffer.empty` for empty initialization)"
                 )
             dtype = dtypes.get_ctype(target[0])
             if dtype is None:
@@ -73,8 +73,8 @@ class Vector[T]:
         vec = cls(dtype, mode)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
-                 vec._cdata), "Failed creating vector from list")
+        ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
+                 vec._cdata), "Failed creating buffer from list")
         return vec
 
     @classmethod
@@ -91,8 +91,8 @@ class Vector[T]:
         vec = cls(dtype, mode)
         size = len(target.flatten())
         val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
-        ffi_call(_ottol.otto_vector_from_array(val, size, dtype.size,
-                 vec._cdata), "Failed creating vector from numpy array")
+        ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
+                 vec._cdata), "Failed creating buffer from numpy array")
         return vec
 
     @classmethod
@@ -103,7 +103,7 @@ class Vector[T]:
             if vals == []:
                 LOGGER.error("Found empty iterator, raising exception")
                 raise ValueError(
-                    "Expected non-empty empty iterator (see `Vector.empty` for empty initialization)"
+                    "Expected non-empty empty iterator (see `Buffer.empty` for empty initialization)"
                 )
             dtype = dtypes.get_ctype(vals[0])
             if dtype is None:
@@ -120,9 +120,9 @@ class Vector[T]:
             LOGGER.warn("Trying to iterate invalid input type")
             return cls.from_iter(iter(target), dtype, mode)
         except TypeError:
-            LOGGER.error("Trying to create Vector from invalid type")
+            LOGGER.error("Trying to create Buffer from invalid type")
             raise TypeError(
-                f"Could not create `Vector` from type '{
+                f"Could not create `Buffer` from type '{
                     type(target).__name__}'"
             )
 
@@ -165,10 +165,10 @@ class Vector[T]:
 
     def __del__(self):
         try:
-            ffi_call(_ottol.otto_vector_cleanup(
-                self._cdata), "Failed cleanup of vector")
+            ffi_call(_ottol.otto_buffer_cleanup(
+                self._cdata), "Failed cleanup of buffer")
         except OttoException as e:
-            LOGGER.error(f"Cleaning up vector failed with exception '{e}'")
+            LOGGER.error(f"Cleaning up buffer failed with exception '{e}'")
 
     def __str__(self) -> str:
         return self.content_string()
@@ -199,16 +199,16 @@ class Vector[T]:
         return np.array(self.to_list(), dtype=self._dtype.np)
 
     def add(self, rhs):
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_add__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_add__{self._dtype.name}", self, rhs, None)
 
     def sub(self, rhs):
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_sub__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_sub__{self._dtype.name}", self, rhs, None)
 
     def mul(self, rhs):
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_mul__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_mul__{self._dtype.name}", self, rhs, None)
 
     def truediv(self, rhs):
-        return self.ctx.call_binop_kernel_no_out(f"otto_vector_div__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_div__{self._dtype.name}", self, rhs, None)
 
     def __add__(self, rhs):
         self._validate_runtime()
@@ -260,7 +260,7 @@ class Vector[T]:
         return self.__str__()
 
     def _generic_str(self) -> str:
-        return f"Vector<{self._dtype.name}>"
+        return f"Buffer<{self._dtype.name}>"
 
     def content_string(self) -> str:
         return f"{self._generic_str()}{self.to_list()}"
@@ -271,16 +271,16 @@ class Vector[T]:
     def validate_index(self, idx: int) -> int:
         if idx >= self.len:
             raise IndexError(
-                f"index {idx} out of range for vector of len {self.len}")
+                f"index {idx} out of range for buffer of len {self.len}")
         if idx < -self.len:
             raise IndexError(
-                f"index {idx % self.len} out of range for vector of len {self.len}")
+                f"index {idx % self.len} out of range for buffer of len {self.len}")
         return idx % self.len
 
     def get(self, key: int) -> T:
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
-        ffi_call(_ottol.otto_vector_get(self._cdata, key, val),
+        ffi_call(_ottol.otto_buffer_get(self._cdata, key, val),
                  f"Failed getting element at index {key}")
         return val[0]
 
@@ -288,7 +288,7 @@ class Vector[T]:
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = value
-        ffi_call(_ottol.otto_vector_set(self._cdata, key, val),
+        ffi_call(_ottol.otto_buffer_set(self._cdata, key, val),
                  f"Failed setting element at key {key}")
 
     def _validate_runtime(self):
@@ -302,26 +302,26 @@ class Vector[T]:
         return np.array(self)
 
     def resize(self, new_capacity: int) -> None:
-        ffi_call(_ottol.otto_vector_resize(
+        ffi_call(_ottol.otto_buffer_resize(
             self._cdata, new_capacity), "Failed resizing")
 
     def push(self, element: T) -> None:
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = element
-        ffi_call(_ottol.otto_vector_push(
+        ffi_call(_ottol.otto_buffer_push(
             self._cdata, val), "Failed pushing element")
 
     def extend_from_list(self, target: List[T]):
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_vector_extend_array(
+        ffi_call(_ottol.otto_buffer_extend_array(
             self._cdata, val, size), "Failed extending from list")
 
     def extend_from_numpy(self, target: np.ndarray):
         target = target.flatten()
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_vector_extend_array(
+        ffi_call(_ottol.otto_buffer_extend_array(
             self._cdata, val, size), "Failed extending from numpy array")
 
     def extend_from_iter(self, target: Iterable):
@@ -334,9 +334,9 @@ class Vector[T]:
                 "Trying to extend from invalid input type, trying as iter")
             return self.extend_from_iter(iter(target))
         except TypeError:
-            LOGGER.error("Trying to extend Vector from invalid type")
+            LOGGER.error("Trying to extend Buffer from invalid type")
             raise TypeError(
-                f"Could not extend `Vector` from type '{
+                f"Could not extend `Buffer` from type '{
                     type(target).__name__}'"
             )
 
@@ -357,7 +357,7 @@ class Vector[T]:
         return self.extend_from_iter(iter(target))
 
     def set_mode(self, mode: MemFlags) -> Self:
-        LOGGER.debug("Setting vector as '%s'", mode.name)
+        LOGGER.debug("Setting buffer as '%s'", mode.name)
         self.mode = mode
         return self
 
@@ -378,7 +378,7 @@ class Vector[T]:
             LOGGER.info("Getting default runtime")
             ctx = Runtime()
         self.ctx = ctx
-        _ottol.otto_vector_todevice_mode(self._cdata, ctx._cdata, mode.value)
+        _ottol.otto_buffer_todevice_mode(self._cdata, ctx._cdata, mode.value)
         return self
 
     def to_device_read(self, ctx: Runtime = None) -> Self:
@@ -394,8 +394,8 @@ class Vector[T]:
         return self.to_device_mode(ctx, self.mode)
 
     def to_host(self, total=0) -> Self:
-        _ottol.otto_vector_tohost(self._cdata, total)
+        _ottol.otto_buffer_tohost(self._cdata, total)
         return self
 
     def create_from(self) -> Self:
-        return Vector.with_capacity(self.capacity, self._dtype, self.mode)
+        return Buffer.with_capacity(self.capacity, self._dtype, self.mode)

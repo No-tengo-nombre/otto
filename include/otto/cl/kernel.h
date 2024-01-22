@@ -8,7 +8,7 @@
 
 #include "cl.h"
 
-#define OTTO_VECTORARG(vec) sizeof(vec.gmem), &vec.gmem
+#define otto_bufferARG(vec) sizeof(vec.gmem), &vec.gmem
 #define OTTO_PVECTORARG(vec) sizeof(vec->gmem), &vec->gmem
 
 #ifdef __cplusplus
@@ -17,7 +17,7 @@ extern "C" {
 
 typedef struct otto_program otto_program_t;
 typedef struct otto_runtime otto_runtime_t;
-typedef struct otto_vector otto_vector_t;
+typedef struct otto_buffer otto_buffer_t;
 
 typedef struct otto_kernel_args {
   uint32_t work_dim;
@@ -45,9 +45,9 @@ otto_status_t otto_kernel_call(const otto_kernel_t *ker,
 otto_status_t otto_kernel_call_binop(const otto_kernel_t *ker,
                                      const otto_runtime_t *ctx,
                                      const otto_kernel_args_t *hparams,
-                                     const otto_vector_t *a,
-                                     const otto_vector_t *b,
-                                     otto_vector_t *out);
+                                     const otto_buffer_t *a,
+                                     const otto_buffer_t *b,
+                                     otto_buffer_t *out);
 
 #ifdef __cplusplus
 }

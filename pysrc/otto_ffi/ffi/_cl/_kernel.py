@@ -27,7 +27,7 @@ otto_status_t otto_kernel_call(const otto_kernel_t *ker,
 otto_status_t otto_kernel_call_binop(const otto_kernel_t *ker,
                                      const otto_runtime_t *ctx,
                                      const otto_kernel_args_t *hparams,
-                                     const otto_vector_t *a,
-                                     const otto_vector_t *b,
-                                     otto_vector_t *out);
+                                     const otto_buffer_t *a,
+                                     const otto_buffer_t *b,
+                                     otto_buffer_t *out);
 """
