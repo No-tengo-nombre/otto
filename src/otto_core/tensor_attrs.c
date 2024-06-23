@@ -16,7 +16,7 @@ otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat,
     }
     index += s * (*idx++);
   }
-  if (index < 0 || index >= mat->vec.len) {
+  if (index < 0 || index >= mat->buf.len) {
     logi_error("Index %i out of bounds", index);
     return OTTO_STATUS_FAILURE("Index out of bounds");
   }
@@ -30,7 +30,7 @@ otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
   OTTO_CALL_I(otto_tensor_calculate_index(mat, idx, &index),
               "Index out of bounds");
   logi_debug("Getting index %i", index);
-  OTTO_CALL_I(otto_buffer_get(&mat->vec, index, out),
+  OTTO_CALL_I(otto_buffer_get(&mat->buf, index, out),
               "Failed getting index from underlying buffer");
   return OTTO_STATUS_SUCCESS;
 }
@@ -41,7 +41,7 @@ otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
   OTTO_CALL_I(otto_tensor_calculate_index(mat, idx, &index),
               "Index out of bounds");
   logi_debug("Setting index %i", index);
-  OTTO_CALL_I(otto_buffer_set(&mat->vec, index, src),
+  OTTO_CALL_I(otto_buffer_set(&mat->buf, index, src),
               "Failed setting index from underlying buffer");
   return OTTO_STATUS_SUCCESS;
 }

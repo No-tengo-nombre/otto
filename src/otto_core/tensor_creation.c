@@ -8,7 +8,7 @@
 
 // otto_status_t otto_tensor_new(otto_tensor_t *out) {
 //   otto_tensor_t result = {
-//       .vec = NULL,
+//       .buf = NULL,
 //       .rank = 0,
 //       .shape = NULL,
 //   };
@@ -24,10 +24,10 @@ otto_status_t otto_tensor_zero(const size_t rank, size_t *shape,
     len *= *shape++;
   }
   logi_debug("Length for underlying buffer is %i", len);
-  otto_buffer_t vec;
-  OTTO_CALL_I(otto_buffer_zero(len, data_size, &vec), "Failed creating buffer");
+  otto_buffer_t buf;
+  OTTO_CALL_I(otto_buffer_zero(len, data_size, &buf), "Failed creating buffer");
   otto_tensor_t result = {
-      .vec = vec,
+      .buf = buf,
       .rank = rank,
       .shape = original_shape,
   };
@@ -42,7 +42,7 @@ otto_status_t otto_tensor_from_array(const void *data, const size_t rank,
 }
 
 otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat) {
-  OTTO_CALL_I(otto_buffer_cleanup(&mat->vec),
+  OTTO_CALL_I(otto_buffer_cleanup(&mat->buf),
               "Failed cleaning up underlying buffer");
   return OTTO_STATUS_SUCCESS;
 }

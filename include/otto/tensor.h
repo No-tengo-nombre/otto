@@ -21,7 +21,7 @@ extern "C" {
  * the shape of the underlying data.
  */
 typedef struct otto_tensor {
-  otto_buffer_t vec;
+  otto_buffer_t buf;
   size_t rank;
   size_t *shape;
 } otto_tensor_t;

@@ -35,24 +35,24 @@ class Buffer[T]:
 
     @classmethod
     def empty(cls, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
-        vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_new(vec._dsize, vec._cdata),
+        buf = cls(dtype, mode)
+        ffi_call(_ottol.otto_buffer_new(buf._dsize, buf._cdata),
                  "Failed creating empty buffer")
-        return vec
+        return buf
 
     @classmethod
     def zero(cls, size: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
-        vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_zero(size, vec._dsize, vec._cdata),
+        buf = cls(dtype, mode)
+        ffi_call(_ottol.otto_buffer_zero(size, buf._dsize, buf._cdata),
                  "Failed creating zero initialized buffer")
-        return vec
+        return buf
 
     @classmethod
     def with_capacity(cls, capacity: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
-        vec = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_with_capacity(capacity, vec._dsize,
-                 vec._cdata), f"Failed creating buffer with capacity {capacity}")
-        return vec
+        buf = cls(dtype, mode)
+        ffi_call(_ottol.otto_buffer_with_capacity(capacity, buf._dsize,
+                 buf._cdata), f"Failed creating buffer with capacity {capacity}")
+        return buf
 
     @classmethod
     def from_list(cls, target: List[T], dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
@@ -70,12 +70,12 @@ class Buffer[T]:
                     f"Conversion of type '{
                         type(target[0]).__name__}' not implemented"
                 )
-        vec = cls(dtype, mode)
+        buf = cls(dtype, mode)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
         ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
-                 vec._cdata), "Failed creating buffer from list")
-        return vec
+                 buf._cdata), "Failed creating buffer from list")
+        return buf
 
     @classmethod
     def from_numpy(cls, target: np.ndarray, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
@@ -88,15 +88,15 @@ class Buffer[T]:
                     f"Conversion of type 'np.{
                         target.dtype.name}' not implemented"
                 )
-        vec = cls(dtype, mode)
+        buf = cls(dtype, mode)
         size = len(target.flatten())
         val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
         ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
-                 vec._cdata), "Failed creating buffer from numpy array")
-        return vec
+                 buf._cdata), "Failed creating buffer from numpy array")
+        return buf
 
     @classmethod
-    def from_iter(cls, target: Iterator, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def from_iter(cls, target: Iterator, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         LOGGER.debug("Creating from iterator")
         vals = list(target)
         if dtype is None:
@@ -115,7 +115,7 @@ class Buffer[T]:
 
     @singledispatchmethod
     @classmethod
-    def new(cls, target, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def new(cls, target, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         try:
             LOGGER.warn("Trying to iterate invalid input type")
             return cls.from_iter(iter(target), dtype, mode)
@@ -128,27 +128,27 @@ class Buffer[T]:
 
     @new.register(list)
     @classmethod
-    def _(cls, target: list, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def _(cls, target: list, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         return cls.from_list(target, dtype, mode)
 
     @new.register(np.ndarray)
     @classmethod
-    def _(cls, target: np.ndarray, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def _(cls, target: np.ndarray, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         return cls.from_numpy(target, dtype, mode)
 
     @new.register(Iterator)
     @classmethod
-    def _(cls, target: Iterator, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def _(cls, target: Iterator, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         return cls.from_iter(target, dtype, mode)
 
     @new.register(Iterable)
     @classmethod
-    def _(cls, target: Iterable, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def _(cls, target: Iterable, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         return cls.from_iter(iter(target), dtype, mode)
 
     @new.register(Real)
     @classmethod
-    def _(cls, target: Real, dtype: dtypes.DataType = None, mode: MemFlags = MemFlags.READ):
+    def _(cls, target: Real, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
         return cls.from_list([target], dtype, mode)
 
     @property
@@ -370,7 +370,7 @@ class Buffer[T]:
     def set_read_write(self) -> Self:
         return self.set_mode(MemFlags.READ_WRITE)
 
-    def to_device_mode(self, ctx: Runtime = None, mode: MemFlags = None) -> Self:
+    def to_device_mode(self, ctx: Runtime | None = None, mode: MemFlags | None = None) -> Self:
         if mode is None:
             mode = self.mode
 
@@ -381,16 +381,16 @@ class Buffer[T]:
         _ottol.otto_buffer_todevice_mode(self._cdata, ctx._cdata, mode.value)
         return self
 
-    def to_device_read(self, ctx: Runtime = None) -> Self:
+    def to_device_read(self, ctx: Runtime | None = None) -> Self:
         return self.to_device_mode(ctx, MemFlags.READ)
 
-    def to_device_write(self, ctx: Runtime = None) -> Self:
+    def to_device_write(self, ctx: Runtime | None = None) -> Self:
         return self.to_device_mode(ctx, MemFlags.WRITE)
 
-    def to_device_read_write(self, ctx: Runtime = None) -> Self:
+    def to_device_read_write(self, ctx: Runtime | None = None) -> Self:
         return self.to_device_mode(ctx, MemFlags.READ_WRITE)
 
-    def to_device(self, ctx: Runtime = None) -> Self:
+    def to_device(self, ctx: Runtime | None = None) -> Self:
         return self.to_device_mode(ctx, self.mode)
 
     def to_host(self, total=0) -> Self:
