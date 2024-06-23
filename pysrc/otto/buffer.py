@@ -1,14 +1,14 @@
-from collections.abc import Iterator, Iterable
+from collections.abc import Iterable, Iterator
 from enum import Enum
 from functools import singledispatchmethod
 from numbers import Real
 from typing import List, Self
 
 import numpy as np
-
-from otto_utils.logger import LOGGER
 import otto_ffi as _
-from _otto import ffi, lib as _ottol
+from _otto import ffi
+from _otto import lib as _ottol
+from otto_utils.logger import LOGGER
 
 from otto import dtypes
 from otto.cl.runtime import Runtime
@@ -24,8 +24,8 @@ class MemFlags(Enum):
 
 class Buffer[T]:
     """Buffer of data allocated in a given device"""
-    __slots__ = ("_cdata", "_dtype", "_dsize",
-                 "_index", "ctx", "mode", "hparams")
+
+    __slots__ = ("_cdata", "_dtype", "_dsize", "_index", "ctx", "mode", "hparams")
 
     def __init__(self, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         self._cdata = ffi.new("otto_buffer_t *")
@@ -38,28 +38,41 @@ class Buffer[T]:
     def empty(cls, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         """Create an empty buffer"""
         buf = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_new(buf._dsize, buf._cdata),
-                 "Failed creating empty buffer")
+        ffi_call(
+            _ottol.otto_buffer_new(buf._dsize, buf._cdata),
+            "Failed creating empty buffer",
+        )
         return buf
 
     @classmethod
     def zero(cls, size: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
         """Create a zero-initialized buffer"""
         buf = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_zero(size, buf._dsize, buf._cdata),
-                 "Failed creating zero initialized buffer")
+        ffi_call(
+            _ottol.otto_buffer_zero(size, buf._dsize, buf._cdata),
+            "Failed creating zero initialized buffer",
+        )
         return buf
 
     @classmethod
-    def with_capacity(cls, capacity: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ):
+    def with_capacity(
+        cls, capacity: int, dtype: dtypes.DataType, mode: MemFlags = MemFlags.READ
+    ):
         """Create an empty buffer with a given capacity"""
         buf = cls(dtype, mode)
-        ffi_call(_ottol.otto_buffer_with_capacity(capacity, buf._dsize,
-                 buf._cdata), f"Failed creating buffer with capacity {capacity}")
+        ffi_call(
+            _ottol.otto_buffer_with_capacity(capacity, buf._dsize, buf._cdata),
+            f"Failed creating buffer with capacity {capacity}",
+        )
         return buf
 
     @classmethod
-    def from_list(cls, target: List[T], dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def from_list(
+        cls,
+        target: List[T],
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         """Create a buffer from a list, using size as capacity"""
         LOGGER.debug("Creating from list")
         # TODO: Fix the bug that happens when the first element is less general than the rest
@@ -78,12 +91,19 @@ class Buffer[T]:
         buf = cls(dtype, mode)
         size = len(target)
         val = ffi.new(f"{dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
-                 buf._cdata), "Failed creating buffer from list")
+        ffi_call(
+            _ottol.otto_buffer_from_array(val, size, dtype.size, buf._cdata),
+            "Failed creating buffer from list",
+        )
         return buf
 
     @classmethod
-    def from_numpy(cls, target: np.ndarray, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def from_numpy(
+        cls,
+        target: np.ndarray,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         """Create a buffer from a numpy array, using size as capacity"""
         # TODO: Determine a more efficient way of creating from numpy array
         LOGGER.debug("Creating from numpy array")
@@ -97,12 +117,19 @@ class Buffer[T]:
         buf = cls(dtype, mode)
         size = len(target.flatten())
         val = ffi.new(f"{dtype.long_name}[]", list(target.flatten()))
-        ffi_call(_ottol.otto_buffer_from_array(val, size, dtype.size,
-                 buf._cdata), "Failed creating buffer from numpy array")
+        ffi_call(
+            _ottol.otto_buffer_from_array(val, size, dtype.size, buf._cdata),
+            "Failed creating buffer from numpy array",
+        )
         return buf
 
     @classmethod
-    def from_iter(cls, target: Iterator, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def from_iter(
+        cls,
+        target: Iterator,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         """Create a buffer from an iterator"""
         LOGGER.debug("Creating from iterator")
         vals = list(target)
@@ -122,7 +149,12 @@ class Buffer[T]:
 
     @singledispatchmethod
     @classmethod
-    def new(cls, target, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def new(
+        cls,
+        target,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         """Create a new buffer"""
         try:
             LOGGER.warn("Trying to iterate invalid input type")
@@ -136,27 +168,52 @@ class Buffer[T]:
 
     @new.register(list)
     @classmethod
-    def _(cls, target: list, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def _(
+        cls,
+        target: list,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         return cls.from_list(target, dtype, mode)
 
     @new.register(np.ndarray)
     @classmethod
-    def _(cls, target: np.ndarray, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def _(
+        cls,
+        target: np.ndarray,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         return cls.from_numpy(target, dtype, mode)
 
     @new.register(Iterator)
     @classmethod
-    def _(cls, target: Iterator, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def _(
+        cls,
+        target: Iterator,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         return cls.from_iter(target, dtype, mode)
 
     @new.register(Iterable)
     @classmethod
-    def _(cls, target: Iterable, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def _(
+        cls,
+        target: Iterable,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         return cls.from_iter(iter(target), dtype, mode)
 
     @new.register(Real)
     @classmethod
-    def _(cls, target: Real, dtype: dtypes.DataType | None = None, mode: MemFlags = MemFlags.READ):
+    def _(
+        cls,
+        target: Real,
+        dtype: dtypes.DataType | None = None,
+        mode: MemFlags = MemFlags.READ,
+    ):
         return cls.from_list([target], dtype, mode)
 
     @property
@@ -176,8 +233,9 @@ class Buffer[T]:
 
     def __del__(self):
         try:
-            ffi_call(_ottol.otto_buffer_cleanup(
-                self._cdata), "Failed cleanup of buffer")
+            ffi_call(
+                _ottol.otto_buffer_cleanup(self._cdata), "Failed cleanup of buffer"
+            )
         except OttoException as e:
             LOGGER.error(f"Cleaning up buffer failed with exception '{e}'")
 
@@ -211,19 +269,27 @@ class Buffer[T]:
 
     def add(self, rhs):
         """Add another buffer to this buffer"""
-        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_add__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(
+            f"otto_buffer_add__{self._dtype.name}", self, rhs, None
+        )
 
     def sub(self, rhs):
         """Subtract another buffer from this buffer"""
-        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_sub__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(
+            f"otto_buffer_sub__{self._dtype.name}", self, rhs, None
+        )
 
     def mul(self, rhs):
         """Multiply another buffer with this buffer"""
-        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_mul__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(
+            f"otto_buffer_mul__{self._dtype.name}", self, rhs, None
+        )
 
     def truediv(self, rhs):
         """Divice this buffer by another buffer"""
-        return self.ctx.call_binop_kernel_no_out(f"otto_buffer_div__{self._dtype.name}", self, rhs, None)
+        return self.ctx.call_binop_kernel_no_out(
+            f"otto_buffer_div__{self._dtype.name}", self, rhs, None
+        )
 
     def __add__(self, rhs):
         self._validate_runtime()
@@ -289,19 +355,21 @@ class Buffer[T]:
     def validate_index(self, idx: int) -> int:
         """Validate whether a given index is in bounds"""
         if idx >= self.len:
-            raise IndexError(
-                f"index {idx} out of range for buffer of len {self.len}")
+            raise IndexError(f"index {idx} out of range for buffer of len {self.len}")
         if idx < -self.len:
             raise IndexError(
-                f"index {idx % self.len} out of range for buffer of len {self.len}")
+                f"index {idx % self.len} out of range for buffer of len {self.len}"
+            )
         return idx % self.len
 
     def get(self, key: int) -> T:
         """Get an element at given index"""
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
-        ffi_call(_ottol.otto_buffer_get(self._cdata, key, val),
-                 f"Failed getting element at index {key}")
+        ffi_call(
+            _ottol.otto_buffer_get(self._cdata, key, val),
+            f"Failed getting element at index {key}",
+        )
         return val[0]
 
     def set_key(self, key: int, value) -> None:
@@ -309,8 +377,10 @@ class Buffer[T]:
         key = self.validate_index(key)
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = value
-        ffi_call(_ottol.otto_buffer_set(self._cdata, key, val),
-                 f"Failed setting element at key {key}")
+        ffi_call(
+            _ottol.otto_buffer_set(self._cdata, key, val),
+            f"Failed setting element at key {key}",
+        )
 
     def _validate_runtime(self):
         if self.ctx is None:
@@ -326,30 +396,34 @@ class Buffer[T]:
 
     def resize(self, new_capacity: int) -> None:
         """Resize this buffer"""
-        ffi_call(_ottol.otto_buffer_resize(
-            self._cdata, new_capacity), "Failed resizing")
+        ffi_call(
+            _ottol.otto_buffer_resize(self._cdata, new_capacity), "Failed resizing"
+        )
 
     def push(self, element: T) -> None:
         """Push an element into the buffer"""
         val = ffi.new(f"{self._dtype.long_name} *")
         val[0] = element
-        ffi_call(_ottol.otto_buffer_push(
-            self._cdata, val), "Failed pushing element")
+        ffi_call(_ottol.otto_buffer_push(self._cdata, val), "Failed pushing element")
 
     def extend_from_list(self, target: List[T]):
         """Extend this buffer by a given list"""
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_buffer_extend_array(
-            self._cdata, val, size), "Failed extending from list")
+        ffi_call(
+            _ottol.otto_buffer_extend_array(self._cdata, val, size),
+            "Failed extending from list",
+        )
 
     def extend_from_numpy(self, target: np.ndarray):
         """Extend this buffer by a given numpy array"""
         target = target.flatten()
         size = len(target)
         val = ffi.new(f"{self._dtype.long_name}[]", target)
-        ffi_call(_ottol.otto_buffer_extend_array(
-            self._cdata, val, size), "Failed extending from numpy array")
+        ffi_call(
+            _ottol.otto_buffer_extend_array(self._cdata, val, size),
+            "Failed extending from numpy array",
+        )
 
     def extend_from_iter(self, target: Iterable):
         """Extend this buffer by a given iterator"""
@@ -359,8 +433,7 @@ class Buffer[T]:
     def extend(self, target):
         """Extend this buffer"""
         try:
-            LOGGER.warn(
-                "Trying to extend from unsupported input type, trying as iter")
+            LOGGER.warn("Trying to extend from unsupported input type, trying as iter")
             return self.extend_from_iter(iter(target))
         except TypeError:
             LOGGER.error("Trying to extend Buffer from invalid type")
@@ -403,7 +476,9 @@ class Buffer[T]:
         """Set the buffer as readable and writeable"""
         return self.set_mode(MemFlags.READ_WRITE)
 
-    def to_device_mode(self, ctx: Runtime | None = None, mode: MemFlags | None = None) -> Self:
+    def to_device_mode(
+        self, ctx: Runtime | None = None, mode: MemFlags | None = None
+    ) -> Self:
         """Send buffer to device with mode"""
         if mode is None:
             mode = self.mode
