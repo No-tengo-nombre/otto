@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <ottou/log.h>
-#include <ottou/macros.h>
-
+#include <otto/buffer.h>
 #include <otto/cl/cl.h>
 #include <otto/cl/kernel.h>
 #include <otto/cl/program.h>
@@ -11,7 +6,10 @@
 #include <otto/devices.h>
 #include <otto/paths.h>
 #include <otto/status.h>
-#include <otto/buffer.h>
+#include <ottou/log.h>
+#include <ottou/macros.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_SOURCE_SIZE (0x100000)
 
@@ -20,13 +18,10 @@ int main(void) {
   otto_buffer_t a;
   otto_buffer_t b;
   otto_buffer_t out;
-  const int LIST_SIZE = 256;
-  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &a),
-            "Failed allocating A");
-  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &b),
-            "Failed allocating B");
-  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &out),
-            "Failed allocating OUT");
+  const int     LIST_SIZE = 256;
+  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &a), "Failed allocating A");
+  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &b), "Failed allocating B");
+  OTTO_CALL(otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &out), "Failed allocating OUT");
   for (int i = 0; i < LIST_SIZE; i++) {
     otto_buffer_push(&a, &i);
     int v = LIST_SIZE - i;
@@ -34,10 +29,9 @@ int main(void) {
   }
 
   log_info("Creating the runtime");
-  otto_runtime_t ctx;
+  otto_runtime_t   ctx;
   otto_kernelht_t *ht = NULL;
-  OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx),
-            "Could not initialize the runtime");
+  OTTO_CALL(otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx), "Could not initialize the runtime");
 
   log_info("Creating the buffers in device memory");
   OTTO_CALL(otto_buffer_todevice_read(&a, &ctx), "Failed registering A");
@@ -45,26 +39,22 @@ int main(void) {
   OTTO_CALL(otto_buffer_todevice_write(&out, &ctx), "Failed registering OUT");
 
   log_info("Creating the program");
-  const char *files[] = {OTTO_CLKERNEL("buffer/elementary.cl")};
+  const char    *files[] = {OTTO_CLKERNEL("buffer/elementary.cl")};
   otto_program_t prog;
-  OTTO_CALL(otto_program_from_files(&ctx, files, 1, "", &prog),
-            "Failed to create the program");
+  OTTO_CALL(otto_program_from_files(&ctx, files, 1, "", &prog), "Failed to create the program");
 
   log_info("Creating the kernel");
-  OTTO_CALL(otto_kernel_new(&prog, "otto_buffer_add", 3, &ctx, NULL),
-            "Failed creating kernel");
+  OTTO_CALL(otto_kernel_new(&prog, "otto_buffer_add", 3, &ctx, NULL), "Failed creating kernel");
 
   log_info("Creating hparams");
   otto_kernel_args_t hparams = {
-      .work_dim = 1,
+      .work_dim    = 1,
       .global_size = out.capacity,
-      .local_size = 64,
+      .local_size  = 64,
   };
 
   log_info("Calling kernel directly from runtime");
-  OTTO_CALL(otto_runtime_call_kernel_binop(&ctx, "otto_buffer_add__i32", &hparams,
-                                           &a, &b, &out),
-            "Failed calling kernel");
+  OTTO_CALL(otto_runtime_call_kernel_binop(&ctx, "otto_buffer_add__i32", &hparams, &a, &b, &out), "Failed calling kernel");
 
   log_info("Reading from the output buffer");
   OTTO_CALL(otto_buffer_tohost(&out, 0), "Failed fetching OUT to host");

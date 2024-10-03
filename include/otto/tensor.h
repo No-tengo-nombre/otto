@@ -1,7 +1,8 @@
 #pragma once
 
-#include "status.h"
 #include "buffer.h"
+#include "status.h"
+
 #include <stdint.h>
 
 #ifdef __cplusplus
@@ -22,18 +23,15 @@ extern "C" {
  */
 typedef struct otto_tensor {
   otto_buffer_t buf;
-  size_t rank;
-  size_t *shape;
+  size_t        rank;
+  size_t       *shape;
 } otto_tensor_t;
 
 /* Tensor creation */
 
 // otto_status_t otto_tensor_new(otto_tensor_t *out);
-otto_status_t otto_tensor_zero(const size_t rank, size_t *shape,
-                               const size_t data_size, otto_tensor_t *out);
-otto_status_t otto_tensor_from_array(const void *data, const size_t rank,
-                                     size_t *shape, const size_t data_size,
-                                     otto_tensor_t *out);
+otto_status_t otto_tensor_zero(const size_t rank, size_t *shape, const size_t data_size, otto_tensor_t *out);
+otto_status_t otto_tensor_from_array(const void *data, const size_t rank, size_t *shape, const size_t data_size, otto_tensor_t *out);
 // otto_status_t otto_tensor_from_buffer(otto_buffer_t *vec, const size_t rank,
 //                                       const int64_t *shape);
 
@@ -42,12 +40,9 @@ otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat);
 
 /* Tensor attributes */
 
-otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat,
-                                          const size_t *idx, size_t *out);
-otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx,
-                              void *out);
-otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx,
-                              const void *src);
+otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat, const size_t *idx, size_t *out);
+otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx, void *out);
+otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx, const void *src);
 
 #ifdef __cplusplus
 }

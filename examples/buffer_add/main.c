@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <ottou/log.h>
-#include <ottou/macros.h>
-
+#include <otto/buffer.h>
 #include <otto/cl/cl.h>
 #include <otto/cl/kernel.h>
 #include <otto/cl/program.h>
@@ -11,12 +6,15 @@
 #include <otto/devices.h>
 #include <otto/paths.h>
 #include <otto/status.h>
-#include <otto/buffer.h>
+#include <ottou/log.h>
+#include <ottou/macros.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 int main(void) {
   /* Runtime creation */
   log_info("Creating the runtime");
-  otto_runtime_t ctx;
+  otto_runtime_t   ctx;
   otto_kernelht_t *ht = NULL;
   otto_runtime_new(NULL, NULL, OTTO_DEVICE_GPU, ht, &ctx);
   otto_runtime_load_kernels(&ctx, OTTO_KERNELS_CORE, "");
@@ -26,7 +24,7 @@ int main(void) {
   otto_buffer_t a;
   otto_buffer_t b;
   otto_buffer_t out;
-  const int LIST_SIZE = 256;
+  const int     LIST_SIZE = 256;
   otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &a);
   otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &b);
   otto_buffer_with_capacity(LIST_SIZE, sizeof(int), &out);
@@ -45,13 +43,12 @@ int main(void) {
   /* Call the kernel */
   log_info("Creating hparams");
   otto_kernel_args_t hparams = {
-      .work_dim = 1,
+      .work_dim    = 1,
       .global_size = out.capacity,
-      .local_size = 64,
+      .local_size  = 64,
   };
   log_info("Calling kernel directly from runtime");
-  otto_runtime_call_kernel_binop(&ctx, "otto_buffer_add__i32", &hparams, &a, &b,
-                                 &out);
+  otto_runtime_call_kernel_binop(&ctx, "otto_buffer_add__i32", &hparams, &a, &b, &out);
   log_info("Reading from the output buffer");
   otto_buffer_tohost(&out, 0);
 
