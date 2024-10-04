@@ -8,12 +8,12 @@ from otto.exceptions import OttoException
 
 
 class Status(Enum):
-    SUCCESS = _ottol.OTTO_STATUS_SUCCESS
-    FAILURE = _ottol.OTTO_STATUS_FAILURE
+    SUCCESS = _ottol.OTTO_SUCCESS
+    FAILURE = _ottol.OTTO_FAILURE
 
 
 def ffi_call(val, msg: str = None, *, exception_cls=OttoException):
-    if val == Status.FAILURE.value:
+    if val.status == Status.FAILURE.value:
         LOGGER.error(
             f"Found a failed otto call %s",
             "" if msg is None else f"'{msg}'"

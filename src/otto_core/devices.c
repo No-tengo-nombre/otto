@@ -11,7 +11,7 @@ otto_status_t otto_device_as_cl(const otto_device_t dev, cl_device_type *out) {
   case OTTO_DEVICE_GPU:
     *out = CL_DEVICE_TYPE_GPU;
     break;
-  default:
+  default:;
     const char *msg = "Requested device not implemented";
     logi_warn(msg);
     return OTTO_STATUS_FAILURE(msg);
@@ -28,7 +28,7 @@ otto_status_t otto_device_name(const otto_device_t dev, const char **out) {
   case OTTO_DEVICE_GPU:
     *out = "gpu";
     break;
-  default:
+  default:;
     const char *msg = "Requested device not found";
     logi_warn(msg);
     return OTTO_STATUS_FAILURE(msg);

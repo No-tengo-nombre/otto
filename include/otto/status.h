@@ -14,12 +14,12 @@ enum otto_status {
 
 typedef struct otto_status_msg {
   enum otto_status status;
-  const char *msg;
+  const char      *msg;
 } otto_status_t;
 
 otto_status_t otto_status_new(enum otto_status status, const char *msg);
 
-#define OTTO_STATUS_SUCCESS otto_status_new(OTTO_SUCCESS, NULL)
+#define OTTO_STATUS_SUCCESS      otto_status_new(OTTO_SUCCESS, NULL)
 #define OTTO_STATUS_FAILURE(msg) otto_status_new(OTTO_FAILURE, msg)
 
 #ifdef __cplusplus

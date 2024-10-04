@@ -8,4 +8,4 @@
 
 # Reference guide
 
-- [Vectors](reference/vectors.md)
+- [Buffers](reference/buffers.md)

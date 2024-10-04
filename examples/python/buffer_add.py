@@ -1,7 +1,7 @@
 import numpy as np
 
 from otto.cl import Runtime, Device, KernelArgs
-from otto import Vector
+from otto import Buffer
 from otto_utils.logger import LOGGER
 
 
@@ -12,9 +12,9 @@ def main(size=256):
     Runtime.cls_device = Device.GPU
     Runtime.hparams = KernelArgs(1, size, 64)
 
-    LOGGER.info("Creating vectors")
-    a = Vector.from_numpy(np.arange(size)).to_device()
-    b = Vector.from_numpy(size - np.arange(size)).to_device()
+    LOGGER.info("Creating buffers")
+    a = Buffer.from_numpy(np.arange(size)).to_device()
+    b = Buffer.from_numpy(size - np.arange(size)).to_device()
     print(f"a = {a}")
     print(f"b = {b}")
 

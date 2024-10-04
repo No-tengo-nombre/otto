@@ -10,7 +10,7 @@ import cffi
 src_path = Path.joinpath(Path(__file__).parent, "pysrc")
 os.environ["PYTHONPATH"] = str(src_path)
 sys.path.append(str(src_path))
-from otto_ffi.ffi import _devices, _status, _vector, _cl
+from otto_ffi.ffi import _devices, _status, _buffer, _cl
 from otto_ffi.config import INCLUDE_DIRS, CLIB_DEBUG_PATH, CBIN_DEBUG_PATH, CLIB_RELEASE_PATH, CBIN_RELEASE_PATH, CLIB_DLL_NAMES, CLIB_SO_NAMES, SHLIB_PATH
 
 
@@ -126,14 +126,14 @@ FFI_CDEF = f"""
 {_cl._kernel.CTYPEDEF}
 {_cl._program.CTYPEDEF}
 {_cl._runtime.CTYPEDEF}
-{_vector.CTYPEDEF}
+{_buffer.CTYPEDEF}
 // Function definitions
 {_status.CDEF}
 {_devices.CDEF}
 {_cl._kernel.CDEF}
 {_cl._program.CDEF}
 {_cl._runtime.CDEF}
-{_vector.CDEF}
+{_buffer.CDEF}
 """
 
 LIB_SOURCE = """

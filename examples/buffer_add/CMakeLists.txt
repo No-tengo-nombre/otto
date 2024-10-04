@@ -1,7 +1,7 @@
 file(GLOB EXAMPLE_ROOT_SOURCE *.c)
 file(GLOB EXAMPLE_ROOT_HEADER *.h)
 
-set(EXAMPLE_NAME ex.vector_add)
+set(EXAMPLE_NAME ex.buffer_add)
 
 add_executable(${EXAMPLE_NAME} ${EXAMPLE_ROOT_HEADER} ${EXAMPLE_ROOT_SOURCE})
 
