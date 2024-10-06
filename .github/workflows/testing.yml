@@ -1,4 +1,4 @@
-name: Test core library
+name: Testing
 on:
   push:
     branches-ignore:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   ctest-debug:
-    name: Debug
+    name: CTest Debug
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,7 +39,7 @@ jobs:
           verbose: true
 
   ctest-release:
-    name: Release
+    name: CTest Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
