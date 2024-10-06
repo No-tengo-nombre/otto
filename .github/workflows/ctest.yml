@@ -1,4 +1,4 @@
-name: CMake tests
+name: Test core library
 on:
   push:
     branches-ignore:
@@ -6,11 +6,16 @@ on:
 
 jobs:
   ctest-debug:
-    name: CTest Debug mode
+    name: Debug
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.0
+
+      - name: Install OpenCL
+        run: |
+          sudo apt-get update
+          sudo apt-get install ocl-icd-opencl-dev
 
       - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@v5
@@ -32,17 +37,22 @@ jobs:
           verbose: true
 
   ctest-release:
-    name: CTest Release mode
+    name: Release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.0
 
+      - name: Install OpenCL
+        run: |
+          sudo apt-get update
+          sudo apt-get install ocl-icd-opencl-dev
+
       - name: Setup Ninja
         uses: seanmiddleditch/gha-setup-ninja@v5
 
       - name: Configure and build
-        uses: threeal/cmake-action@v1.3.0
+        uses: threeal/cmake-action@v2.0.0
         with:
           generator: Ninja
           run-build: true
