@@ -1,0 +1,58 @@
+name: CMake tests
+on:
+  push:
+    branches-ignore:
+      - "gh-pages"
+
+jobs:
+  ctest-debug:
+    name: CTest Debug mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.0
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure and build
+        uses: threeal/cmake-action@v1.3.0
+        with:
+          generator: Ninja
+          run-build: true
+          options: |
+            OTTO_BUILD_TESTS=ON
+            OTTO_BUILD_EXAMPLES=OFF
+            CMAKE_BUILD_TYPE=Debug
+
+      - name: Run tests
+        uses: threeal/ctest-action@v1.1.0
+        with:
+          build-config: Debug
+          verbose: true
+
+  ctest-release:
+    name: CTest Release mode
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.0
+
+      - name: Setup Ninja
+        uses: seanmiddleditch/gha-setup-ninja@v5
+
+      - name: Configure and build
+        uses: threeal/cmake-action@v1.3.0
+        with:
+          generator: Ninja
+          run-build: true
+          options: |
+            OTTO_BUILD_TESTS=ON
+            OTTO_BUILD_EXAMPLES=OFF
+            CMAKE_BUILD_TYPE=Release
+
+      - name: Run tests
+        uses: threeal/ctest-action@v1.1.0
+        with:
+          build-config: Release
+          verbose: true
