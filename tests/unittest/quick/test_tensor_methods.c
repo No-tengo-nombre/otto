@@ -5,34 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-otto_status_t test_creation_zero1() {
-  otto_tensor_t mat;
-  size_t        shape[] = {5, 3, 4};
-  OTTO_CALL(otto_tensor_zero(3, shape, sizeof(uint32_t), &mat), "Failed creating tensor");
-  size_t len = 60;
-  OTTO_ASSERT_EQI(mat.rank, 3);
-  OTTO_ASSERT_EQI(mat.shape[0], 5);
-  OTTO_ASSERT_EQI(mat.shape[1], 3);
-  OTTO_ASSERT_EQI(mat.shape[2], 4);
-  for (int i = 0; i < len; i++) {
-    OTTO_ASSERT_EQI(((uint32_t *)mat.buf.data)[i], 0);
-  }
-  return OTTO_STATUS_SUCCESS;
-}
-
-otto_status_t test_creation_zero2() {
-  otto_tensor_t mat;
-  size_t        shape[] = {20};
-  OTTO_CALL(otto_tensor_zero(1, shape, sizeof(uint32_t), &mat), "Failed creating tensor");
-  size_t len = 20;
-  OTTO_ASSERT_EQI(mat.rank, 1);
-  OTTO_ASSERT_EQI(mat.shape[0], 20);
-  for (int i = 0; i < len; i++) {
-    OTTO_ASSERT_EQI(((uint32_t *)mat.buf.data)[i], 0);
-  }
-  return OTTO_STATUS_SUCCESS;
-}
-
 otto_status_t test_methods_get1() {
   otto_tensor_t mat;
   size_t        shape[] = {5, 3, 4};
@@ -83,8 +55,6 @@ otto_status_t test_methods_set() {
 }
 
 int main() {
-  OTTO_CALL_TEST(test_creation_zero1);
-  OTTO_CALL_TEST(test_creation_zero2);
   OTTO_CALL_TEST(test_methods_get1);
   OTTO_CALL_TEST(test_methods_get2);
   OTTO_CALL_TEST(test_methods_get3);
