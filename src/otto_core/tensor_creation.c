@@ -34,7 +34,19 @@ otto_status_t otto_tensor_zero(const size_t rank, size_t *shape, const size_t da
 }
 
 otto_status_t otto_tensor_from_array(const void *data, const size_t rank, size_t *shape, const size_t data_size, otto_tensor_t *out) {
-  return OTTO_STATUS_FAILURE("Not implemented");
+  size_t  len            = 1;
+  size_t *original_shape = shape;
+  for (int i = 0; i < rank; i++) {
+    len *= *shape++;
+  }
+  logi_debug("Length for underlying buffer is %i", len);
+
+  otto_tensor_t result;
+  OTTO_CALL_I(otto_buffer_from_array(data, len, data_size, &result.buf), "Failed to create buffer for tensor");
+  result.rank  = rank;
+  result.shape = original_shape;
+  *out         = result;
+  return OTTO_STATUS_SUCCESS;
 }
 
 otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat) {
