@@ -32,8 +32,6 @@ typedef struct otto_tensor {
 // otto_status_t otto_tensor_new(otto_tensor_t *out);
 otto_status_t otto_tensor_zero(const size_t rank, size_t *shape, const size_t data_size, otto_tensor_t *out);
 otto_status_t otto_tensor_from_array(const void *data, const size_t rank, size_t *shape, const size_t data_size, otto_tensor_t *out);
-// otto_status_t otto_tensor_from_buffer(otto_buffer_t *vec, const size_t rank,
-//                                       const int64_t *shape);
 
 /* Tensor finalization */
 otto_status_t otto_tensor_cleanup(const otto_tensor_t *const mat);
