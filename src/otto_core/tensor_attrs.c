@@ -37,3 +37,35 @@ otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx, const void 
   OTTO_CALL_I(otto_buffer_set(&mat->buf, index, src), "Failed setting index from underlying buffer");
   return OTTO_STATUS_SUCCESS;
 }
+
+#define _OTTO_TENSOR_DEFINE_GET(T, t)                                                                                                                \
+  T otto_tensor_get_##t(const otto_tensor_t *mat, const size_t *idx) {                                                                               \
+    T out;                                                                                                                                           \
+    (void)otto_tensor_get(mat, idx, &out);                                                                                                           \
+    return out;                                                                                                                                      \
+  }
+
+#define _OTTO_TENSOR_DEFINE_SET(T, t)                                                                                                                \
+  void otto_tensor_set_##t(otto_tensor_t *mat, const size_t *idx, const T src) { (void)otto_tensor_set(mat, idx, &src); }
+
+_OTTO_TENSOR_DEFINE_GET(int8_t, i8)
+_OTTO_TENSOR_DEFINE_GET(int16_t, i16)
+_OTTO_TENSOR_DEFINE_GET(int32_t, i32)
+_OTTO_TENSOR_DEFINE_GET(int64_t, i64)
+_OTTO_TENSOR_DEFINE_GET(uint8_t, u8)
+_OTTO_TENSOR_DEFINE_GET(uint16_t, u16)
+_OTTO_TENSOR_DEFINE_GET(uint32_t, u32)
+_OTTO_TENSOR_DEFINE_GET(uint64_t, u64)
+_OTTO_TENSOR_DEFINE_GET(float, f)
+_OTTO_TENSOR_DEFINE_GET(double, d)
+
+_OTTO_TENSOR_DEFINE_SET(int8_t, i8)
+_OTTO_TENSOR_DEFINE_SET(int16_t, i16)
+_OTTO_TENSOR_DEFINE_SET(int32_t, i32)
+_OTTO_TENSOR_DEFINE_SET(int64_t, i64)
+_OTTO_TENSOR_DEFINE_SET(uint8_t, u8)
+_OTTO_TENSOR_DEFINE_SET(uint16_t, u16)
+_OTTO_TENSOR_DEFINE_SET(uint32_t, u32)
+_OTTO_TENSOR_DEFINE_SET(uint64_t, u64)
+_OTTO_TENSOR_DEFINE_SET(float, f)
+_OTTO_TENSOR_DEFINE_SET(double, d)

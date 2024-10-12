@@ -237,3 +237,4 @@ pdb/
 lib/
 logs/
 pybuild/
+pysrc/**/*.c

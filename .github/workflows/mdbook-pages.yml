@@ -1,4 +1,4 @@
-name: Deploy
+name: MdBook deploy
 on:
   push:
     branches:

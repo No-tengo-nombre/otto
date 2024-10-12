@@ -25,6 +25,16 @@
     log_debug("TEST_FAIL: Expected different than %i, found %i", v2, v1);                                                                            \
     return OTTO_STATUS_FAILURE(NULL);                                                                                                                \
   }
+#define OTTO_ASSERT_EQF(v1, v2)                                                                                                                      \
+  if ((v1) != (v2)) {                                                                                                                                \
+    log_debug("TEST_FAIL: Expected %f, found %f", v2, v1);                                                                                           \
+    return OTTO_STATUS_FAILURE(NULL);                                                                                                                \
+  }
+#define OTTO_ASSERT_NEF(v1, v2)                                                                                                                      \
+  if ((v1) == (v2)) {                                                                                                                                \
+    log_debug("TEST_FAIL: Expected different than %f, found %f", v2, v1);                                                                            \
+    return OTTO_STATUS_FAILURE(NULL);                                                                                                                \
+  }
 #define OTTO_ASSERT_STREQ(v1, v2)                                                                                                                    \
   if (strcmp((v1), (v2))) {                                                                                                                          \
     log_debug("TEST_FAIL: Expected %s, found %s", v2, v1);                                                                                           \
