@@ -1,11 +1,47 @@
+[project]
+name = "otto"
+description = "High performance GPGPU library"
+readme = "README.md"
+version = "0.1.0"
+license = {file = "LICENSE"}
+authors = [{name = "Cristobal Allendes"}]
+maintainers = [{name = "Cristobal Allendes"}]
+requires-python = ">=3.6"
+keywords = ["gpgpu", "opencl"]
+dependencies = ["numpy>=1.0.0"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+[project.urls]
+homepage = "https://github.com/No-tengo-nombre/otto"
+documentation = "https://no-tengo-nombre.github.io/otto"
+repository = "https://github.com/No-tengo-nombre/otto"
+
 [build-system]
-requires = ["setuptools>=42.0", "wheel"]
+requires = ["setuptools>=42.0", "wheel", "cffi"]
 build-backend = "setuptools.build_meta"
 
+[tool.setuptools]
+package-dir = {"" = "pysrc"}
+packages = [
+    "otto",
+    "otto.cl",
+    "otto_ffi",
+    "otto_ffi.config",
+    "otto_ffi.ffi",
+    "otto_ffi.ffi._cl",
+    "otto_utils",
+]
+
 [tool.pytest.ini_options]
-testpaths = [
-    "tests/python",
-]
-pythonpath = [
-    "pysrc",
-]
+testpaths = ["tests/python"]
+pythonpath = ["pysrc"]
