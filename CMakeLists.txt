@@ -49,6 +49,7 @@ set(CMAKE_COMPILE_PDB_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}/pdb)
 
 # Directory of the code
 set(PROJECT_SOURCE_DIR_LOCATION ${CMAKE_SOURCE_DIR}/src)
+seT(PROJECT_HEADERS_DEST "include")
 
 # Names for the different libraries in the project
 set(PROJECT_CORE_NAME ${PROJECT_NAME}_core)
@@ -91,4 +92,16 @@ if(${OTTO_BUILD_TESTS})
   add_subdirectory(tests)
 endif()
 
-# TODO: Implement option to build the Python wrapper along with the C lib
+if(${OTTO_INSTALL})
+  # libraries
+  install(TARGETS ${PROJECT_CORE_NAME} ${PROJECT_UTILS_NAME})
+
+  # headers
+  file(GLOB BASE_HEADERS ${PROJECT_HEADERS}/otto/*.h)
+  file(GLOB BASE_CL_HEADERS ${PROJECT_HEADERS}/otto/cl/*.h)
+  file(GLOB UTILS_HEADERS ${PROJECT_HEADERS}/ottou/*.h)
+  install(FILES ${BASE_HEADERS} DESTINATION ${PROJECT_HEADERS_DEST}/otto)
+  install(FILES ${BASE_CL_HEADERS} DESTINATION ${PROJECT_HEADERS_DEST}/otto/cl)
+  install(FILES ${UTILS_HEADERS} DESTINATION ${PROJECT_HEADERS_DEST}/ottou)
+endif()
+
