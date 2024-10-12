@@ -97,8 +97,10 @@ otto_status_t otto_buffer_extend_array(otto_buffer_t *buf, const void *src, cons
     (void)otto_buffer_get(buf, i, &out);                                                                                                             \
     return out;                                                                                                                                      \
   }
+
 #define _OTTO_BUFFER_DEFINE_SET(T, t)                                                                                                                \
   void otto_buffer_set_##t(otto_buffer_t *buf, const size_t i, const T src) { (void)otto_buffer_set(buf, i, &src); }
+
 #define _OTTO_BUFFER_DEFINE_PUSH(T, t)                                                                                                               \
   void otto_buffer_push_##t(otto_buffer_t *buf, const T src) { (void)otto_buffer_push(buf, &src); }
 

@@ -42,6 +42,27 @@ otto_status_t otto_tensor_calculate_index(const otto_tensor_t *mat, const size_t
 otto_status_t otto_tensor_get(const otto_tensor_t *mat, const size_t *idx, void *out);
 otto_status_t otto_tensor_set(otto_tensor_t *mat, const size_t *idx, const void *src);
 
+int8_t   otto_tensor_get_i8(const otto_tensor_t *mat, const size_t *idx);
+int16_t  otto_tensor_get_i16(const otto_tensor_t *mat, const size_t *idx);
+int32_t  otto_tensor_get_i32(const otto_tensor_t *mat, const size_t *idx);
+int64_t  otto_tensor_get_i64(const otto_tensor_t *mat, const size_t *idx);
+uint8_t  otto_tensor_get_u8(const otto_tensor_t *mat, const size_t *idx);
+uint16_t otto_tensor_get_u16(const otto_tensor_t *mat, const size_t *idx);
+uint32_t otto_tensor_get_u32(const otto_tensor_t *mat, const size_t *idx);
+uint64_t otto_tensor_get_u64(const otto_tensor_t *mat, const size_t *idx);
+float    otto_tensor_get_f(const otto_tensor_t *mat, const size_t *idx);
+double   otto_tensor_get_d(const otto_tensor_t *mat, const size_t *idx);
+void     otto_tensor_set_i8(otto_tensor_t *mat, const size_t *idx, const int8_t src);
+void     otto_tensor_set_i16(otto_tensor_t *mat, const size_t *idx, const int16_t src);
+void     otto_tensor_set_i32(otto_tensor_t *mat, const size_t *idx, const int32_t src);
+void     otto_tensor_set_i64(otto_tensor_t *mat, const size_t *idx, const int64_t src);
+void     otto_tensor_set_u8(otto_tensor_t *mat, const size_t *idx, const uint8_t src);
+void     otto_tensor_set_u16(otto_tensor_t *mat, const size_t *idx, const uint16_t src);
+void     otto_tensor_set_u32(otto_tensor_t *mat, const size_t *idx, const uint32_t src);
+void     otto_tensor_set_u64(otto_tensor_t *mat, const size_t *idx, const uint64_t src);
+void     otto_tensor_set_f(otto_tensor_t *mat, const size_t *idx, const float src);
+void     otto_tensor_set_d(otto_tensor_t *mat, const size_t *idx, const double src);
+
 #ifdef __cplusplus
 }
 #endif
