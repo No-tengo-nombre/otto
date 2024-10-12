@@ -58,6 +58,26 @@ otto_status_t test_methods_get_rank2() {
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t test_methods_getinm_rank2() {
+  double data[3][4] = {
+      {  1.0,   2.0,   3.0,   4.0},
+      { 10.0,  20.0,  30.0,  40.0},
+      {-10.0, -20.0, -30.0, -40.0},
+  };
+  size_t rank      = 2;
+  size_t shape[]   = {3, 4};
+  size_t data_size = sizeof(double);
+
+  logi_debug("Creating tensor");
+  otto_tensor_t mat;
+  OTTO_CALL(otto_tensor_from_array(data, rank, shape, data_size, &mat), "Failed creating tensor from array");
+
+  size_t idx[] = {1, 2};
+  double val   = otto_tensor_get_d(&mat, idx);
+  OTTO_ASSERT_EQF(val, 30.0);
+  return OTTO_STATUS_SUCCESS;
+}
+
 otto_status_t test_methods_set() {
   otto_tensor_t mat;
   size_t        shape[] = {5, 3, 4};
@@ -96,12 +116,35 @@ otto_status_t test_methods_set_rank2() {
   return OTTO_STATUS_SUCCESS;
 }
 
+otto_status_t test_methods_setinm_rank2() {
+  double data[3][4] = {
+      {  1.0,   2.0,   3.0,   4.0},
+      { 10.0,  20.0,  30.0,  40.0},
+      {-10.0, -20.0, -30.0, -40.0},
+  };
+  size_t rank      = 2;
+  size_t shape[]   = {3, 4};
+  size_t data_size = sizeof(double);
+
+  logi_debug("Creating tensor");
+  otto_tensor_t mat;
+  OTTO_CALL(otto_tensor_from_array(data, rank, shape, data_size, &mat), "Failed creating tensor from array");
+
+  double new_val = 1236.124;
+  size_t idx[]   = {2, 2};
+  otto_tensor_set_d(&mat, idx, new_val);
+  OTTO_ASSERT_EQF(((double *)mat.buf.data)[10], new_val);
+  return OTTO_STATUS_SUCCESS;
+}
+
 int main() {
   OTTO_CALL_TEST(test_methods_get1);
   OTTO_CALL_TEST(test_methods_get2);
   OTTO_CALL_TEST(test_methods_get3);
   OTTO_CALL_TEST(test_methods_get_rank2);
+  OTTO_CALL_TEST(test_methods_getinm_rank2);
   OTTO_CALL_TEST(test_methods_set);
   OTTO_CALL_TEST(test_methods_set_rank2);
+  OTTO_CALL_TEST(test_methods_setinm_rank2);
   return TEST_PASS;
 }
