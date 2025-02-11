@@ -13,6 +13,7 @@ examples=0
 testing=0
 verbose=0
 python_install=0
+lib_install=0
 
 while getopts "hcxvisetrdwlpG:R:P:" arg
 do
@@ -25,6 +26,7 @@ do
             ;;
         i)
             params+=" -DOTTO_INSTALL=ON"
+            lib_install=1
             ;;
         s)
             params+=" -DBUILD_SHARED_LIBS=OFF"
@@ -126,6 +128,13 @@ if [[ "${example}" != "" ]]; then
     else
         ./bin/debug/ex.${example}
     fi
+fi
+
+if [[ $lib_install -eq 1 ]]; then
+    # Implement options when installing
+    PREFIX="/usr/"
+    echo -e "\n\n\x1b[32;20mInstalling library to ${PREFIX}\x1b[0m"
+    sudo cmake --install build --prefix "/usr/"
 fi
 
 if [ $python_install -eq 1 ]; then

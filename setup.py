@@ -169,5 +169,4 @@ if __name__ == "__main__":
         cmdclass={
             "build_ext": cmake_ext,
         },
-        # cffi_modules=["cffi_build.py:ffi_builder"],
     )
