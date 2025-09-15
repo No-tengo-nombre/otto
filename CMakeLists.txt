@@ -63,6 +63,9 @@ option(OTTO_BUILD_TESTS "Build the tests that come with the package." OFF)
 option(OTTO_INSTALL "Install target." OFF)
 option(BUILD_SHARED_LIBS "Build using shared libraries." ON)
 
+# CMake configuration files
+include(${CMAKE_SOURCE_DIR}/cmake/cppcheck.cmake)
+
 # Compile definitions
 add_compile_definitions(OTTO_CLKERNELS_DIR="${PROJECT_CL_KERNELS}")
 add_compile_definitions(LOG_USE_COLOR)
